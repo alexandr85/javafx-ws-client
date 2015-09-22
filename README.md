@@ -1,2 +1,2 @@
 # javafx-ws-client
-JavaFx WebSocket client
+JavaFx client application for testing WebSocket
