@@ -1,4 +1,4 @@
-package ru.aleksandr85;
+package ru.testing.client.config;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
@@ -11,10 +11,10 @@ public class Configuration {
 
     @Parameter(
             required = true,
-            names = {"-a", "--type"},
+            names = {"-a", "--app-type"},
             description = "Set application type console|gui"
     )
-    private String applicationType = "console";
+    private ApplicationType type = ApplicationType.gui;
 
     @Parameter(
             names = {"-s", "--server-url"},
@@ -39,8 +39,8 @@ public class Configuration {
      * Get application type
      * @return String console|gui (default: console)
      */
-    public String getApplicationType() {
-        return applicationType;
+    public ApplicationType getApplicationType() {
+        return type;
     }
 
     /**

@@ -1,5 +1,6 @@
 # IDE files
 .idea
+*.iml
 
 # Package Files
 *.jar
