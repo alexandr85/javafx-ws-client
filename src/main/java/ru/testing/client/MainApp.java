@@ -14,6 +14,9 @@ import ru.testing.client.config.Configuration;
  */
 public class MainApp extends Application {
 
+    private static final double PRIMARY_STAGE_MIN_WIDTH = 590;
+    private static final double PRIMARY_STAGE_MIN_HEIGHT = 440;
+
     /**
      * Entry point to application
      * @param args String[]
@@ -30,8 +33,14 @@ public class MainApp extends Application {
             System.exit(1);
         }
 
+        // show help application option
+        if (config.isHelp()) {
+            parser.usage();
+            System.exit(0);
+        }
+
         // select application type
-        if (config.getApplicationType() == ApplicationType.console) {
+        if (config.getType() == ApplicationType.console) {
             System.out.println("Start console application");
         } else {
             launch(args);
@@ -43,8 +52,10 @@ public class MainApp extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/root.fxml"));
         Scene scene = new Scene(root);
         primaryStage.setTitle("WebSocket client");
+        primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
+        primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
         primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 }

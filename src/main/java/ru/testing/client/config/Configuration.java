@@ -10,9 +10,8 @@ import com.beust.jcommander.Parameters;
 public class Configuration {
 
     @Parameter(
-            required = true,
             names = {"-a", "--app-type"},
-            description = "Set application type console|gui"
+            description = "Set application type"
     )
     private ApplicationType type = ApplicationType.gui;
 
@@ -39,7 +38,7 @@ public class Configuration {
      * Get application type
      * @return String console|gui (default: console)
      */
-    public ApplicationType getApplicationType() {
+    public ApplicationType getType() {
         return type;
     }
 
@@ -57,5 +56,13 @@ public class Configuration {
      */
     public int getTimeout() {
         return timeout;
+    }
+
+    /**
+     * Show help aplication options
+     * @return boolean
+     */
+    public boolean isHelp() {
+        return help;
     }
 }
