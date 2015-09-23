@@ -1,20 +1,13 @@
-package ru.testing.client;
+package ru.testing.client.console;
 
 import com.beust.jcommander.JCommander;
-import ru.testing.client.config.ApplicationType;
 import ru.testing.client.config.Configuration;
-import ru.testing.client.console.ConsoleApp;
-import ru.testing.client.gui.JavaFxApp;
 
 /**
- * Main application class
+ * Console testing client
  */
-public class MainApp {
+public class ConsoleApp {
 
-    /**
-     * Entry point to application
-     * @param args String[]
-     */
     public static void main(String[] args) {
         Configuration config = new Configuration();
         JCommander parser = new JCommander();
@@ -31,13 +24,6 @@ public class MainApp {
         if (config.isHelp()) {
             parser.usage();
             System.exit(0);
-        }
-
-        // select application type
-        if (config.getType() == ApplicationType.console) {
-            ConsoleApp.main(args);
-        } else {
-            JavaFxApp.main(args);
         }
     }
 }

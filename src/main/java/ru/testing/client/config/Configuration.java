@@ -6,7 +6,7 @@ import com.beust.jcommander.Parameters;
 /**
  * Configuration parameters for use application
  */
-@Parameters(separators = "=")
+@Parameters()
 public class Configuration {
 
     @Parameter(
