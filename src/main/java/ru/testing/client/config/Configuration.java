@@ -16,7 +16,7 @@ public class Configuration {
     private ApplicationType type = ApplicationType.gui;
 
     @Parameter(
-            names = {"-s", "--server-url"},
+            names = {"-u", "--url"},
             description = "Server url for WebSocket connection (ws[s]://host:port/path/to/websocket)"
     )
     private String serverUrl;
