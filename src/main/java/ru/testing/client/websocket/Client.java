@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.websocket.*;
 import java.net.URI;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * WebSocket client
