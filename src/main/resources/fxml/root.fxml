@@ -2,87 +2,94 @@
 
 <?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
-<?import java.lang.*?>
-<?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="570.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0">
-         <children>
-            <ToolBar maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0">
-              <items>
-                  <TextField maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="410.0" promptText="websocket server url">
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </TextField>
-                  <Button defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Connect">
-                     <cursor>
-                        <Cursor fx:constant="HAND" />
-                     </cursor></Button>
-                  <Separator orientation="VERTICAL" prefHeight="200.0" />
-                  <Circle fill="#ff1f1f81" radius="10.0" stroke="#fa20201f" strokeType="INSIDE" />
-              </items>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </ToolBar>
-         </children>
-      </VBox>
-      <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="3">
-         <children>
-            <ToolBar maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0">
-              <items>
-                  <TextField maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="410.0" promptText="message">
-                     <padding>
-                        <Insets left="5.0" />
-                     </padding></TextField>
-                <Button alignment="CENTER" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Send" />
-              </items>
-               <opaqueInsets>
-                  <Insets />
-               </opaqueInsets>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </ToolBar>
-         </children>
-      </VBox>
-      <VBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="2">
-         <children>
-            <ToolBar maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0">
-              <items>
-                <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Clear" />
-                  <Separator orientation="VERTICAL" prefHeight="200.0">
-                     <padding>
-                        <Insets left="10.0" right="7.0" />
-                     </padding>
-                  </Separator>
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Filter" />
-                  <TextField />
-              </items>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </ToolBar>
-         </children>
-      </VBox>
-      <TextFlow prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
-   </children>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+          prefWidth="570.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="ru.testing.client.controllers.MainController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES"/>
+        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="0">
+        <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="40.0" prefWidth="570.0">
+            <padding>
+                <Insets left="10.0"/>
+            </padding>
+            <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="410.0"
+                       promptText="websocket server url">
+                <padding>
+                    <Insets left="5.0"/>
+                </padding>
+                <opaqueInsets>
+                    <Insets/>
+                </opaqueInsets>
+            </TextField>
+            <Button fx:id="connectBtn" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                    text="Connect">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+                <padding>
+                    <Insets left="3.0" right="2.0"/>
+                </padding>
+            </Separator>
+            <Circle fx:id="status" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"/>
+        </ToolBar>
+    </VBox>
+    <TextArea fx:id="outputText" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" editable="false"/>
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="2">
+        <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="40.0" prefWidth="570.0">
+            <padding>
+                <Insets left="10.0"/>
+            </padding>
+            <Button fx:id="cleanOutputTextBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Clear"/>
+            <Separator orientation="VERTICAL" prefHeight="200.0">
+                <padding>
+                    <Insets left="10.0" right="7.0"/>
+                </padding>
+            </Separator>
+            <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                    mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Filter"/>
+            <TextField maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="25.0" prefWidth="175.0"/>
+        </ToolBar>
+    </VBox>
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="3">
+        <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="40.0" prefWidth="570.0">
+            <opaqueInsets>
+                <Insets/>
+            </opaqueInsets>
+            <padding>
+                <Insets left="10.0"/>
+            </padding>
+            <TextField maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="25.0" prefWidth="410.0" promptText="message">
+                <padding>
+                    <Insets left="5.0"/>
+                </padding>
+            </TextField>
+            <Button alignment="CENTER" disable="true" maxHeight="-Infinity" maxWidth="-Infinity"
+                    minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                    prefWidth="100.0" text="Send"/>
+        </ToolBar>
+    </VBox>
 </GridPane>
