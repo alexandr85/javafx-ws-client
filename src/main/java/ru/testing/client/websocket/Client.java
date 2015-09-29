@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
 public class Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
-    private Session session = null;
+    private Session session;
     private MessageHandler messageHandler;
 
     public Client(final URI endpointURI) {
@@ -29,15 +29,15 @@ public class Client {
     @OnOpen
     public void onOpen(final Session session) {
         if (session.isOpen()) {
-            LOGGER.info(String.format("Connection open with server %s", session.getRequestURI()));
+            LOGGER.info("Connection open with server {}", session.getRequestURI());
             this.session = session;
         }
     }
 
     @OnClose
     public void onClose(final Session session, final CloseReason reason) {
-        if (session.isOpen()) {
-            LOGGER.info(String.format("Connection close: %s", reason));
+        if (!session.isOpen()) {
+            LOGGER.info("Connection close: {}", reason);
             this.session = null;
         }
     }
@@ -55,10 +55,6 @@ public class Client {
 
     public void sendMessage(final String message) {
         session.getAsyncRemote().sendText(message);
-    }
-
-    public static interface MessageHandler {
-        void handleMessage(String message);
     }
 
     public Session getSession() {

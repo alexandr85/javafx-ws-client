@@ -35,22 +35,27 @@ public class MainApp extends Application {
         parser.addObject(config);
         try {
             parser.parse(args);
+
+            // show help application option
+            if (config.isHelp()) {
+                parser.usage();
+                System.exit(0);
+            }
+
+            // select application type
+            if (config.getType() == ApplicationType.console) {
+                if (config.getServerUrl().isEmpty()) {
+                    LOGGER.error("WebSocket server url required");
+                    parser.usage();
+                    System.exit(1);
+                }
+                startConsoleClient(config.getServerUrl());
+            } else {
+                launch(args);
+            }
         } catch (Exception e) {
             parser.usage();
             System.exit(1);
-        }
-
-        // show help application option
-        if (config.isHelp()) {
-            parser.usage();
-            System.exit(0);
-        }
-
-        // select application type
-        if (config.getType() == ApplicationType.console) {
-            startConsoleClient();
-        } else {
-            launch(args);
         }
     }
 
@@ -66,14 +71,16 @@ public class MainApp extends Application {
         primaryStage.show();
     }
 
-    private static void startConsoleClient() {
+    private static void startConsoleClient(String url) {
         try {
-            final Client client = new Client(new URI("ws://echo.websocket.org"));
+            LOGGER.info("Connecting to {} ...", url);
+            final Client client = new Client(new URI(url));
             String message;
-            client.addMessageHandler(serverMessage -> LOGGER.info(String.format("=> %s", serverMessage)));
+            client.addMessageHandler(serverMessage -> LOGGER.info("Request: {}", serverMessage));
+            LOGGER.info("For disconnect from server type 'exit'");
             while (true) {
                 Scanner scanner = new Scanner(System.in);
-                System.out.print("Send message (type 'exit' for close connection): ");
+                System.out.print("Send message: ");
                 message = scanner.nextLine();
                 if (message.equals("exit")) {
                     client.getSession().close();
