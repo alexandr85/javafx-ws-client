@@ -1,4 +1,4 @@
-package ru.testing.client.controllers;
+package ru.testing.client.gui;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -25,22 +25,37 @@ public class MainController {
     private static final String DISCONNECT_STATUS = "#ff1f1f81";
     private Client client;
 
-    @FXML private TextField serverUrl;
-    @FXML private Button connectBtn;
-    @FXML private Circle status;
-    @FXML private TextArea outputText;
-    @FXML private Button cleanOutputTextBtn;
-    @FXML private TextField messageText;
-    @FXML private Button messageSendBtn;
+    @FXML
+    private TextField serverUrl;
+
+    @FXML
+    private Button connectBtn;
+
+    @FXML
+    private Circle status;
+
+    @FXML
+    private TextArea outputText;
+
+    @FXML
+    private Button cleanOutputTextBtn;
+
+    @FXML
+    private TextField messageText;
+
+    @FXML
+    private Button messageSendBtn;
 
     private boolean connectionStatus;
 
     /**
      * Method run then controller initialize
      */
-    @FXML void initialize() {
+    @FXML
+    private void initialize() {
 
         status.setFill(Paint.valueOf(DISCONNECT_STATUS));
+        outputText.setWrapText(true);
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((ActionEvent event) -> {
@@ -59,8 +74,9 @@ public class MainController {
                     disableSendMessage(true);
                     status.setFill(Paint.valueOf(DISCONNECT_STATUS));
                     connectBtn.setText("Connect");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     LOGGER.error(e.getMessage());
+                    Dialogs.getExceptionDialog(e);
                 }
             } else {
                 Platform.runLater(this::startClient);
@@ -75,7 +91,9 @@ public class MainController {
         try {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
-            client.addMessageHandler(outputText::appendText);
+            client.addMessageHandler((message -> {
+                outputText.appendText(String.format("%s\n", message));
+            }));
 
             // set status
             status.setFill(Paint.valueOf(CONNECT_STATUS));
@@ -90,7 +108,8 @@ public class MainController {
                 messageText.clear();
             }));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getLocalizedMessage());
+            Dialogs.getExceptionDialog(e);
         }
     }
 
