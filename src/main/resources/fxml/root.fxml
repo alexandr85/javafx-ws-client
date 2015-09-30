@@ -35,7 +35,8 @@
                     <Insets/>
                 </opaqueInsets>
             </TextField>
-            <Button fx:id="connectBtn" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            <Button fx:id="connectBtn" defaultButton="true" maxHeight="-Infinity" maxWidth="-Infinity"
+                    minHeight="-Infinity"
                     minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
                     text="Connect">
                 <cursor>
@@ -50,7 +51,8 @@
             <Circle fx:id="status" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"/>
         </ToolBar>
     </VBox>
-    <TextArea fx:id="outputText" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" editable="false"/>
+    <TextArea fx:id="outputText" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" editable="false"
+              wrapText="false"/>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="2">
         <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"

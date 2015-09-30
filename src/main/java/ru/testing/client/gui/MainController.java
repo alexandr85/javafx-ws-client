@@ -1,6 +1,7 @@
 package ru.testing.client.gui;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
 
-import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -23,7 +23,7 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final String CONNECT_STATUS = "#5CB85C";
     private static final String DISCONNECT_STATUS = "#ff1f1f81";
-    private Client client;
+    private static Client client;
 
     @FXML
     private TextField serverUrl;
@@ -53,9 +53,8 @@ public class MainController {
      */
     @FXML
     private void initialize() {
-
-        status.setFill(Paint.valueOf(DISCONNECT_STATUS));
-        outputText.setWrapText(true);
+        checkConnectionStatus();
+        outputText.setFocusTraversable(false);
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((ActionEvent event) -> {
@@ -67,13 +66,9 @@ public class MainController {
 
         // Connect or disconnect with websocket server
         connectBtn.setOnAction((event -> {
-            if (connectionStatus) {
+            if (!outputText.getText().isEmpty() && connectionStatus) {
                 try {
                     client.getSession().close();
-                    connectionStatus = false;
-                    disableSendMessage(true);
-                    status.setFill(Paint.valueOf(DISCONNECT_STATUS));
-                    connectBtn.setText("Connect");
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage());
                     Dialogs.getExceptionDialog(e);
@@ -91,17 +86,7 @@ public class MainController {
         try {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
-            client.addMessageHandler((message -> {
-                outputText.appendText(String.format("%s\n", message));
-            }));
-
-            // set status
-            status.setFill(Paint.valueOf(CONNECT_STATUS));
-            connectBtn.setText("Disconnect");
-            connectionStatus = true;
-
-            // enable send message
-            disableSendMessage(false);
+            client.addMessageHandler((message -> outputText.appendText(String.format("%s\n", message))));
 
             messageSendBtn.setOnAction((event -> {
                 client.sendMessage(messageText.getText());
@@ -115,10 +100,51 @@ public class MainController {
 
     /**
      * Set status disable or enable send message text field and button
-     * @param disable boolean
+     * @param isConnected boolean
      */
-    private void disableSendMessage(boolean disable) {
-        messageText.setDisable(disable);
-        messageSendBtn.setDisable(disable);
+    private void setConnectStatus(boolean isConnected) {
+        if (isConnected) {
+            Platform.runLater(() -> {
+                connectionStatus = true;
+                status.setFill(Paint.valueOf(CONNECT_STATUS));
+                connectBtn.setText("Disconnect");
+                messageText.setDisable(false);
+                messageSendBtn.setDisable(false);
+            });
+        } else {
+            Platform.runLater(() -> {
+                connectionStatus = false;
+                status.setFill(Paint.valueOf(DISCONNECT_STATUS));
+                connectBtn.setText("Connect");
+                messageText.setDisable(true);
+                messageSendBtn.setDisable(true);
+            });
+        }
+    }
+
+    /**
+     * Check connection status
+     */
+    private void checkConnectionStatus() {
+        Task task = new Task() {
+
+            @Override
+            protected Object call() throws Exception {
+                try {
+                    while (true) {
+                        if (client != null && client.getSession() != null && client.getSession().isOpen()) {
+                            setConnectStatus(true);
+                        } else {
+                            setConnectStatus(false);
+                        }
+                        Thread.sleep(100);
+                    }
+                } catch (InterruptedException e) {
+                    LOGGER.error(e.getMessage());
+                }
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 }
