@@ -1,9 +1,9 @@
 package ru.testing.client.gui;
 
+import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -22,7 +22,7 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final String CONNECT_STATUS = "#5CB85C";
-    private static final String DISCONNECT_STATUS = "#ff1f1f81";
+    private static final String DISCONNECT_STATUS = "#D9534F";
     private static Client client;
 
     @FXML
@@ -41,12 +41,19 @@ public class MainController {
     private Button cleanOutputTextBtn;
 
     @FXML
+    private Button filterBtn;
+
+    @FXML
+    private TextField filterValue;
+
+    @FXML
     private TextField messageText;
 
     @FXML
     private Button messageSendBtn;
 
     private boolean connectionStatus;
+    private String filterString;
 
     /**
      * Method run then controller initialize
@@ -57,7 +64,7 @@ public class MainController {
         outputText.setFocusTraversable(false);
 
         // Clean output text area action
-        cleanOutputTextBtn.setOnAction(((ActionEvent event) -> {
+        cleanOutputTextBtn.setOnAction(((event) -> {
             if (!outputText.getText().isEmpty()) {
                 outputText.clear();
                 LOGGER.debug("Clean all response messages");
@@ -66,7 +73,7 @@ public class MainController {
 
         // Connect or disconnect with websocket server
         connectBtn.setOnAction((event -> {
-            if (!outputText.getText().isEmpty() && connectionStatus) {
+            if (connectionStatus) {
                 try {
                     client.getSession().close();
                 } catch (Exception e) {
@@ -74,7 +81,16 @@ public class MainController {
                     Dialogs.getExceptionDialog(e);
                 }
             } else {
-                Platform.runLater(this::startClient);
+                if (!serverUrl.getText().isEmpty()) {
+                    Platform.runLater(this::startClient);
+                }
+            }
+        }));
+
+        // Add filter value
+        filterBtn.setOnAction((event -> {
+            if (!filterValue.getText().isEmpty()) {
+                filterString = filterValue.getText();
             }
         }));
     }
@@ -86,7 +102,13 @@ public class MainController {
         try {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
-            client.addMessageHandler((message -> outputText.appendText(String.format("%s\n", message))));
+            client.addMessageHandler((message -> {
+                if (filterString == null || filterString.isEmpty()) {
+                    outputText.appendText(String.format("%s\n", message));
+                } else if (message.contains(filterString)){
+                    outputText.appendText(String.format("%s\n", message));
+                }
+            }));
 
             messageSendBtn.setOnAction((event -> {
                 client.sendMessage(messageText.getText());
@@ -137,7 +159,7 @@ public class MainController {
                         } else {
                             setConnectStatus(false);
                         }
-                        Thread.sleep(100);
+                        Thread.sleep(200);
                     }
                 } catch (InterruptedException e) {
                     LOGGER.error(e.getMessage());

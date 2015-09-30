@@ -2,6 +2,7 @@ package ru.testing.client;
 
 import com.beust.jcommander.JCommander;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -63,6 +64,10 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/root.fxml"));
         Scene scene = new Scene(root);
+        primaryStage.setOnCloseRequest((event -> {
+            Platform.exit();
+            System.exit(0);
+        }));
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
         primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
