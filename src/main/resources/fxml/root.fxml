@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import java.lang.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
@@ -72,28 +70,18 @@
                     <Insets left="10.0" right="7.0"/>
                 </padding>
             </Separator>
-            <Button fx:id="filterBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="60.0"
-                    text="Filter">
+            <Button fx:id="addFilterBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                    text="Add filter">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
             </Button>
-            <TextField fx:id="filterValue" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                       prefHeight="25.0" prefWidth="100.0"/>
-            <Label styleClass="labelText" focusTraversable="false" maxHeight="-Infinity" maxWidth="Infinity"
-                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0"
-                   text="New response filter by:">
-                <padding>
-                    <Insets left="5.0"/>
-                </padding>
-            </Label>
-            <Label fx:id="filterSave" focusTraversable="false" maxHeight="-Infinity" maxWidth="Infinity"
-                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="100.0">
-                <padding>
-                    <Insets left="5.0"/>
-                </padding>
-            </Label>
+            <TextField fx:id="filterText" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="25.0" prefWidth="140.0"/>
+            <MenuButton fx:id="filterList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                        text="Filter list" disable="true"/>
         </ToolBar>
     </VBox>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"

@@ -3,10 +3,7 @@ package ru.testing.client.gui;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -42,13 +39,10 @@ public class MainController {
     private Button cleanOutputTextBtn;
 
     @FXML
-    private Button filterBtn;
+    private Button addFilterBtn;
 
     @FXML
-    private TextField filterValue;
-
-    @FXML
-    private Label filterSave;
+    private TextField filterText;
 
     @FXML
     private TextField messageText;
@@ -56,22 +50,24 @@ public class MainController {
     @FXML
     private Button messageSendBtn;
 
+    @FXML
+    private MenuButton filterList;
+
     private boolean connectionStatus;
-    private String filterString;
 
     /**
      * Method run then controller initialize
      */
     @FXML
     private void initialize() {
+
+        // Check connection status
         checkConnectionStatus();
-        outputText.setFocusTraversable(false);
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((event) -> {
             if (!outputText.getText().isEmpty()) {
                 outputText.clear();
-                LOGGER.debug("Clean all response messages");
             }
         }));
 
@@ -83,20 +79,11 @@ public class MainController {
             }
         });
 
-        // Add filter value
-        filterBtn.setOnAction((event -> applyFilter()));
-
-        filterValue.setOnKeyPressed((keyEvent -> {
+        // Add filter
+        addFilterBtn.setOnMouseClicked((event -> addToFilterList()));
+        filterText.setOnKeyPressed((keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                applyFilter();
-            }
-        }));
-
-        // Add action for clear filter
-        filterSave.setOnMouseClicked((event -> {
-            if (!filterSave.getText().isEmpty() && Dialogs.getConfirmationDialog("Do you want to clear filter?")) {
-                filterString = "";
-                filterSave.setText(filterString);
+                addToFilterList();
             }
         }));
     }
@@ -127,9 +114,14 @@ public class MainController {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
             client.addMessageHandler((message -> {
-                if (filterString == null || filterString.isEmpty()) {
-                    outputText.appendText(String.format("%s\n", message));
-                } else if (message.contains(filterString)){
+                if (filterList.getItems().size() != 0) {
+                    for (MenuItem item : filterList.getItems()) {
+                        if (message.contains(item.getText())) {
+                            outputText.appendText(String.format("%s\n", message));
+                            break;
+                        }
+                    }
+                } else {
                     outputText.appendText(String.format("%s\n", message));
                 }
             }));
@@ -200,11 +192,21 @@ public class MainController {
     /**
      * Apply text filter for new response
      */
-    private void applyFilter() {
-        if (filterValue != null) {
-            filterString = filterValue.getText();
-            filterSave.setText(filterString);
-            LOGGER.debug("Use filter string for new message: {}", filterString);
+    private void addToFilterList() {
+        if (filterText != null && !filterText.getText().isEmpty()) {
+            String filterString = filterText.getText();
+            MenuItem menuItem = new MenuItem(filterString);
+            menuItem.setOnAction((event -> {
+                filterList.getItems().remove(menuItem);
+                if (filterList.getItems().size() == 0) {
+                    filterList.setDisable(true);
+                }
+            }));
+            filterList.getItems().addAll(menuItem);
+            if (filterList.getItems().size() > 0) {
+                filterList.setDisable(false);
+            }
+            filterText.clear();
         }
     }
 
