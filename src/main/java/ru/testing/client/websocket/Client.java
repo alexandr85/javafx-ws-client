@@ -1,11 +1,13 @@
 package ru.testing.client.websocket;
 
+import com.sun.scenario.effect.impl.prism.PrImage;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.gui.Dialogs;
 
 import javax.websocket.*;
 import java.net.URI;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * WebSocket client
@@ -14,6 +16,7 @@ import java.util.concurrent.CountDownLatch;
 public class Client {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
+    private static final int NORMAL_CLOSE_CODE = 1000;
     private Session session;
     private MessageHandler messageHandler;
 
@@ -37,7 +40,10 @@ public class Client {
     @OnClose
     public void onClose(final Session session, final CloseReason reason) {
         if (!session.isOpen()) {
-            LOGGER.info("Connection close: {}", reason);
+            LOGGER.info("Connection closed: {}", reason);
+            if (reason.getCloseCode().getCode() != NORMAL_CLOSE_CODE) {
+                Platform.runLater(() -> Dialogs.getWarningDialog(String.format("Connection closed: %s", reason)));
+            }
             this.session = null;
         }
     }
@@ -57,6 +63,10 @@ public class Client {
         session.getAsyncRemote().sendText(message);
     }
 
+    /**
+     * Get connection session
+     * @return Session
+     */
     public Session getSession() {
         return this.session;
     }

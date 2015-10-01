@@ -1,0 +1,7 @@
+.labelText {
+    -fx-underline: true;
+}
+
+#filterSave {
+    -fx-font: bold 11pt "System";
+}

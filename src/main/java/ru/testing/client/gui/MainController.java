@@ -3,10 +3,11 @@ package ru.testing.client.gui;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import org.slf4j.Logger;
@@ -47,6 +48,9 @@ public class MainController {
     private TextField filterValue;
 
     @FXML
+    private Label filterSave;
+
+    @FXML
     private TextField messageText;
 
     @FXML
@@ -72,27 +76,46 @@ public class MainController {
         }));
 
         // Connect or disconnect with websocket server
-        connectBtn.setOnAction((event -> {
-            if (connectionStatus) {
-                try {
-                    client.getSession().close();
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
-                    Dialogs.getExceptionDialog(e);
-                }
-            } else {
-                if (!serverUrl.getText().isEmpty()) {
-                    Platform.runLater(this::startClient);
-                }
+        connectBtn.setOnAction((event -> connectedToServer()));
+        serverUrl.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                connectedToServer();
+            }
+        });
+
+        // Add filter value
+        filterBtn.setOnAction((event -> applyFilter()));
+
+        filterValue.setOnKeyPressed((keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                applyFilter();
             }
         }));
 
-        // Add filter value
-        filterBtn.setOnAction((event -> {
-            if (!filterValue.getText().isEmpty()) {
-                filterString = filterValue.getText();
+        // Add action for clear filter
+        filterSave.setOnMouseClicked((event -> {
+            if (!filterSave.getText().isEmpty() && Dialogs.getConfirmationDialog("Do you want to clear filter?")) {
+                filterSave.setText("");
             }
         }));
+    }
+
+    /**
+     * Try connected to websocket server
+     */
+    private void connectedToServer() {
+        if (connectionStatus) {
+            try {
+                client.getSession().close();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                Dialogs.getExceptionDialog(e);
+            }
+        } else {
+            if (!serverUrl.getText().isEmpty()) {
+                Platform.runLater(this::startClient);
+            }
+        }
     }
 
     /**
@@ -110,10 +133,13 @@ public class MainController {
                 }
             }));
 
-            messageSendBtn.setOnAction((event -> {
-                client.sendMessage(messageText.getText());
-                messageText.clear();
-            }));
+            // Send message
+            messageSendBtn.setOnAction((event -> sendWebsocketMessage()));
+            messageText.setOnKeyPressed((keyEvent) -> {
+                if (keyEvent.getCode() == KeyCode.ENTER) {
+                    sendWebsocketMessage();
+                }
+            });
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
             Dialogs.getExceptionDialog(e);
@@ -168,5 +194,24 @@ public class MainController {
             }
         };
         new Thread(task).start();
+    }
+
+    /**
+     * Apply text filter for new response
+     */
+    private void applyFilter() {
+        if (filterValue != null) {
+            filterString = filterValue.getText();
+            filterSave.setText(filterString);
+            LOGGER.debug("Use filter string for new message: {}", filterString);
+        }
+    }
+
+    /**
+     * Send websocket message
+     */
+    private void sendWebsocketMessage() {
+        client.sendMessage(messageText.getText());
+        messageText.clear();
     }
 }

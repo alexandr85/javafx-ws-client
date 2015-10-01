@@ -14,6 +14,7 @@ import java.util.Optional;
 import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.WARNING;
 
 /**
  * Class contains javafx modal dialogs
@@ -81,5 +82,17 @@ public abstract class Dialogs {
         alert.setContentText(message);
         Optional<ButtonType> result = alert.showAndWait();
         return result.get() == ButtonType.OK;
+    }
+
+    /**
+     * Show warning message dialog
+     * @param message String
+     */
+    public static void getWarningDialog(String message) {
+        Alert alert = new Alert(WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
