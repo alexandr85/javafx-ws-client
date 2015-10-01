@@ -95,7 +95,8 @@ public class MainController {
         // Add action for clear filter
         filterSave.setOnMouseClicked((event -> {
             if (!filterSave.getText().isEmpty() && Dialogs.getConfirmationDialog("Do you want to clear filter?")) {
-                filterSave.setText("");
+                filterString = "";
+                filterSave.setText(filterString);
             }
         }));
     }
