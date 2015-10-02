@@ -39,19 +39,19 @@ public class MainController {
     private Button cleanOutputTextBtn;
 
     @FXML
+    private TextField filterText;
+
+    @FXML
     private Button addFilterBtn;
 
     @FXML
-    private TextField filterText;
+    private MenuButton filterList;
 
     @FXML
     private TextField messageText;
 
     @FXML
     private Button messageSendBtn;
-
-    @FXML
-    private MenuButton filterList;
 
     private boolean connectionStatus;
 
@@ -127,11 +127,16 @@ public class MainController {
             }));
 
             // Send message
-            messageSendBtn.setOnAction((event -> sendWebsocketMessage()));
+            messageSendBtn.setOnAction((event -> {
+                sendWebsocketMessage();
+                messageText.requestFocus();
+
+            }));
             messageText.setOnKeyPressed((keyEvent) -> {
                 if (keyEvent.getCode() == KeyCode.ENTER) {
                     sendWebsocketMessage();
                 }
+                messageText.requestFocus();
             });
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
@@ -198,6 +203,7 @@ public class MainController {
             MenuItem menuItem = new MenuItem(filterString);
             menuItem.setOnAction((event -> {
                 filterList.getItems().remove(menuItem);
+                filterText.requestFocus();
                 if (filterList.getItems().size() == 0) {
                     filterList.setDisable(true);
                 }
