@@ -78,7 +78,7 @@
         <GridPane.margin>
             <Insets bottom="9.0" left="7.0" right="7.0" top="7.0"/>
         </GridPane.margin>
-        <TextArea fx:id="outputText" prefHeight="100.0" prefWidth="200.0"/>
+        <TextArea fx:id="outputText" prefHeight="100.0" prefWidth="200.0" styleClass="output_text" editable="false"/>
         <ToolBar prefHeight="35.0" prefWidth="200.0" GridPane.rowIndex="1">
             <Button fx:id="cleanOutputTextBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                     prefHeight="25.0" prefWidth="100.0" text="Clean output" textAlignment="CENTER"/>
