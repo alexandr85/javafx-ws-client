@@ -1,12 +1,18 @@
 package ru.testing.client.gui;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
@@ -21,7 +27,12 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final String CONNECT_STATUS = "#5CB85C";
     private static final String DISCONNECT_STATUS = "#D9534F";
+    private static final int HISTORY_STAGE_WIDTH = 300;
+    private static final int HISTORY_STAGE_HEIGHT = 200;
     private static Client client;
+    protected final ObservableList<SendMessage> sendMessageList = FXCollections.observableArrayList();
+    private boolean connectionStatus;
+    private Stage history;
 
     @FXML
     private TextField serverUrl;
@@ -48,12 +59,16 @@ public class MainController {
     private MenuButton filterList;
 
     @FXML
-    private TextField messageText;
+    protected TextField messageText;
 
     @FXML
     private Button messageSendBtn;
 
-    private boolean connectionStatus;
+    @FXML
+    private Button messageSendHistoryBtn;
+
+    @FXML
+    HistoryController historyController;
 
     /**
      * Method run then controller initialize
@@ -79,11 +94,45 @@ public class MainController {
             }
         });
 
+        // Send message
+        messageSendBtn.setOnAction((event -> sendWebsocketMessage()));
+        messageText.setOnKeyPressed((keyEvent) -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                sendWebsocketMessage();
+            }
+        });
+
         // Add filter
         addFilterBtn.setOnMouseClicked((event -> addToFilterList()));
         filterText.setOnKeyPressed((keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
+            }
+        }));
+
+        // Show send message history window
+        messageSendHistoryBtn.setOnAction((event -> {
+            if (history == null) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/history.fxml"));
+                    loader.setController(new HistoryController());
+                    historyController = loader.getController();
+                    historyController.init(this);
+                    Pane root = loader.load();
+                    Scene scene = new Scene(root);
+                    history = new Stage();
+                    history.setTitle("Send messages history");
+                    history.setMinWidth(HISTORY_STAGE_WIDTH);
+                    history.setMinHeight(HISTORY_STAGE_HEIGHT);
+                    history.setScene(scene);
+                    history.setOnCloseRequest((eventHistory -> history = null));
+                    history.show();
+                } catch (Exception e) {
+                    Dialogs.getExceptionDialog(e);
+                }
+            } else {
+                history.show();
+                history.requestFocus();
             }
         }));
     }
@@ -125,19 +174,6 @@ public class MainController {
                     outputText.appendText(String.format("%s\n", message));
                 }
             }));
-
-            // Send message
-            messageSendBtn.setOnAction((event -> {
-                sendWebsocketMessage();
-                messageText.requestFocus();
-
-            }));
-            messageText.setOnKeyPressed((keyEvent) -> {
-                if (keyEvent.getCode() == KeyCode.ENTER) {
-                    sendWebsocketMessage();
-                }
-                messageText.requestFocus();
-            });
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
             Dialogs.getExceptionDialog(e);
@@ -220,7 +256,13 @@ public class MainController {
      * Send websocket message
      */
     private void sendWebsocketMessage() {
-        client.sendMessage(messageText.getText());
-        messageText.clear();
+        if (!messageText.getText().isEmpty()) {
+            sendMessageList.add(new SendMessage(messageText.getText()));
+            if (client != null) {
+                client.sendMessage(messageText.getText());
+            }
+            messageText.clear();
+            messageText.requestFocus();
+        }
     }
 }
