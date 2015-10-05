@@ -54,14 +54,14 @@
         <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                prefHeight="25.0" prefWidth="55.0" text="Message"/>
         <TextField fx:id="messageText" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="380.0" promptText="some text">
+                   prefHeight="25.0" prefWidth="380.0" promptText="some text" disable="true">
             <padding>
                 <Insets left="5.0"/>
             </padding>
         </TextField>
         <Button fx:id="messageSendBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                prefWidth="100.0" text="Send">
+                prefWidth="100.0" text="Send" disable="true">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>

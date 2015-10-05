@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
@@ -25,14 +26,16 @@ import java.net.URI;
 public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final String DEFAULT_WS_SERVER_URL = "ws://echo.websocket.org";
     private static final String CONNECT_STATUS = "#5CB85C";
     private static final String DISCONNECT_STATUS = "#D9534F";
-    private static final int HISTORY_STAGE_WIDTH = 300;
-    private static final int HISTORY_STAGE_HEIGHT = 200;
+    private static final int HISTORY_STAGE_WIDTH = 400;
+    private static final int HISTORY_STAGE_HEIGHT = 260;
+    private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 200;
     private static Client client;
     protected final ObservableList<SendMessage> sendMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
-    private Stage history;
+    protected Stage history;
 
     @FXML
     private TextField serverUrl;
@@ -65,7 +68,7 @@ public class MainController {
     private Button messageSendBtn;
 
     @FXML
-    private Button messageSendHistoryBtn;
+    protected Button messageSendHistoryBtn;
 
     @FXML
     HistoryController historyController;
@@ -76,8 +79,8 @@ public class MainController {
     @FXML
     private void initialize() {
 
-        // Check connection status
-        checkConnectionStatus();
+        // Set default websocket server url for test
+        serverUrl.setText(DEFAULT_WS_SERVER_URL);
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((event) -> {
@@ -87,10 +90,10 @@ public class MainController {
         }));
 
         // Connect or disconnect with websocket server
-        connectBtn.setOnAction((event -> connectedToServer()));
+        connectBtn.setOnAction((event -> actionConnectDisconnect()));
         serverUrl.setOnKeyPressed((keyEvent) -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                connectedToServer();
+                actionConnectDisconnect();
             }
         });
 
@@ -120,11 +123,15 @@ public class MainController {
                     historyController.init(this);
                     Pane root = loader.load();
                     Scene scene = new Scene(root);
+                    scene.getStylesheets().addAll(getClass().getResource("/styles/history.css").toExternalForm());
                     history = new Stage();
+                    history.setAlwaysOnTop(true);
+                    history.initStyle(StageStyle.UNDECORATED);
                     history.setTitle("Send messages history");
                     history.setMinWidth(HISTORY_STAGE_WIDTH);
                     history.setMinHeight(HISTORY_STAGE_HEIGHT);
                     history.setScene(scene);
+                    history.setResizable(false);
                     history.setOnCloseRequest((eventHistory -> history = null));
                     history.show();
                 } catch (Exception e) {
@@ -138,9 +145,10 @@ public class MainController {
     }
 
     /**
-     * Try connected to websocket server
+     * Connected to websocket server if connectionStatus = false
+     * or disconnect from websocket server if connectionStatus = true
      */
-    private void connectedToServer() {
+    private void actionConnectDisconnect() {
         if (connectionStatus) {
             try {
                 client.getSession().close();
@@ -174,6 +182,8 @@ public class MainController {
                     outputText.appendText(String.format("%s\n", message));
                 }
             }));
+            connectionStatus = true;
+            checkConnectionStatus();
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
             Dialogs.getExceptionDialog(e);
@@ -187,7 +197,6 @@ public class MainController {
     private void setConnectStatus(boolean isConnected) {
         if (isConnected) {
             Platform.runLater(() -> {
-                connectionStatus = true;
                 status.setFill(Paint.valueOf(CONNECT_STATUS));
                 connectBtn.setText("Disconnect");
                 messageText.setDisable(false);
@@ -195,11 +204,11 @@ public class MainController {
             });
         } else {
             Platform.runLater(() -> {
-                connectionStatus = false;
                 status.setFill(Paint.valueOf(DISCONNECT_STATUS));
                 connectBtn.setText("Connect");
                 messageText.setDisable(true);
                 messageSendBtn.setDisable(true);
+                connectionStatus = false;
             });
         }
     }
@@ -213,13 +222,13 @@ public class MainController {
             @Override
             protected Object call() throws Exception {
                 try {
-                    while (true) {
+                    while (connectionStatus) {
                         if (client != null && client.getSession() != null && client.getSession().isOpen()) {
                             setConnectStatus(true);
                         } else {
                             setConnectStatus(false);
                         }
-                        Thread.sleep(200);
+                        Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
                     }
                 } catch (InterruptedException e) {
                     LOGGER.error(e.getMessage());
