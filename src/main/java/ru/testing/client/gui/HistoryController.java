@@ -33,7 +33,7 @@ public class HistoryController {
             cell.setOnMouseClicked(event -> {
                 if (event.getClickCount() > 1) {
                     String cellText = cell.getText();
-                    if (!cellText.isEmpty()) {
+                    if (cellText != null && !cellText.isEmpty() && !main.messageText.isDisable()) {
                         main.messageText.setText(cell.getText());
                     }
                 }

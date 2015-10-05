@@ -264,5 +264,8 @@ public class MainController {
             messageText.clear();
             messageText.requestFocus();
         }
+        if (sendMessageList.size() > 0) {
+            messageSendHistoryBtn.setDisable(false);
+        }
     }
 }

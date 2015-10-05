@@ -22,7 +22,7 @@ import java.util.Scanner;
 public class MainApp extends Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
-    private static final double PRIMARY_STAGE_MIN_WIDTH = 675;
+    private static final double PRIMARY_STAGE_MIN_WIDTH = 680;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 490;
 
     /**

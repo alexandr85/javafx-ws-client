@@ -66,7 +66,7 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Button>
-        <Button fx:id="messageSendHistoryBtn" alignment="CENTER" disable="false" maxHeight="-Infinity"
+        <Button fx:id="messageSendHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                 prefHeight="25.0" prefWidth="100.0" text="History">
             <cursor>
