@@ -44,6 +44,7 @@ public class HistoryController {
                     if (cellText != null && !cellText.isEmpty() && !main.messageText.isDisable()) {
                         main.messageText.setText(cell.getText());
                         main.history.close();
+                        main.history = null;
                     }
                 }
             });

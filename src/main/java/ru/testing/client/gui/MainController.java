@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
 
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -36,6 +37,11 @@ public class MainController {
     protected final ObservableList<SendMessage> sendMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
     protected Stage history;
+    private Stage mainStage;
+
+    public MainController(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
 
     @FXML
     private TextField serverUrl;
@@ -115,33 +121,41 @@ public class MainController {
 
         // Show send message history window
         messageSendHistoryBtn.setOnAction((event -> {
-            if (history == null) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/history.fxml"));
-                    loader.setController(new HistoryController());
-                    historyController = loader.getController();
-                    historyController.init(this);
-                    Pane root = loader.load();
-                    Scene scene = new Scene(root);
-                    scene.getStylesheets().addAll(getClass().getResource("/styles/history.css").toExternalForm());
-                    history = new Stage();
-                    history.setAlwaysOnTop(true);
-                    history.initStyle(StageStyle.UNDECORATED);
-                    history.setTitle("Send messages history");
-                    history.setMinWidth(HISTORY_STAGE_WIDTH);
-                    history.setMinHeight(HISTORY_STAGE_HEIGHT);
-                    history.setScene(scene);
-                    history.setResizable(false);
-                    history.setOnCloseRequest((eventHistory -> history = null));
-                    history.show();
-                } catch (Exception e) {
-                    Dialogs.getExceptionDialog(e);
-                }
-            } else {
-                history.show();
-                history.requestFocus();
+            try {
+                showHistoryStage();
+            } catch (Exception e) {
+                Dialogs.getExceptionDialog(e);
             }
         }));
+    }
+
+    /**
+     * Method create and show message history window
+     * @throws IOException
+     */
+    private void showHistoryStage() throws IOException {
+        if (history == null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/history.fxml"));
+            loader.setController(new HistoryController());
+            historyController = loader.getController();
+            historyController.init(this);
+            Pane root = loader.load();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().addAll(getClass().getResource("/styles/history.css").toExternalForm());
+            history = new Stage();
+            history.initStyle(StageStyle.UTILITY);
+            history.setAlwaysOnTop(true);
+            history.setTitle("Send messages history");
+            history.setMinWidth(HISTORY_STAGE_WIDTH);
+            history.setMinHeight(HISTORY_STAGE_HEIGHT);
+            history.setScene(scene);
+            history.setResizable(false);
+            history.setOnCloseRequest((eventHistory -> history = null));
+        }
+        history.setX(mainStage.getX() + mainStage.getWidth()/2 - HISTORY_STAGE_WIDTH/2);
+        history.setY(mainStage.getY() + mainStage.getHeight()/2 - HISTORY_STAGE_HEIGHT/2);
+        history.show();
+        history.requestFocus();
     }
 
     /**

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.config.ApplicationType;
 import ru.testing.client.config.Configuration;
+import ru.testing.client.gui.MainController;
 import ru.testing.client.websocket.Client;
 
 import java.net.URI;
@@ -62,7 +63,9 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/view/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
+        loader.setController(new MainController(primaryStage));
+        Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.getStylesheets().addAll(getClass().getResource("/styles/main.css").toExternalForm());
         primaryStage.setOnCloseRequest((event -> {
