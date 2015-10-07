@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
 
+import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
 
@@ -184,18 +185,21 @@ public class MainController {
         try {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
-            client.addMessageHandler((message -> {
-                if (filterList.getItems().size() != 0) {
-                    for (MenuItem item : filterList.getItems()) {
-                        if (message.contains(item.getText())) {
-                            outputText.appendText(String.format("%s\n", message));
-                            break;
+            client.setMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    if (filterList.getItems().size() != 0) {
+                        for (MenuItem item : filterList.getItems()) {
+                            if (message.contains(item.getText())) {
+                                outputText.appendText(String.format("%s\n", message));
+                                break;
+                            }
                         }
+                    } else {
+                        outputText.appendText(String.format("%s\n", message));
                     }
-                } else {
-                    outputText.appendText(String.format("%s\n", message));
                 }
-            }));
+            });
             connectionStatus = true;
             checkConnectionStatus();
         } catch (Exception e) {
@@ -282,7 +286,11 @@ public class MainController {
         if (!messageText.getText().isEmpty()) {
             sendMessageList.add(new SendMessage(messageText.getText()));
             if (client != null) {
-                client.sendMessage(messageText.getText());
+                try {
+                    client.sendMessage(messageText.getText());
+                } catch (IOException e) {
+                    Dialogs.getExceptionDialog(e);
+                }
             }
             messageText.clear();
             messageText.requestFocus();

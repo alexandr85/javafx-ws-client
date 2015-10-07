@@ -1,36 +1,39 @@
 package ru.testing.client.websocket;
 
-import com.sun.scenario.effect.impl.prism.PrImage;
 import javafx.application.Platform;
+import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.gui.Dialogs;
 
 import javax.websocket.*;
+import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 
 /**
  * WebSocket client
  */
-@ClientEndpoint
-public class Client {
+public class Client extends Endpoint{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
     private static final int NORMAL_CLOSE_CODE = 1000;
     private Session session;
-    private MessageHandler messageHandler;
 
     public Client(final URI endpointURI) {
         try {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(this, endpointURI);
+            ClientManager client = ClientManager.createClient();
+            final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
+                    .decoders(Collections.singletonList(SimpleDecoder.class))
+                    .build();
+            client.connectToServer(this, config, endpointURI);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @OnOpen
-    public void onOpen(final Session session) {
+    @Override
+    public void onOpen(Session session, EndpointConfig config) {
         if (session.isOpen()) {
             LOGGER.info("Connection open with server {}", session.getRequestURI());
             this.session = session;
@@ -48,26 +51,20 @@ public class Client {
         }
     }
 
-    @OnMessage
-    public void onMessage(final String message) {
-        if (messageHandler != null) {
-            messageHandler.handleMessage(message);
+    public void setMessageHandler(MessageHandler.Whole<String> messageHandler) {
+        if (session != null) {
+            session.addMessageHandler(messageHandler);
         }
     }
 
-    public void addMessageHandler(final MessageHandler msgHandler) {
-        messageHandler = msgHandler;
+    public void sendMessage(String message) throws IOException {
+        if (session != null) {
+            session.getBasicRemote().sendText(message);
+        }
     }
 
-    public void sendMessage(final String message) {
-        session.getAsyncRemote().sendText(message);
-    }
-
-    /**
-     * Get connection session
-     * @return Session
-     */
+    // todo: need do privet and realization verify connection status
     public Session getSession() {
-        return this.session;
+        return session;
     }
 }
