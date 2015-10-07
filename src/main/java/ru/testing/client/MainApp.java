@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,15 @@ public class MainApp extends Application {
             Platform.exit();
             System.exit(0);
         }));
+        try {
+            Image image = new Image(getClass().getResource("/images/icon.png").toExternalForm());
+            if (image.getHeight() == 0) {
+                throw new Exception();
+            }
+            primaryStage.getIcons().addAll(image);
+        } catch (Exception e) {
+            LOGGER.debug("Icon not found");
+        }
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
         primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
