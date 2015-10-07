@@ -81,7 +81,7 @@ public class MainApp extends Application {
             }
             primaryStage.getIcons().addAll(image);
         } catch (Exception e) {
-            LOGGER.debug("Icon was not found");
+            LOGGER.error("Icon was not found");
         }
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
