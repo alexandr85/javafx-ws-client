@@ -15,6 +15,7 @@ import ru.testing.client.config.Configuration;
 import ru.testing.client.gui.MainController;
 import ru.testing.client.websocket.Client;
 
+import javax.websocket.MessageHandler;
 import java.net.URI;
 import java.util.Scanner;
 
@@ -94,18 +95,23 @@ public class MainApp extends Application {
         try {
             LOGGER.info("Connecting to {} ...", url);
             final Client client = new Client(new URI(url));
-            String message;
-            client.addMessageHandler(serverMessage -> LOGGER.info("Request: {}", serverMessage));
+            String sendMessage;
+            client.setMessageHandler(new MessageHandler.Whole<String>() {
+                @Override
+                public void onMessage(String message) {
+                    LOGGER.info("Request: {}", message);
+                }
+            });
             LOGGER.info("For disconnect from server type 'exit'");
             while (true) {
                 Scanner scanner = new Scanner(System.in);
                 System.out.print("Send message: ");
-                message = scanner.nextLine();
-                if (message.equals("exit")) {
+                sendMessage = scanner.nextLine();
+                if (sendMessage.equals("exit")) {
                     client.getSession().close();
                     break;
                 }
-                client.sendMessage(message);
+                client.sendMessage(sendMessage);
                 Thread.sleep(2000);
             }
         } catch (Exception e) {
