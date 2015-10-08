@@ -23,6 +23,9 @@ public class HistoryController {
     @FXML
     private TableColumn<SendMessage, String> messageColumnItem;
 
+    /**
+     * Method run then this controller initialize
+     */
     @FXML
     public void initialize() {
 
@@ -62,7 +65,11 @@ public class HistoryController {
         });
     }
 
-    public void init(MainController mainController) {
+    /**
+     * Initialize instance main controller in this controller
+     * @param mainController MainController
+     */
+    protected void init(MainController mainController) {
         this.main = mainController;
     }
 }

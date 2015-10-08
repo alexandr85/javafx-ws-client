@@ -28,7 +28,6 @@ import java.net.URI;
 public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
-    private static final String DEFAULT_WS_SERVER_URL = "ws://echo.websocket.org";
     private static final String CONNECT_STATUS = "#5CB85C";
     private static final String DISCONNECT_STATUS = "#D9534F";
     private static final int HISTORY_STAGE_WIDTH = 400;
@@ -81,13 +80,10 @@ public class MainController {
     HistoryController historyController;
 
     /**
-     * Method run then controller initialize
+     * Method run then this controller initialize
      */
     @FXML
     private void initialize() {
-
-        // Set default websocket server url for test
-        serverUrl.setText(DEFAULT_WS_SERVER_URL);
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((event) -> {
@@ -186,17 +182,18 @@ public class MainController {
             LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
             client.setMessageHandler(new MessageHandler.Whole<String>() {
+
                 @Override
                 public void onMessage(String message) {
-                    if (filterList.getItems().size() != 0) {
+                    if (filterList!= null && filterList.getItems().size() != 0) {
                         for (MenuItem item : filterList.getItems()) {
                             if (message.contains(item.getText())) {
-                                outputText.appendText(String.format("%s\n", message));
+                                showResponseMessage(message);
                                 break;
                             }
                         }
                     } else {
-                        outputText.appendText(String.format("%s\n", message));
+                        showResponseMessage(message);
                     }
                 }
             });
@@ -277,6 +274,18 @@ public class MainController {
             }
             filterText.clear();
         }
+    }
+
+    /**
+     * Add websocket response message to output text area
+     * @param message String message
+     */
+    private void showResponseMessage(String message) {
+        Platform.runLater(() -> {
+            if (outputText != null) {
+                outputText.appendText(String.format("%s\n", message));
+            }
+        });
     }
 
     /**

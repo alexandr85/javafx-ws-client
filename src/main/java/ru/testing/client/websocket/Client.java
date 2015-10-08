@@ -20,11 +20,16 @@ public class Client extends Endpoint{
     private static final int NORMAL_CLOSE_CODE = 1000;
     private Session session;
 
+    /**
+     * Default client constructor
+     * @param endpointURI java.net.URI
+     */
     public Client(final URI endpointURI) {
         try {
             ClientManager client = ClientManager.createClient();
             final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
                     .decoders(Collections.singletonList(SimpleDecoder.class))
+                    .encoders(Collections.singletonList(SimpleEncoder.class))
                     .build();
             client.connectToServer(this, config, endpointURI);
         } catch (Exception e) {
@@ -51,19 +56,28 @@ public class Client extends Endpoint{
         }
     }
 
+    /**
+     * Set message handler for output response message
+     * @param messageHandler MessageHandler.Whole<String>
+     */
     public void setMessageHandler(MessageHandler.Whole<String> messageHandler) {
         if (session != null) {
             session.addMessageHandler(messageHandler);
         }
     }
 
+    /**
+     * Send string message to websocket session
+     * @param message String
+     * @throws IOException
+     */
     public void sendMessage(String message) throws IOException {
         if (session != null) {
             session.getBasicRemote().sendText(message);
         }
     }
 
-    // todo: need do privet and realization verify connection status
+    // todo: need do private and realization verify connection status in this class
     public Session getSession() {
         return session;
     }

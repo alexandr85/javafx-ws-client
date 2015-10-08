@@ -35,7 +35,7 @@ public class MainApp extends Application {
     public static void main(String[] args) {
         Configuration config = new Configuration();
         JCommander parser = new JCommander();
-        parser.setProgramName("java -jar ws.client.jar");
+        parser.setProgramName("java -jar ws.client-${version}.jar");
         parser.addObject(config);
         try {
             parser.parse(args);
@@ -58,11 +58,17 @@ public class MainApp extends Application {
                 launch(args);
             }
         } catch (Exception e) {
+            LOGGER.error("Running exception: {}", e.getMessage());
             parser.usage();
             System.exit(1);
         }
     }
 
+    /**
+     * Start javafx application window
+     * @param primaryStage Stage
+     * @throws Exception
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
@@ -91,12 +97,17 @@ public class MainApp extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Start console websocket client
+     * @param url String
+     */
     private static void startConsoleClient(String url) {
         try {
             LOGGER.info("Connecting to {} ...", url);
             final Client client = new Client(new URI(url));
             String sendMessage;
             client.setMessageHandler(new MessageHandler.Whole<String>() {
+
                 @Override
                 public void onMessage(String message) {
                     LOGGER.info("Request: {}", message);

@@ -9,24 +9,39 @@ import com.beust.jcommander.Parameters;
 @Parameters()
 public class Configuration {
 
+    /**
+     * Application types running
+     * Default gui type
+     */
     @Parameter(
             names = {"-a", "--app-type"},
             description = "Set application type"
     )
     private ApplicationType type = ApplicationType.gui;
 
+    /**
+     * Set application url for console application type
+     */
     @Parameter(
             names = {"-u", "--url"},
             description = "Server url for WebSocket connection (ws[s]://host:port/path/to/websocket)"
     )
     private String serverUrl;
 
+    /**
+     * Sets the default time in milliseconds
+     * after which any web socket sessions in this container will be closed
+     * if it has been inactive.
+     */
     @Parameter(
             names = {"-t", "--timeout"},
             description = "Connection timeout"
     )
     private int timeout = 5000;
 
+    /**
+     * Show console application help
+     */
     @Parameter(
             names = {"-h", "--help"},
             description = "Show application options",
