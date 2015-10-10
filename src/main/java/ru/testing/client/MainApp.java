@@ -2,7 +2,6 @@ package ru.testing.client;
 
 import com.beust.jcommander.JCommander;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -76,10 +75,6 @@ public class MainApp extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.getStylesheets().addAll(getClass().getResource("/styles/main.css").toExternalForm());
-        primaryStage.setOnCloseRequest((event -> {
-            Platform.exit();
-            System.exit(0);
-        }));
         try {
             Image image = new Image(getClass().getResource("/images/icon.png").toExternalForm());
             if (image.getHeight() == 0) {

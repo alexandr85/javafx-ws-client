@@ -24,19 +24,14 @@ public class Client extends Endpoint{
      * Default client constructor
      * @param endpointURI java.net.URI
      */
-    public Client(final URI endpointURI) {
-        try {
-            ClientManager client = ClientManager.createClient();
-            final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
-                    .decoders(Collections.singletonList(SimpleDecoder.class))
-                    .encoders(Collections.singletonList(SimpleEncoder.class))
-                    .build();
-            LOGGER.info("Connecting to {} ...", endpointURI.getHost());
-            client.connectToServer(this, config, endpointURI);
-        } catch (Exception e) {
-            LOGGER.error("Error connecting: {}", e.getCause());
-            throw new RuntimeException(e);
-        }
+    public Client(final URI endpointURI) throws Exception {
+        ClientManager client = ClientManager.createClient();
+        final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
+                .decoders(Collections.singletonList(SimpleDecoder.class))
+                .encoders(Collections.singletonList(SimpleEncoder.class))
+                .build();
+        LOGGER.info("Connecting to {} ...", endpointURI.getHost());
+        client.connectToServer(this, config, endpointURI);
     }
 
     @Override

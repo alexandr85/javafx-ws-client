@@ -38,6 +38,7 @@ public class MainController {
     private boolean connectionStatus;
     protected Stage history;
     private Stage mainStage;
+    private Tooltip statusTooltip;
 
     public MainController(Stage mainStage) {
         this.mainStage = mainStage;
@@ -84,6 +85,18 @@ public class MainController {
      */
     @FXML
     private void initialize() {
+
+        // Set circle tooltip status
+        setCircleTooltip("Disconnected");
+
+        // Close application
+        mainStage.setOnCloseRequest((event -> {
+            if (client != null && client.isOpenConnection()) {
+                client.closeConnection();
+            }
+            Platform.exit();
+            System.exit(0);
+        }));
 
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((event) -> {
@@ -227,14 +240,14 @@ public class MainController {
             @Override
             protected Object call() throws Exception {
                 try {
-                    while (connectionStatus) {
+                    do {
                         if (client != null && client.isOpenConnection()) {
                             setConnectStatus(true);
                         } else {
                             setConnectStatus(false);
                         }
                         Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
-                    }
+                    } while (connectionStatus);
                 } catch (InterruptedException e) {
                     LOGGER.error(e.getMessage());
                 }
@@ -254,6 +267,7 @@ public class MainController {
                 status.setFill(Paint.valueOf(CONNECT_STATUS));
                 connectBtn.setText("Disconnect");
                 connectBtn.setDisable(false);
+                setCircleTooltip("Connected");
                 messageText.setDisable(false);
                 messageSendBtn.setDisable(false);
             });
@@ -262,6 +276,8 @@ public class MainController {
                 status.setFill(Paint.valueOf(DISCONNECT_STATUS));
                 serverUrl.setEditable(true);
                 connectBtn.setText("Connect");
+                connectBtn.setDisable(false);
+                setCircleTooltip("Disconnected");
                 messageText.setDisable(true);
                 messageSendBtn.setDisable(true);
                 connectionStatus = false;
@@ -321,6 +337,20 @@ public class MainController {
         }
         if (sendMessageList.size() > 0) {
             messageSendHistoryBtn.setDisable(false);
+        }
+    }
+
+    /**
+     * Set circle status tooltip message
+     * @param message String
+     */
+    private void setCircleTooltip(String message) {
+        if (statusTooltip == null) {
+            statusTooltip = new Tooltip(message);
+            status.setOnMouseEntered((event -> statusTooltip.show(status, event.getScreenX(), event.getScreenY())));
+            status.setOnMouseExited((event -> statusTooltip.hide()));
+        } else {
+            statusTooltip.setText(message);
         }
     }
 }
