@@ -119,7 +119,7 @@ public class MainApp extends Application {
                 System.out.print("Send message: ");
                 sendMessage = scanner.nextLine();
                 if (sendMessage.equals("exit")) {
-                    client.getSession().close();
+                    client.closeConnection();
                     break;
                 }
                 client.sendMessage(sendMessage);

@@ -31,8 +31,10 @@ public class Client extends Endpoint{
                     .decoders(Collections.singletonList(SimpleDecoder.class))
                     .encoders(Collections.singletonList(SimpleEncoder.class))
                     .build();
+            LOGGER.info("Connecting to {} ...", endpointURI.getHost());
             client.connectToServer(this, config, endpointURI);
         } catch (Exception e) {
+            LOGGER.error("Error connecting: {}", e.getCause());
             throw new RuntimeException(e);
         }
     }
@@ -77,8 +79,22 @@ public class Client extends Endpoint{
         }
     }
 
-    // todo: need do private and realization verify connection status in this class
-    public Session getSession() {
-        return session;
+    /**
+     * Get connection status
+     * @return boolean
+     */
+    public boolean isOpenConnection() {
+        return session != null && session.isOpen();
+    }
+
+    /**
+     * Method close current connection
+     */
+    public void closeConnection() {
+        try {
+            session.close();
+        } catch (IOException e) {
+            LOGGER.error("Close connection error: {}", e.getCause());
+        }
     }
 }

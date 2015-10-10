@@ -32,7 +32,7 @@ public class MainController {
     private static final String DISCONNECT_STATUS = "#D9534F";
     private static final int HISTORY_STAGE_WIDTH = 400;
     private static final int HISTORY_STAGE_HEIGHT = 260;
-    private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 200;
+    private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private static Client client;
     protected final ObservableList<SendMessage> sendMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
@@ -149,8 +149,8 @@ public class MainController {
             history.setResizable(false);
             history.setOnCloseRequest((eventHistory -> history = null));
         }
-        history.setX(mainStage.getX() + mainStage.getWidth()/2 - HISTORY_STAGE_WIDTH/2);
-        history.setY(mainStage.getY() + mainStage.getHeight()/2 - HISTORY_STAGE_HEIGHT/2);
+        history.setX(mainStage.getX() + mainStage.getWidth() / 2 - HISTORY_STAGE_WIDTH / 2);
+        history.setY(mainStage.getY() + mainStage.getHeight() / 2 - HISTORY_STAGE_HEIGHT / 2);
         history.show();
         history.requestFocus();
     }
@@ -162,14 +162,27 @@ public class MainController {
     private void actionConnectDisconnect() {
         if (connectionStatus) {
             try {
-                client.getSession().close();
+                client.closeConnection();
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 Dialogs.getExceptionDialog(e);
             }
         } else {
             if (!serverUrl.getText().isEmpty()) {
-                Platform.runLater(this::startClient);
+                Task task = new Task() {
+
+                    @Override
+                    protected Object call() throws Exception {
+                        Platform.runLater(() -> {
+                            serverUrl.setEditable(false);
+                            connectBtn.setDisable(true);
+                            connectBtn.setText("Connecting ...");
+                        });
+                        startClient();
+                        return null;
+                    }
+                };
+                new Thread(task).start();
             }
         }
     }
@@ -179,7 +192,6 @@ public class MainController {
      */
     private void startClient() {
         try {
-            LOGGER.info("Connecting to {} ...", serverUrl.getText());
             client = new Client(new URI(serverUrl.getText()));
             client.setMessageHandler(new MessageHandler.Whole<String>() {
 
@@ -198,33 +210,11 @@ public class MainController {
                 }
             });
             connectionStatus = true;
-            checkConnectionStatus();
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
             Dialogs.getExceptionDialog(e);
-        }
-    }
-
-    /**
-     * Set status disable or enable send message text field and button
-     * @param isConnected boolean
-     */
-    private void setConnectStatus(boolean isConnected) {
-        if (isConnected) {
-            Platform.runLater(() -> {
-                status.setFill(Paint.valueOf(CONNECT_STATUS));
-                connectBtn.setText("Disconnect");
-                messageText.setDisable(false);
-                messageSendBtn.setDisable(false);
-            });
-        } else {
-            Platform.runLater(() -> {
-                status.setFill(Paint.valueOf(DISCONNECT_STATUS));
-                connectBtn.setText("Connect");
-                messageText.setDisable(true);
-                messageSendBtn.setDisable(true);
-                connectionStatus = false;
-            });
+        } finally {
+            checkConnectionStatus();
         }
     }
 
@@ -238,7 +228,7 @@ public class MainController {
             protected Object call() throws Exception {
                 try {
                     while (connectionStatus) {
-                        if (client != null && client.getSession() != null && client.getSession().isOpen()) {
+                        if (client != null && client.isOpenConnection()) {
                             setConnectStatus(true);
                         } else {
                             setConnectStatus(false);
@@ -252,6 +242,31 @@ public class MainController {
             }
         };
         new Thread(task).start();
+    }
+
+    /**
+     * Set status disable or enable send message text field and button
+     * @param isConnected boolean
+     */
+    private void setConnectStatus(boolean isConnected) {
+        if (isConnected) {
+            Platform.runLater(() -> {
+                status.setFill(Paint.valueOf(CONNECT_STATUS));
+                connectBtn.setText("Disconnect");
+                connectBtn.setDisable(false);
+                messageText.setDisable(false);
+                messageSendBtn.setDisable(false);
+            });
+        } else {
+            Platform.runLater(() -> {
+                status.setFill(Paint.valueOf(DISCONNECT_STATUS));
+                serverUrl.setEditable(true);
+                connectBtn.setText("Connect");
+                messageText.setDisable(true);
+                messageSendBtn.setDisable(true);
+                connectionStatus = false;
+            });
+        }
     }
 
     /**
