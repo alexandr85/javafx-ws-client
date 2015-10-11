@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
