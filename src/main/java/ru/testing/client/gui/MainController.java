@@ -225,7 +225,7 @@ public class MainController {
             connectionStatus = true;
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());
-            Dialogs.getExceptionDialog(e);
+            Platform.runLater(() -> Dialogs.getExceptionDialog(e));
         } finally {
             checkConnectionStatus();
         }
@@ -347,8 +347,7 @@ public class MainController {
     private void setCircleTooltip(String message) {
         if (statusTooltip == null) {
             statusTooltip = new Tooltip(message);
-            status.setOnMouseEntered((event -> statusTooltip.show(status, event.getScreenX(), event.getScreenY())));
-            status.setOnMouseExited((event -> statusTooltip.hide()));
+            Tooltip.install(status, statusTooltip);
         } else {
             statusTooltip.setText(message);
         }
