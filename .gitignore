@@ -10,3 +10,6 @@
 # compile folders
 **/target
 **/out
+
+# logging
+**/logs
