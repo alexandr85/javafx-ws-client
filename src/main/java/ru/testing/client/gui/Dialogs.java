@@ -41,7 +41,7 @@ public abstract class Dialogs {
         Alert alert = new Alert(ERROR);
         alert.setTitle("Oops! Catch some error");
         alert.setHeaderText(null);
-        alert.setContentText(e.getCause().getMessage());
+        alert.setContentText(e.getLocalizedMessage());
 
         // Create expandable Exception.
         StringWriter sw = new StringWriter();
