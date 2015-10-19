@@ -77,6 +77,7 @@ public class MainApp extends Application {
         loader.setController(new MainController(primaryStage));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(this.getClass().getResource("/styles/main.css").toExternalForm());
         setApplicationIcon(primaryStage);
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);

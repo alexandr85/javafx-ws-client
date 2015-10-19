@@ -16,3 +16,16 @@
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
+
+.history_list {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent
+}
+
+.connected {
+    -fx-fill: #5CB85C;
+}
+
+.disconnected {
+    -fx-fill: #D9534F;
+}

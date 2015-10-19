@@ -5,15 +5,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Paint;
+import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.Client;
@@ -28,17 +26,13 @@ import java.net.URI;
 public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
-    private static final String CONNECT_STATUS = "#5CB85C";
-    private static final String DISCONNECT_STATUS = "#D9534F";
-    private static final int HISTORY_STAGE_WIDTH = 400;
-    private static final int HISTORY_STAGE_HEIGHT = 260;
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private static Client client;
-    protected final ObservableList<SendMessage> sendMessageList = FXCollections.observableArrayList();
+    protected final ObservableList<String> sendMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
-    protected Stage history;
     private Stage mainStage;
     private Tooltip statusTooltip;
+    private PopOver historyPopOver;
 
     public MainController(Stage mainStage) {
         this.mainStage = mainStage;
@@ -75,10 +69,7 @@ public class MainController {
     private Button messageSendBtn;
 
     @FXML
-    protected Button messageSendHistoryBtn;
-
-    @FXML
-    HistoryController historyController;
+    protected ToggleButton messageSendHistoryBtn;
 
     /**
      * Method run then this controller initialize
@@ -131,41 +122,72 @@ public class MainController {
 
         // Show send message history window
         messageSendHistoryBtn.setOnAction((event -> {
-            try {
-                showHistoryStage();
-            } catch (Exception e) {
-                Dialogs.getExceptionDialog(e);
+            if (messageSendHistoryBtn.isSelected()) {
+                if (historyPopOver == null) {
+                    getHistoryPopOver();
+                }
+                historyPopOver.show(messageSendHistoryBtn, -1);
+            } else {
+                historyPopOver.hide();
             }
         }));
     }
 
     /**
      * Method create and show message history window
-     * @throws IOException
      */
-    private void showHistoryStage() throws IOException {
-        if (history == null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/history.fxml"));
-            loader.setController(new HistoryController());
-            historyController = loader.getController();
-            historyController.init(this);
-            Pane root = loader.load();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().addAll(getClass().getResource("/styles/history.css").toExternalForm());
-            history = new Stage();
-            history.initStyle(StageStyle.UTILITY);
-            history.setAlwaysOnTop(true);
-            history.setTitle("Send messages history");
-            history.setMinWidth(HISTORY_STAGE_WIDTH);
-            history.setMinHeight(HISTORY_STAGE_HEIGHT);
-            history.setScene(scene);
-            history.setResizable(false);
-            history.setOnCloseRequest((eventHistory -> history = null));
-        }
-        history.setX(mainStage.getX() + mainStage.getWidth() / 2 - HISTORY_STAGE_WIDTH / 2);
-        history.setY(mainStage.getY() + mainStage.getHeight() / 2 - HISTORY_STAGE_HEIGHT / 2);
-        history.show();
-        history.requestFocus();
+    private void getHistoryPopOver() {
+        historyPopOver = new PopOver();
+        historyPopOver.setDetachable(false);
+        historyPopOver.setAutoHide(false);
+        historyPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
+        historyPopOver.setOnHidden((event) -> {
+            historyPopOver.hide();
+            messageSendHistoryBtn.setSelected(false);
+        });
+
+        ListView<String> list = new ListView<>();
+        list.setMaxHeight(150);
+        list.setMaxWidth(300);
+        list.getStyleClass().add("history_list");
+        list.setItems(sendMessageList);
+        HBox historyPane = new HBox();
+        historyPane.getChildren().addAll(list);
+        historyPane.setPadding(new Insets(5, 0, 5, 0));
+
+        // Set message text from history
+        list.setCellFactory(col -> {
+            final ListCell<String> cell = new ListCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() > 1) {
+                    String cellText = cell.getText();
+                    if (cellText != null && !cellText.isEmpty() && !messageText.isDisable()) {
+                        messageText.setText(cell.getText());
+                        historyPopOver.hide();
+                    }
+                }
+            });
+            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu())));
+            return cell;
+        });
+        historyPopOver.setContentNode(historyPane);
+    }
+
+    /**
+     * Context menu for history pop over
+     * @return ContextMenu
+     */
+    private ContextMenu getHistoryContextMenu() {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem deleteAll = new MenuItem("Delete all");
+        deleteAll.setOnAction((event -> {
+            sendMessageList.clear();
+            historyPopOver.hide();
+            messageSendHistoryBtn.setDisable(true);
+        }));
+        contextMenu.getItems().add(deleteAll);
+        return contextMenu;
     }
 
     /**
@@ -213,12 +235,12 @@ public class MainController {
                     if (filterList!= null && filterList.getItems().size() != 0) {
                         for (MenuItem item : filterList.getItems()) {
                             if (message.contains(item.getText())) {
-                                showResponseMessage(message);
+                                setResponseMessage(message);
                                 break;
                             }
                         }
                     } else {
-                        showResponseMessage(message);
+                        setResponseMessage(message);
                     }
                 }
             });
@@ -264,7 +286,8 @@ public class MainController {
     private void setConnectStatus(boolean isConnected) {
         if (isConnected) {
             Platform.runLater(() -> {
-                status.setFill(Paint.valueOf(CONNECT_STATUS));
+                status.getStyleClass().clear();
+                status.getStyleClass().add("connected");
                 connectBtn.setText("Disconnect");
                 connectBtn.setDisable(false);
                 setCircleTooltip("Connected");
@@ -273,7 +296,8 @@ public class MainController {
             });
         } else {
             Platform.runLater(() -> {
-                status.setFill(Paint.valueOf(DISCONNECT_STATUS));
+                status.getStyleClass().clear();
+                status.getStyleClass().add("disconnected");
                 serverUrl.setEditable(true);
                 connectBtn.setText("Connect");
                 connectBtn.setDisable(false);
@@ -311,7 +335,7 @@ public class MainController {
      * Add websocket response message to output text area
      * @param message String message
      */
-    private void showResponseMessage(String message) {
+    private void setResponseMessage(String message) {
         Platform.runLater(() -> {
             if (outputText != null) {
                 outputText.appendText(String.format("%s\n", message));
@@ -324,7 +348,7 @@ public class MainController {
      */
     private void sendWebsocketMessage() {
         if (!messageText.getText().isEmpty()) {
-            sendMessageList.add(new SendMessage(messageText.getText()));
+            sendMessageList.add(messageText.getText());
             if (client != null) {
                 try {
                     client.sendMessage(messageText.getText());

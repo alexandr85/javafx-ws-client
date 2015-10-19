@@ -43,7 +43,7 @@
                 <Insets left="3.0" right="2.0"/>
             </padding>
         </Separator>
-        <Circle fx:id="status" fill="#D9534F" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"/>
+        <Circle fx:id="status" styleClass="disconnected" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"/>
     </ToolBar>
     <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
              prefWidth="570.0" GridPane.rowIndex="1">
@@ -65,13 +65,13 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Button>
-        <Button fx:id="messageSendHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
+        <ToggleButton fx:id="messageSendHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                 prefHeight="25.0" prefWidth="100.0" text="History">
             <cursor>
                 <Cursor fx:constant="HAND"/>
             </cursor>
-        </Button>
+        </ToggleButton>
     </ToolBar>
     <GridPane GridPane.rowIndex="2" styleClass="output_grid">
         <columnConstraints>
