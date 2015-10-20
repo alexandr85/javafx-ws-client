@@ -7,7 +7,10 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -19,6 +22,8 @@ import ru.testing.client.websocket.Client;
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * FXML controller for main page
@@ -48,10 +53,16 @@ public class MainController {
     private Circle status;
 
     @FXML
-    private TextArea outputText;
+    private ListView<String> outputText;
 
     @FXML
     private Button cleanOutputTextBtn;
+
+    @FXML
+    private ToggleButton filterOnOffBtn;
+
+    @FXML
+    private FlowPane filterBlock;
 
     @FXML
     private TextField filterText;
@@ -89,10 +100,17 @@ public class MainController {
             System.exit(0);
         }));
 
+        outputText.setCellFactory(col -> {
+            final ListCell<String> cell = new ListCell<>();
+            cell.textProperty().bind(cell.itemProperty());
+            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getOutputContextMenu(cell))));
+            return cell;
+        });
+
         // Clean output text area action
         cleanOutputTextBtn.setOnAction(((event) -> {
-            if (!outputText.getText().isEmpty()) {
-                outputText.clear();
+            if (outputText.getItems().size() > 0) {
+                outputText.getItems().clear();
             }
         }));
 
@@ -109,6 +127,15 @@ public class MainController {
         messageText.setOnKeyPressed((keyEvent) -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 sendWebsocketMessage();
+            }
+        });
+
+        // Active filtering
+        filterOnOffBtn.setOnAction((action) -> {
+            if (filterOnOffBtn.isSelected()) {
+                filterBlock.setDisable(false);
+            } else {
+                filterBlock.setDisable(true);
             }
         });
 
@@ -168,7 +195,7 @@ public class MainController {
                     }
                 }
             });
-            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu())));
+            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu(cell))));
             return cell;
         });
         historyPopOver.setContentNode(historyPane);
@@ -176,9 +203,10 @@ public class MainController {
 
     /**
      * Context menu for history pop over
+     * @param cell ListCell string
      * @return ContextMenu
      */
-    private ContextMenu getHistoryContextMenu() {
+    private ContextMenu getHistoryContextMenu(ListCell<String> cell) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem deleteAll = new MenuItem("Delete all");
         deleteAll.setOnAction((event -> {
@@ -186,8 +214,37 @@ public class MainController {
             historyPopOver.hide();
             messageSendHistoryBtn.setDisable(true);
         }));
-        contextMenu.getItems().add(deleteAll);
+        contextMenu.getItems().addAll(getCopyMenu(cell), deleteAll);
         return contextMenu;
+    }
+
+    /**
+     * Context menu for history pop over
+     * @param cell ListCell string
+     * @return ContextMenu
+     */
+    private ContextMenu getOutputContextMenu(ListCell<String> cell) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem deleteAll = new MenuItem("Delete all");
+        deleteAll.setOnAction((event -> outputText.getItems().clear()));
+        contextMenu.getItems().addAll(getCopyMenu(cell), deleteAll);
+        return contextMenu;
+    }
+
+    /**
+     * Menu item 'copy' for copy string to clipboard
+     * @param cell ListCell<String>
+     * @return MenuItem
+     */
+    private MenuItem getCopyMenu(ListCell<String> cell) {
+        MenuItem copyItem = new MenuItem("Copy");
+        copyItem.setOnAction((event -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            content.putString(cell.getText());
+            clipboard.setContent(content);
+        }));
+        return copyItem;
     }
 
     /**
@@ -232,7 +289,7 @@ public class MainController {
 
                 @Override
                 public void onMessage(String message) {
-                    if (filterList!= null && filterList.getItems().size() != 0) {
+                    if (filterOnOffBtn.isSelected() && filterList!= null && filterList.getItems().size() != 0) {
                         for (MenuItem item : filterList.getItems()) {
                             if (message.contains(item.getText())) {
                                 setResponseMessage(message);
@@ -338,7 +395,10 @@ public class MainController {
     private void setResponseMessage(String message) {
         Platform.runLater(() -> {
             if (outputText != null) {
-                outputText.appendText(String.format("%s\n", message));
+                Calendar calendar = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                outputText.getItems().add(String.format("%s %s", sdf.format(calendar.getTime()), message));
+                outputText.scrollTo(outputText.getItems().size());
             }
         });
     }
