@@ -18,7 +18,7 @@ public class ContextMenuItems {
      * @return MenuItem
      */
     public MenuItem clearListView(ListView listView) {
-        MenuItem deleteAll = new MenuItem("Clear");
+        MenuItem deleteAll = new MenuItem("Clear all");
         deleteAll.setOnAction((event -> listView.getItems().clear()));
         return deleteAll;
     }

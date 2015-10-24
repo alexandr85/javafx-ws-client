@@ -89,8 +89,6 @@ public class MainController {
     @FXML
     private void initialize() {
 
-        serverUrl.setText("wss://echo.websocket.org");
-
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
 
@@ -249,12 +247,13 @@ public class MainController {
      */
     private ContextMenu getHistoryContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem deleteAll = new MenuItem("Clear");
+        MenuItem deleteAll = new MenuItem("Clear all");
         deleteAll.setOnAction((event -> {
             sendMessageList.clear();
             historyPopOver.hide();
             messageSendHistoryBtn.setDisable(true);
         }));
+        contextMenu.getItems().add(deleteAll);
         return contextMenu;
     }
 
