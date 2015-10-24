@@ -1,29 +1,28 @@
 package ru.testing.client.gui;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.message.MessageType;
+import ru.testing.client.message.OutputMessage;
+import ru.testing.client.message.OutputMessageCell;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 /**
  * FXML controller for main page
@@ -33,7 +32,7 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private static Client client;
-    protected final ObservableList<String> sendMessageList = FXCollections.observableArrayList();
+    private final ObservableList<String> sendMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
@@ -53,27 +52,6 @@ public class MainController {
     private Circle status;
 
     @FXML
-    private ListView<String> outputText;
-
-    @FXML
-    private Button cleanOutputTextBtn;
-
-    @FXML
-    private ToggleButton filterOnOffBtn;
-
-    @FXML
-    private FlowPane filterBlock;
-
-    @FXML
-    private TextField filterText;
-
-    @FXML
-    private Button addFilterBtn;
-
-    @FXML
-    private MenuButton filterList;
-
-    @FXML
     protected TextField messageText;
 
     @FXML
@@ -82,11 +60,31 @@ public class MainController {
     @FXML
     protected ToggleButton messageSendHistoryBtn;
 
+    @FXML
+    private ListView<OutputMessage> outputText;
+
+    @FXML
+    private ToggleButton autoScroll;
+
+    @FXML
+    private ToggleButton filterOnOffBtn;
+
+    @FXML
+    private TextField filterText;
+
+    @FXML
+    private Button filterAddBtn;
+
+    @FXML
+    private MenuButton filterList;
+
     /**
      * Method run then this controller initialize
      */
     @FXML
     private void initialize() {
+
+        serverUrl.setText("wss://echo.websocket.org");
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -100,19 +98,16 @@ public class MainController {
             System.exit(0);
         }));
 
-        outputText.setCellFactory(col -> {
-            final ListCell<String> cell = new ListCell<>();
-            cell.textProperty().bind(cell.itemProperty());
-            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getOutputContextMenu(cell))));
-            return cell;
-        });
-
-        // Clean output text area action
-        cleanOutputTextBtn.setOnAction(((event) -> {
-            if (outputText.getItems().size() > 0) {
-                outputText.getItems().clear();
+        // Update output message list view
+        outputText.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        outputText.setCellFactory((listView) -> new OutputMessageCell(outputText));
+        outputText.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
+            c.next();
+            final int size = outputText.getItems().size();
+            if (size > 0 && autoScroll.isSelected()) {
+                outputText.scrollTo(size - 1);
             }
-        }));
+        });
 
         // Connect or disconnect with websocket server
         connectBtn.setOnAction((event -> actionConnectDisconnect()));
@@ -133,14 +128,22 @@ public class MainController {
         // Active filtering
         filterOnOffBtn.setOnAction((action) -> {
             if (filterOnOffBtn.isSelected()) {
-                filterBlock.setDisable(false);
+                filterText.setDisable(false);
+                filterAddBtn.setDisable(false);
+                if (filterList.getItems().size() > 0) {
+                    filterList.setDisable(false);
+                }
+                filterOnOffBtn.setText("Filter on");
             } else {
-                filterBlock.setDisable(true);
+                filterText.setDisable(true);
+                filterAddBtn.setDisable(true);
+                filterList.setDisable(true);
+                filterOnOffBtn.setText("Filter off");
             }
         });
 
         // Add filter
-        addFilterBtn.setOnMouseClicked((event -> addToFilterList()));
+        filterAddBtn.setOnMouseClicked((event -> addToFilterList()));
         filterText.setOnKeyPressed((keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
@@ -195,7 +198,7 @@ public class MainController {
                     }
                 }
             });
-            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu(cell))));
+            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu())));
             return cell;
         });
         historyPopOver.setContentNode(historyPane);
@@ -203,48 +206,17 @@ public class MainController {
 
     /**
      * Context menu for history pop over
-     * @param cell ListCell string
      * @return ContextMenu
      */
-    private ContextMenu getHistoryContextMenu(ListCell<String> cell) {
+    private ContextMenu getHistoryContextMenu() {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem deleteAll = new MenuItem("Delete all");
+        MenuItem deleteAll = new MenuItem("Clear");
         deleteAll.setOnAction((event -> {
             sendMessageList.clear();
             historyPopOver.hide();
             messageSendHistoryBtn.setDisable(true);
         }));
-        contextMenu.getItems().addAll(getCopyMenu(cell), deleteAll);
         return contextMenu;
-    }
-
-    /**
-     * Context menu for history pop over
-     * @param cell ListCell string
-     * @return ContextMenu
-     */
-    private ContextMenu getOutputContextMenu(ListCell<String> cell) {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem deleteAll = new MenuItem("Delete all");
-        deleteAll.setOnAction((event -> outputText.getItems().clear()));
-        contextMenu.getItems().addAll(getCopyMenu(cell), deleteAll);
-        return contextMenu;
-    }
-
-    /**
-     * Menu item 'copy' for copy string to clipboard
-     * @param cell ListCell<String>
-     * @return MenuItem
-     */
-    private MenuItem getCopyMenu(ListCell<String> cell) {
-        MenuItem copyItem = new MenuItem("Copy");
-        copyItem.setOnAction((event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getText());
-            clipboard.setContent(content);
-        }));
-        return copyItem;
     }
 
     /**
@@ -268,7 +240,7 @@ public class MainController {
                         Platform.runLater(() -> {
                             serverUrl.setEditable(false);
                             connectBtn.setDisable(true);
-                            connectBtn.setText("Connecting ...");
+                            connectBtn.setText("Connecting");
                         });
                         startClient();
                         return null;
@@ -292,12 +264,12 @@ public class MainController {
                     if (filterOnOffBtn.isSelected() && filterList!= null && filterList.getItems().size() != 0) {
                         for (MenuItem item : filterList.getItems()) {
                             if (message.contains(item.getText())) {
-                                setResponseMessage(message);
+                                addMessageToOutput(MessageType.RECEIVED, message);
                                 break;
                             }
                         }
                     } else {
-                        setResponseMessage(message);
+                        addMessageToOutput(MessageType.RECEIVED, message);
                     }
                 }
             });
@@ -390,15 +362,13 @@ public class MainController {
 
     /**
      * Add websocket response message to output text area
+     * @param type Message type
      * @param message String message
      */
-    private void setResponseMessage(String message) {
+    private void addMessageToOutput(MessageType type, String message) {
         Platform.runLater(() -> {
             if (outputText != null) {
-                Calendar calendar = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                outputText.getItems().add(String.format("%s %s", sdf.format(calendar.getTime()), message));
-                outputText.scrollTo(outputText.getItems().size());
+                outputText.getItems().add(new OutputMessage(type, message));
             }
         });
     }
@@ -407,11 +377,13 @@ public class MainController {
      * Send websocket message
      */
     private void sendWebsocketMessage() {
-        if (!messageText.getText().isEmpty()) {
-            sendMessageList.add(messageText.getText());
+        String sendMsg = messageText.getText();
+        if (!sendMsg.isEmpty()) {
+            sendMessageList.add(sendMsg);
+            addMessageToOutput(MessageType.SEND, sendMsg);
             if (client != null) {
                 try {
-                    client.sendMessage(messageText.getText());
+                    client.sendMessage(sendMsg);
                 } catch (IOException e) {
                     Dialogs.getExceptionDialog(e);
                 }
