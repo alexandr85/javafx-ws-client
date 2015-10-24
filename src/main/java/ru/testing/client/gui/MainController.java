@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ import ru.testing.client.websocket.Client;
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /**
  * FXML controller for main page
@@ -78,6 +80,9 @@ public class MainController {
     @FXML
     private MenuButton filterList;
 
+    @FXML
+    private Label timeDiffLabel;
+
     /**
      * Method run then this controller initialize
      */
@@ -106,6 +111,40 @@ public class MainController {
             final int size = outputText.getItems().size();
             if (size > 0 && autoScroll.isSelected()) {
                 outputText.scrollTo(size - 1);
+            }
+        });
+        outputText.getSelectionModel().getSelectedItems().addListener((ListChangeListener<OutputMessage>) c -> {
+            if (c.next()) {
+                int selectedSize = c.getList().size();
+                if (selectedSize > 1) {
+                    long timeFirst = c.getList().get(0).getMilliseconds();
+                    long timeLast = c.getList().get(selectedSize - 1).getMilliseconds();
+                    long timeDiff = timeLast - timeFirst;
+                    long ms = timeDiff % 1000;
+                    long sec = TimeUnit.MILLISECONDS.toSeconds(timeDiff) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff));
+                    long min = TimeUnit.MILLISECONDS.toMinutes(timeDiff);
+                    if (min > 29) {
+                        timeDiffLabel.setText("Time diff > 30m");
+                    } else if (min > 0) {
+                        timeDiffLabel.setText(String.format("%dm %ds %dms", min, sec, ms));
+                    } else if (sec > 0) {
+                        timeDiffLabel.setText(String.format("%ds %dms", sec, ms));
+                    } else {
+                        timeDiffLabel.setText(String.format("%dms", ms));
+                    }
+                } else {
+                    timeDiffLabel.setText("");
+                }
+            }
+        });
+        outputText.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                if (event.getPickResult().getIntersectedNode() instanceof OutputMessageCell) {
+                    OutputMessageCell cell = (OutputMessageCell) event.getPickResult().getIntersectedNode();
+                    outputText.getSelectionModel().clearSelection();
+                    outputText.getSelectionModel().select(cell.getItem());
+                }
             }
         });
 
@@ -186,7 +225,7 @@ public class MainController {
         historyPane.setPadding(new Insets(5, 0, 5, 0));
 
         // Set message text from history
-        list.setCellFactory(col -> {
+        list.setCellFactory(listView -> {
             final ListCell<String> cell = new ListCell<>();
             cell.textProperty().bind(cell.itemProperty());
             cell.setOnMouseClicked(event -> {

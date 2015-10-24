@@ -21,7 +21,7 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
     protected void updateItem(OutputMessage message, boolean empty) {
         super.updateItem(message, empty);
         if (message != null) {
-            setText(String.format("%-12s %s", message.getTimeString(), message.getMessage()));
+            setText(String.format("%-12s %s", message.getFormattedTime(), message.getMessage()));
             if (message.getMessageType() == MessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
 
@@ -35,6 +35,8 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
             getStyleClass().removeAll(SEND_MESSAGE_CSS);
         }
     }
+
+
 
     /**
      * Context menu for history pop over

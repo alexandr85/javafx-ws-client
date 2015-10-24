@@ -97,9 +97,9 @@
             </padding>
             <GridPane>
                 <columnConstraints>
-                    <ColumnConstraints prefWidth="130"/>
+                    <ColumnConstraints prefWidth="120"/>
                     <ColumnConstraints minWidth="10.0"/>
-                    <ColumnConstraints minWidth="10.0"/>
+                    <ColumnConstraints minWidth="40.0"/>
                 </columnConstraints>
                 <ToggleButton fx:id="autoScroll" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                               prefHeight="25.0" prefWidth="100.0" text="Auto scroll" textAlignment="CENTER"
@@ -109,7 +109,7 @@
                     </cursor>
                 </ToggleButton>
                 <FlowPane alignment="CENTER_LEFT" hgap="10.0" maxHeight="-Infinity" maxWidth="Infinity"
-                          minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="440.0"
+                          minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="420.0"
                           styleClass="filter_block" disable="false" GridPane.columnIndex="1">
                     <padding>
                         <Insets bottom="3.0" left="8.0" right="3.0" top="3.0"/>
@@ -121,7 +121,7 @@
                         </cursor>
                     </ToggleButton>
                     <TextField fx:id="filterText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" prefHeight="25.0" prefWidth="150.0" disable="true"/>
+                               minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0" disable="true"/>
                     <Button fx:id="filterAddBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                             prefHeight="25.0" prefWidth="70.0" text="Add" disable="true">
                         <cursor>
@@ -135,6 +135,11 @@
                         </cursor>
                     </MenuButton>
                 </FlowPane>
+                <Label fx:id="timeDiffLabel" GridPane.columnIndex="2" GridPane.halignment="LEFT">
+                    <GridPane.margin>
+                        <Insets left="8" right="4"/>
+                    </GridPane.margin>
+                </Label>
             </GridPane>
         </ToolBar>
     </GridPane>

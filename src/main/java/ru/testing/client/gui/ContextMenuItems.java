@@ -29,7 +29,7 @@ public class ContextMenuItems {
      * @return MenuItem
      */
     public MenuItem getCopyCellAll(ListCell<OutputMessage> cell) {
-        MenuItem copyItem = new MenuItem("Copy all");
+        MenuItem copyItem = new MenuItem("Copy cell");
         copyItem.setOnAction((event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
@@ -65,7 +65,7 @@ public class ContextMenuItems {
         copyItem.setOnAction((event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getItem().getTimeString());
+            content.putString(cell.getItem().getFormattedTime());
             clipboard.setContent(content);
         }));
         return copyItem;

@@ -43,6 +43,7 @@
     -fx-background-color: #C9F8D4;
 }
 
-.message_send:focused {
-    -fx-background-color: #75A8F5;
+.cell:selected {
+    -fx-background-color: #066EC1;
+    -fx-font-weight: bold;
 }

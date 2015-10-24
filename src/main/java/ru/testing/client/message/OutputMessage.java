@@ -25,13 +25,13 @@ public class OutputMessage {
         return message;
     }
 
-    public Date getTime() {
-        return time;
+    public long getMilliseconds() {
+        return time.getTime();
     }
 
-    public String getTimeString() {
+    public String getFormattedTime() {
         SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
-        return sdf.format(getTime());
+        return sdf.format(time);
     }
 
     public MessageType getMessageType() {
