@@ -6,7 +6,7 @@
 
     <groupId>ru.testing</groupId>
     <artifactId>javafx-ws-client</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
 
     <properties>
         <appName>ws.client</appName>
