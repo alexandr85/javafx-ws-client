@@ -3,6 +3,8 @@ package ru.testing.client.message;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import ru.testing.client.gui.ContextMenuItems;
 
 /**
@@ -11,6 +13,7 @@ import ru.testing.client.gui.ContextMenuItems;
 public class OutputMessageCell extends ListCell<OutputMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
+    private ImageView imageView = new ImageView();
     private ListView listView;
 
     public OutputMessageCell(ListView listView) {
@@ -22,12 +25,16 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
         super.updateItem(message, empty);
         if (message != null) {
             setText(String.format("%-12s %s", message.getFormattedTime(), message.getMessage()));
+            Image image;
             if (message.getMessageType() == MessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
-
+                image = new Image(getClass().getResource("/images/arrow-up.png").toExternalForm(), true);
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
+                image = new Image(getClass().getResource("/images/arrow-down.png").toExternalForm(), true);
             }
+            imageView.setImage(image);
+            setGraphic(imageView);
             setContextMenu(getOutputContextMenu(this));
         } else {
             setText(null);
