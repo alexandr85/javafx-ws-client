@@ -25,7 +25,7 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
         super.updateItem(message, empty);
         if (message != null) {
             setText(String.format("%-12s %s", message.getFormattedTime(), message.getMessage()));
-            String imageUrl = "";
+            String imageUrl;
             if (message.getMessageType() == MessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
                 imageUrl = "/images/arrow-up.png";
