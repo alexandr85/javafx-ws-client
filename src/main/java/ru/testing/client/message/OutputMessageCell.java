@@ -25,15 +25,15 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
         super.updateItem(message, empty);
         if (message != null) {
             setText(String.format("%-12s %s", message.getFormattedTime(), message.getMessage()));
-            Image image;
+            String imageUrl = "";
             if (message.getMessageType() == MessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
-                image = new Image(getClass().getResource("/images/arrow-up.png").toExternalForm(), true);
+                imageUrl = "/images/arrow-up.png";
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
-                image = new Image(getClass().getResource("/images/arrow-down.png").toExternalForm(), true);
+                imageUrl = "/images/arrow-down.png";
             }
-            imageView.setImage(image);
+            imageView.setImage(new Image(getClass().getResource(imageUrl).toExternalForm(), false));
             setGraphic(imageView);
             setContextMenu(getOutputContextMenu(this));
         } else {
