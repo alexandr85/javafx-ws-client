@@ -44,50 +44,27 @@ public class MainController {
         this.mainStage = mainStage;
     }
 
-    @FXML
-    private TextField serverUrl;
-
-    @FXML
-    private Button connectBtn;
-
-    @FXML
-    private Circle status;
-
-    @FXML
-    protected TextField messageText;
-
-    @FXML
-    private Button messageSendBtn;
-
-    @FXML
-    protected ToggleButton messageSendHistoryBtn;
-
-    @FXML
-    private ListView<OutputMessage> outputText;
-
-    @FXML
-    private ToggleButton autoScroll;
-
-    @FXML
-    private ToggleButton filterOnOffBtn;
-
-    @FXML
-    private TextField filterText;
-
-    @FXML
-    private Button filterAddBtn;
-
-    @FXML
-    private MenuButton filterList;
-
-    @FXML
-    private Label timeDiffLabel;
+    @FXML private MenuItem exitPlatform;
+    @FXML private TextField serverUrl;
+    @FXML private Button connectBtn;
+    @FXML private Circle status;
+    @FXML protected TextField messageText;
+    @FXML private Button messageSendBtn;
+    @FXML protected ToggleButton messageSendHistoryBtn;
+    @FXML private ListView<OutputMessage> outputText;
+    @FXML private ToggleButton autoScroll;
+    @FXML private ToggleButton filterOnOffBtn;
+    @FXML private TextField filterText;
+    @FXML private Button filterAddBtn;
+    @FXML private MenuButton filterList;
+    @FXML private Label timeDiffLabel;
 
     /**
      * Method run then this controller initialize
      */
-    @FXML
-    private void initialize() {
+    @FXML private void initialize() {
+
+        exitPlatform.setOnAction((event1 -> Platform.exit()));
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
