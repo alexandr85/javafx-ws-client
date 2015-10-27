@@ -14,8 +14,10 @@ import ru.testing.client.config.Configuration;
 import ru.testing.client.gui.MainController;
 import ru.testing.client.websocket.Client;
 
+import javax.swing.*;
 import javax.websocket.MessageHandler;
 import java.net.URI;
+import java.net.URL;
 import java.util.Scanner;
 
 /**
@@ -26,6 +28,7 @@ public class MainApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 680;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 490;
+    private static final String APP_ICON_URL = "/images/icon.png";
 
     /**
      * Entry point to application
@@ -74,16 +77,8 @@ public class MainApp extends Application {
         loader.setController(new MainController(primaryStage));
         Parent root = loader.load();
         Scene scene = new Scene(root);
-        scene.getStylesheets().addAll(getClass().getResource("/styles/main.css").toExternalForm());
-        try {
-            Image image = new Image(getClass().getResource("/images/icon.png").toExternalForm());
-            if (image.getHeight() == 0) {
-                throw new Exception();
-            }
-            primaryStage.getIcons().addAll(image);
-        } catch (Exception e) {
-            LOGGER.error("Icon was not found");
-        }
+        scene.getStylesheets().add(this.getClass().getResource("/styles/main.css").toExternalForm());
+        setApplicationIcon(primaryStage);
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
         primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
@@ -122,6 +117,27 @@ public class MainApp extends Application {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set application icon
+     * @param stage Stage
+     */
+    private void setApplicationIcon(Stage stage) {
+        try {
+            URL iconUrl = getClass().getResource(APP_ICON_URL);
+            Image image = new Image(iconUrl.toExternalForm());
+            if (image.getHeight() == 0) {
+                throw new Exception();
+            }
+            stage.getIcons().addAll(image);
+            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                java.awt.Image imageForMac = new ImageIcon(iconUrl).getImage();
+                com.apple.eawt.Application.getApplication().setDockIconImage(imageForMac);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Icon was not found");
         }
     }
 }
