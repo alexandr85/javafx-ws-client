@@ -1,11 +1,11 @@
-package ru.testing.client.gui;
+package ru.testing.client.gui.tools;
 
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import ru.testing.client.message.OutputMessage;
+import ru.testing.client.gui.message.OutputMessage;
 
 /**
  * Class collected other menu items
@@ -72,13 +72,13 @@ public class ContextMenuItems {
     }
 
     /**
-     * Temporary context menu item to create text log
+     * Save message from cell to file
+     * @param cell ListCell<OutputMessage>
+     * @return MenuItem
      */
-    public MenuItem getTextLog(ListCell<OutputMessage> cell) {
-        MenuItem copyItem = new MenuItem("Save to log");
-        copyItem.setOnAction((event -> {
-            FileOperations.logIntoFile(cell.getText());
-        }));
-        return copyItem;
+    public MenuItem saveMessageToFile(ListCell<OutputMessage> cell) {
+        MenuItem saveFileItem = new MenuItem("Save to file");
+        saveFileItem.setOnAction((event -> new FilesOperations().saveTextToFile(cell.getText())));
+        return saveFileItem;
     }
 }

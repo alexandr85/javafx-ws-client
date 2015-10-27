@@ -9,9 +9,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.config.ApplicationType;
-import ru.testing.client.config.Configuration;
-import ru.testing.client.gui.MainController;
+import ru.testing.client.commons.ApplicationType;
+import ru.testing.client.commons.Configuration;
+import ru.testing.client.gui.controllers.MainController;
 import ru.testing.client.websocket.Client;
 
 import javax.swing.*;

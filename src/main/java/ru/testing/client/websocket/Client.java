@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.gui.Dialogs;
+import ru.testing.client.gui.tools.Dialogs;
 
 import javax.websocket.*;
 import java.io.IOException;

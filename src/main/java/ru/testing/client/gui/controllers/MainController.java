@@ -1,4 +1,4 @@
-package ru.testing.client.gui;
+package ru.testing.client.gui.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -16,13 +16,15 @@ import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.message.MessageType;
-import ru.testing.client.message.OutputMessage;
-import ru.testing.client.message.OutputMessageCell;
+import ru.testing.client.commons.OutputFormat;
+import ru.testing.client.gui.tools.Dialogs;
+import ru.testing.client.commons.MessageType;
+import ru.testing.client.gui.message.OutputMessage;
+import ru.testing.client.gui.message.OutputMessageCell;
+import ru.testing.client.gui.tools.FilesOperations;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -176,6 +178,18 @@ public class MainController {
                 historyPopOver.hide();
             }
         }));
+    }
+
+    /**
+     * Save output message to text file
+     */
+    @FXML protected void saveOutputToFile() {
+        StringBuilder builder = new StringBuilder();
+        for (OutputMessage message : outputText.getItems()) {
+            builder.append(String.format(OutputFormat.DEFAULT.getFormat().concat("\n"),
+                    message.getFormattedTime(), message.getMessage()));
+        }
+        new FilesOperations().saveTextToFile(builder.toString());
     }
 
     /**

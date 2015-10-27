@@ -1,4 +1,4 @@
-package ru.testing.client.gui;
+package ru.testing.client.gui.tools;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

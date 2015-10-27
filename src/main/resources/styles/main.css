@@ -3,7 +3,7 @@
 .text-field,
 .label,
 .toolbar {
-    -fx-font-family: "Courier New";
+    -fx-font-family: "Arial";
     -fx-font-size: 12px;
 }
 

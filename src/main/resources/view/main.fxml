@@ -20,7 +20,7 @@
     <MenuBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
              GridPane.rowIndex="0">
         <Menu text="File">
-            <MenuItem mnemonicParsing="false" text="Save output"/>
+            <MenuItem mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile"/>
             <MenuItem mnemonicParsing="false" text="Load profile"/>
             <SeparatorMenuItem/>
             <MenuItem fx:id="exitPlatform" mnemonicParsing="false" text="Exit"/>
@@ -51,7 +51,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="55.0" text="WS url" GridPane.columnIndex="0"/>
+                   prefHeight="25.0" prefWidth="55.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT">
+                <padding>
+                    <Insets left="0" top="0" right="5" bottom="0"/>
+                </padding>
+            </Label>
             <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
                        minWidth="-Infinity" prefHeight="25.0" prefWidth="460.0"
                        promptText="ws://host.name/path" GridPane.columnIndex="1">
@@ -86,7 +90,11 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0"/>
+                   prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0" alignment="CENTER_RIGHT">
+                <padding>
+                    <Insets left="0" top="0" right="5" bottom="0"/>
+                </padding>
+            </Label>
             <TextField fx:id="messageText" disable="true" maxWidth="Infinity" minHeight="-Infinity"
                        minWidth="-Infinity" prefHeight="25.0" prefWidth="400.0" promptText="some text"
                        GridPane.columnIndex="1">
