@@ -1,10 +1,13 @@
 package ru.testing.client.gui.tools;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import org.controlsfx.control.PopOver;
 import ru.testing.client.gui.message.OutputMessage;
 
 /**
@@ -20,6 +23,23 @@ public class ContextMenuItems {
     public MenuItem clearListView(ListView listView) {
         MenuItem deleteAll = new MenuItem("Clear all");
         deleteAll.setOnAction((event -> listView.getItems().clear()));
+        return deleteAll;
+    }
+
+    /**
+     * Clear history send message pop over list
+     * @param list ObservableList send message list
+     * @param popOver PopOver
+     * @param button ToggleButton
+     * @return MenuItem
+     */
+    public MenuItem clearHistoryList(ObservableList list, PopOver popOver, ToggleButton button) {
+        MenuItem deleteAll = new MenuItem("Clear all");
+        deleteAll.setOnAction((event -> {
+            list.clear();
+            popOver.hide();
+            button.setDisable(true);
+        }));
         return deleteAll;
     }
 
@@ -77,7 +97,7 @@ public class ContextMenuItems {
      * @return MenuItem
      */
     public MenuItem saveMessageToFile(ListCell<OutputMessage> cell) {
-        MenuItem saveFileItem = new MenuItem("Save to file");
+        MenuItem saveFileItem = new MenuItem("Save cell to file");
         saveFileItem.setOnAction((event -> new FilesOperations().saveTextToFile(cell.getText())));
         return saveFileItem;
     }

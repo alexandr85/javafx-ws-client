@@ -17,6 +17,7 @@ import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.commons.OutputFormat;
+import ru.testing.client.gui.tools.ContextMenuItems;
 import ru.testing.client.gui.tools.Dialogs;
 import ru.testing.client.commons.MessageType;
 import ru.testing.client.gui.message.OutputMessage;
@@ -42,44 +43,52 @@ public class MainController {
     private Stage mainStage;
     private Tooltip statusTooltip;
     private PopOver historyPopOver;
+    private boolean autoScrollStatus;
 
     public MainController(Stage mainStage) {
         this.mainStage = mainStage;
     }
 
-    @FXML private MenuItem exitPlatform;
-    @FXML private TextField serverUrl;
-    @FXML private Button connectBtn;
-    @FXML private Circle status;
-    @FXML protected TextField messageText;
-    @FXML private Button messageSendBtn;
-    @FXML protected ToggleButton messageSendHistoryBtn;
-    @FXML private ListView<OutputMessage> outputText;
-    @FXML private ToggleButton autoScroll;
-    @FXML private ToggleButton filterOnOffBtn;
-    @FXML private TextField filterText;
-    @FXML private Button filterAddBtn;
-    @FXML private MenuButton filterList;
-    @FXML private Label timeDiffLabel;
+    @FXML
+    private TextField serverUrl;
+    @FXML
+    private Button connectBtn;
+    @FXML
+    private Circle status;
+    @FXML
+    protected TextField messageText;
+    @FXML
+    private Button messageSendBtn;
+    @FXML
+    protected ToggleButton messageSendHistoryBtn;
+    @FXML
+    private ListView<OutputMessage> outputText;
+    @FXML
+    private Label autoScrollLabel;
+    @FXML
+    private MenuItem autoScrollMenuItem;
+    @FXML
+    private ToggleButton filterOnOffBtn;
+    @FXML
+    private TextField filterText;
+    @FXML
+    private Button filterAddBtn;
+    @FXML
+    private MenuButton filterList;
+    @FXML
+    private Label timeDiffLabel;
 
     /**
      * Method run then this controller initialize
      */
-    @FXML private void initialize() {
-
-        exitPlatform.setOnAction((event1 -> Platform.exit()));
+    @FXML
+    private void initialize() {
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
 
         // Close application
-        mainStage.setOnCloseRequest((event -> {
-            if (client != null && client.isOpenConnection()) {
-                client.closeConnection();
-            }
-            Platform.exit();
-            System.exit(0);
-        }));
+        mainStage.setOnCloseRequest((event -> exitApplication()));
 
         // Update output message list view
         outputText.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -87,7 +96,7 @@ public class MainController {
         outputText.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
             c.next();
             final int size = outputText.getItems().size();
-            if (size > 0 && autoScroll.isSelected()) {
+            if (size > 0 && autoScrollStatus) {
                 outputText.scrollTo(size - 1);
             }
         });
@@ -127,7 +136,6 @@ public class MainController {
         });
 
         // Connect or disconnect with websocket server
-        connectBtn.setOnAction((event -> actionConnectDisconnect()));
         serverUrl.setOnKeyPressed((keyEvent) -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 actionConnectDisconnect();
@@ -135,7 +143,6 @@ public class MainController {
         });
 
         // Send message
-        messageSendBtn.setOnAction((event -> sendWebsocketMessage()));
         messageText.setOnKeyPressed((keyEvent) -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 sendWebsocketMessage();
@@ -160,7 +167,6 @@ public class MainController {
         });
 
         // Add filter
-        filterAddBtn.setOnMouseClicked((event -> addToFilterList()));
         filterText.setOnKeyPressed((keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
@@ -181,9 +187,22 @@ public class MainController {
     }
 
     /**
+     * Close application with connection
+     */
+    @FXML
+    private void exitApplication() {
+        if (client != null && client.isOpenConnection()) {
+            client.closeConnection();
+        }
+        Platform.exit();
+        System.exit(0);
+    }
+
+    /**
      * Save output message to text file
      */
-    @FXML protected void saveOutputToFile() {
+    @FXML
+    private void saveOutputToFile() {
         StringBuilder builder = new StringBuilder();
         for (OutputMessage message : outputText.getItems()) {
             builder.append(String.format(OutputFormat.DEFAULT.getFormat().concat("\n"),
@@ -198,7 +217,6 @@ public class MainController {
     private void getHistoryPopOver() {
         historyPopOver = new PopOver();
         historyPopOver.setDetachable(false);
-        historyPopOver.setAutoHide(false);
         historyPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
         historyPopOver.setOnHidden((event) -> {
             historyPopOver.hide();
@@ -227,32 +245,20 @@ public class MainController {
                     }
                 }
             });
-            cell.setOnContextMenuRequested((event -> cell.setContextMenu(getHistoryContextMenu())));
+            ContextMenu contextMenu = new ContextMenu();
+            contextMenu.getItems().add(new ContextMenuItems()
+                    .clearHistoryList(sendMessageList, historyPopOver, messageSendHistoryBtn));
+            cell.setOnContextMenuRequested((event -> cell.setContextMenu(contextMenu)));
             return cell;
         });
         historyPopOver.setContentNode(historyPane);
     }
 
     /**
-     * Context menu for history pop over
-     * @return ContextMenu
-     */
-    private ContextMenu getHistoryContextMenu() {
-        ContextMenu contextMenu = new ContextMenu();
-        MenuItem deleteAll = new MenuItem("Clear all");
-        deleteAll.setOnAction((event -> {
-            sendMessageList.clear();
-            historyPopOver.hide();
-            messageSendHistoryBtn.setDisable(true);
-        }));
-        contextMenu.getItems().add(deleteAll);
-        return contextMenu;
-    }
-
-    /**
      * Connected to websocket server if connectionStatus = false
      * or disconnect from websocket server if connectionStatus = true
      */
+    @FXML
     private void actionConnectDisconnect() {
         if (connectionStatus) {
             try {
@@ -291,7 +297,7 @@ public class MainController {
 
                 @Override
                 public void onMessage(String message) {
-                    if (filterOnOffBtn.isSelected() && filterList!= null && filterList.getItems().size() != 0) {
+                    if (filterOnOffBtn.isSelected() && filterList != null && filterList.getItems().size() != 0) {
                         for (MenuItem item : filterList.getItems()) {
                             if (message.contains(item.getText())) {
                                 addMessageToOutput(MessageType.RECEIVED, message);
@@ -340,6 +346,7 @@ public class MainController {
 
     /**
      * Set status disable or enable send message text field and button
+     *
      * @param isConnected boolean
      */
     private void setConnectStatus(boolean isConnected) {
@@ -371,6 +378,7 @@ public class MainController {
     /**
      * Apply text filter for new response
      */
+    @FXML
     private void addToFilterList() {
         if (filterText != null && !filterText.getText().isEmpty()) {
             String filterString = filterText.getText();
@@ -392,7 +400,8 @@ public class MainController {
 
     /**
      * Add websocket response message to output text area
-     * @param type Message type
+     *
+     * @param type    Message type
      * @param message String message
      */
     private void addMessageToOutput(MessageType type, String message) {
@@ -406,6 +415,7 @@ public class MainController {
     /**
      * Send websocket message
      */
+    @FXML
     private void sendWebsocketMessage() {
         String sendMsg = messageText.getText();
         if (!sendMsg.isEmpty()) {
@@ -428,6 +438,7 @@ public class MainController {
 
     /**
      * Set circle status tooltip message
+     *
      * @param message String
      */
     private void setCircleTooltip(String message) {
@@ -436,6 +447,20 @@ public class MainController {
             Tooltip.install(status, statusTooltip);
         } else {
             statusTooltip.setText(message);
+        }
+    }
+
+    @FXML
+    private void changeAutoScrollStatus() {
+        String text = "Auto scroll ";
+        if (!autoScrollStatus) {
+            autoScrollLabel.setText(text.concat("on"));
+            autoScrollMenuItem.setText(text.concat("on"));
+            autoScrollStatus = true;
+        } else {
+            autoScrollLabel.setText(text.concat("off"));
+            autoScrollMenuItem.setText(text.concat("off"));
+            autoScrollStatus = false;
         }
     }
 }

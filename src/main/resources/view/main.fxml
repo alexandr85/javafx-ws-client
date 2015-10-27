@@ -23,16 +23,10 @@
             <MenuItem mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile"/>
             <MenuItem mnemonicParsing="false" text="Load profile"/>
             <SeparatorMenuItem/>
-            <MenuItem fx:id="exitPlatform" mnemonicParsing="false" text="Exit"/>
+            <MenuItem mnemonicParsing="false" text="Exit" onAction="#exitApplication"/>
         </Menu>
         <Menu text="View">
-            <CustomMenuItem hideOnClick="false">
-                <content>
-                    <VBox>
-                        <CheckBox mnemonicParsing="false" text="Auto scroll"/>
-                    </VBox>
-                </content>
-            </CustomMenuItem>
+            <MenuItem fx:id="autoScrollMenuItem" text="Auto scroll off" onAction="#changeAutoScrollStatus"/>
         </Menu>
     </MenuBar>
     <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
@@ -67,7 +61,7 @@
                     styleClass="disconnected" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
             <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                     minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                    text="Connect" GridPane.columnIndex="3">
+                    text="Connect" GridPane.columnIndex="3" onAction="#actionConnectDisconnect">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
@@ -104,7 +98,8 @@
             </TextField>
             <Button fx:id="messageSendBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
                     maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="2">
+                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="2"
+                    onAction="#sendWebsocketMessage">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
@@ -145,14 +140,10 @@
                 <rowConstraints>
                     <RowConstraints/>
                 </rowConstraints>
-                <ToggleButton fx:id="autoScroll" minHeight="-Infinity" minWidth="-Infinity"
-                              mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                              text="Auto scroll" textAlignment="CENTER" GridPane.columnIndex="0"
-                              GridPane.halignment="CENTER">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </ToggleButton>
+                <Label fx:id="autoScrollLabel" minHeight="-Infinity" minWidth="-Infinity"
+                              mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0"
+                              text="Auto scroll off" textAlignment="CENTER" GridPane.columnIndex="0"
+                              GridPane.halignment="CENTER"/>
                 <FlowPane alignment="CENTER_LEFT" disable="false" hgap="10.0" maxHeight="-Infinity"
                           maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                           prefHeight="35.0" prefWidth="420.0" styleClass="filter_block"
@@ -172,7 +163,7 @@
                                prefHeight="25.0" prefWidth="130.0"/>
                     <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity"
                             minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                            prefWidth="70.0" text="Add">
+                            prefWidth="70.0" text="Add" onMouseClicked="#addToFilterList">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
