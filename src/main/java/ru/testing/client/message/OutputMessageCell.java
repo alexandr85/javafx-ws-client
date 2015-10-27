@@ -57,7 +57,8 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
                 m.getCopyCellAll(cell),
                 m.getCopyCellMessage(cell),
                 m.getCopyCellTime(cell),
-                m.clearListView(listView)
+                m.clearListView(listView),
+                m.getTextLog(cell)
         );
         return contextMenu;
     }
