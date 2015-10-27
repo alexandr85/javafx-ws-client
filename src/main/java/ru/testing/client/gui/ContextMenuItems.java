@@ -70,4 +70,15 @@ public class ContextMenuItems {
         }));
         return copyItem;
     }
+
+    /**
+     * Temporary context menu item to create text log
+     */
+    public MenuItem getTextLog(ListCell<OutputMessage> cell) {
+        MenuItem copyItem = new MenuItem("Save to log");
+        copyItem.setOnAction((event -> {
+            FileOperations.logIntoFile(cell.getText());
+        }));
+        return copyItem;
+    }
 }
