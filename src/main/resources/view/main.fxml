@@ -6,8 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0"
-          prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" hgap="10">
+<GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
     </columnConstraints>
@@ -23,7 +23,7 @@
             <MenuItem mnemonicParsing="false" text="Save output"/>
             <MenuItem mnemonicParsing="false" text="Load profile"/>
             <SeparatorMenuItem/>
-            <MenuItem mnemonicParsing="false" text="Exit" fx:id="exitPlatform"/>
+            <MenuItem fx:id="exitPlatform" mnemonicParsing="false" text="Exit"/>
         </Menu>
         <Menu text="View">
             <CustomMenuItem hideOnClick="false">
@@ -35,70 +35,83 @@
             </CustomMenuItem>
         </Menu>
     </MenuBar>
-    <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-             prefWidth="570.0" GridPane.rowIndex="1">
+    <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
+          minWidth="-Infinity" prefHeight="40.0" prefWidth="570.0" GridPane.rowIndex="1">
         <padding>
             <Insets left="10.0"/>
         </padding>
-        <GridPane>
+        <GridPane hgap="5">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" maxWidth="50.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="460.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="40.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" valignment="CENTER"/>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                    prefHeight="25.0" prefWidth="55.0" text="WS url" GridPane.columnIndex="0"/>
             <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                       minWidth="-Infinity" prefHeight="25.0" prefWidth="446.0" promptText="ws://host.name/path"
-                    GridPane.columnIndex="1">
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="460.0"
+                       promptText="ws://host.name/path" GridPane.columnIndex="1">
                 <padding>
                     <Insets left="5.0"/>
                 </padding>
             </TextField>
-            <Circle fx:id="status" styleClass="disconnected" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
-                    GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
+            <Circle fx:id="status" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
+                    styleClass="disconnected" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
             <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Connect"
-                    GridPane.columnIndex="3">
+                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                    text="Connect" GridPane.columnIndex="3">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
             </Button>
         </GridPane>
-    </ToolBar>
-    <ToolBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-             prefWidth="570.0" GridPane.rowIndex="2">
+    </VBox>
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+          prefWidth="570.0" GridPane.rowIndex="2">
         <padding>
             <Insets left="10.0"/>
         </padding>
-        <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-               prefHeight="25.0" prefWidth="55.0" text="Message"/>
-        <TextField fx:id="messageText" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="380.0" promptText="some text" disable="true">
-            <padding>
-                <Insets left="5.0"/>
-            </padding>
-        </TextField>
-        <Button fx:id="messageSendBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                prefWidth="100.0" text="Send" disable="true">
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </Button>
-        <ToggleButton fx:id="messageSendHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
-                      maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                      prefHeight="25.0" prefWidth="100.0" text="History">
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ToggleButton>
-    </ToolBar>
-    <GridPane GridPane.rowIndex="3" styleClass="output_grid">
+        <GridPane hgap="5">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0" maxWidth="50.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="400.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                   prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0"/>
+            <TextField fx:id="messageText" disable="true" maxWidth="Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="400.0" promptText="some text"
+                       GridPane.columnIndex="1">
+                <padding>
+                    <Insets left="5.0"/>
+                </padding>
+            </TextField>
+            <Button fx:id="messageSendBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
+                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="2">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+            <ToggleButton fx:id="messageSendHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
+                          maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="History"
+                          GridPane.columnIndex="3">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ToggleButton>
+        </GridPane>
+    </VBox>
+    <GridPane styleClass="output_grid" GridPane.rowIndex="3">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         </columnConstraints>
@@ -109,10 +122,11 @@
         <GridPane.margin>
             <Insets bottom="9.0" left="7.0" right="7.0" top="7.0"/>
         </GridPane.margin>
-        <ListView fx:id="outputText" prefHeight="100.0" prefWidth="200.0" styleClass="output_text" editable="false"/>
-        <ToolBar prefHeight="35.0" prefWidth="200.0" GridPane.rowIndex="1">
+        <ListView fx:id="outputText" editable="false" prefHeight="100.0" prefWidth="200.0"
+                  styleClass="output_text"/>
+        <VBox prefHeight="35.0" prefWidth="200.0" GridPane.rowIndex="1">
             <padding>
-                <Insets left="0" top="5" right="0" bottom="5"/>
+                <Insets bottom="5" left="0" right="0" top="5"/>
             </padding>
             <GridPane>
                 <columnConstraints>
@@ -120,35 +134,44 @@
                     <ColumnConstraints minWidth="10.0"/>
                     <ColumnConstraints minWidth="40.0"/>
                 </columnConstraints>
-                <ToggleButton fx:id="autoScroll" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                              prefHeight="25.0" prefWidth="100.0" text="Auto scroll" textAlignment="CENTER"
-                        GridPane.columnIndex="0" GridPane.halignment="CENTER">
+                <rowConstraints>
+                    <RowConstraints/>
+                </rowConstraints>
+                <ToggleButton fx:id="autoScroll" minHeight="-Infinity" minWidth="-Infinity"
+                              mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                              text="Auto scroll" textAlignment="CENTER" GridPane.columnIndex="0"
+                              GridPane.halignment="CENTER">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>
                 </ToggleButton>
-                <FlowPane alignment="CENTER_LEFT" hgap="10.0" maxHeight="-Infinity" maxWidth="Infinity"
-                          minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0" prefWidth="420.0"
-                          styleClass="filter_block" disable="false" GridPane.columnIndex="1">
+                <FlowPane alignment="CENTER_LEFT" disable="false" hgap="10.0" maxHeight="-Infinity"
+                          maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          prefHeight="35.0" prefWidth="420.0" styleClass="filter_block"
+                          GridPane.columnIndex="1">
                     <padding>
                         <Insets bottom="3.0" left="8.0" right="3.0" top="3.0"/>
                     </padding>
-                    <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                  prefHeight="25.0" prefWidth="100.0" text="Filter off" textAlignment="CENTER">
+                    <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity"
+                                  mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
+                                  text="Filter off" textAlignment="CENTER">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </ToggleButton>
-                    <TextField fx:id="filterText" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" prefHeight="25.0" prefWidth="130.0" disable="true"/>
-                    <Button fx:id="filterAddBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                            prefHeight="25.0" prefWidth="70.0" text="Add" disable="true">
+                    <TextField fx:id="filterText" disable="true" maxHeight="-Infinity"
+                               maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                               prefHeight="25.0" prefWidth="130.0"/>
+                    <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity"
+                            minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                            prefWidth="70.0" text="Add">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
-                    <MenuButton fx:id="filterList" disable="true" minHeight="-Infinity" minWidth="-Infinity"
-                                mnemonicParsing="false" prefHeight="25.0" prefWidth="70.0" text="List">
+                    <MenuButton fx:id="filterList" disable="true" minHeight="-Infinity"
+                                minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                                prefWidth="70.0" text="List">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
@@ -160,6 +183,6 @@
                     </GridPane.margin>
                 </Label>
             </GridPane>
-        </ToolBar>
+        </VBox>
     </GridPane>
 </GridPane>
