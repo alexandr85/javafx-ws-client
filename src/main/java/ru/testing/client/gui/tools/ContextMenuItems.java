@@ -2,7 +2,6 @@ package ru.testing.client.gui.tools;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.Clipboard;
@@ -17,12 +16,12 @@ public class ContextMenuItems {
 
     /**
      * Menu item for clear all cell in list view
-     * @param listView ListView
+     * @param list ObservableList<OutputMessage>
      * @return MenuItem
      */
-    public MenuItem clearListView(ListView listView) {
+    public MenuItem clearListView(ObservableList<OutputMessage> list) {
         MenuItem deleteAll = new MenuItem("Clear all");
-        deleteAll.setOnAction((event -> listView.getItems().clear()));
+        deleteAll.setOnAction((event -> list.clear()));
         return deleteAll;
     }
 
@@ -33,7 +32,7 @@ public class ContextMenuItems {
      * @param button ToggleButton
      * @return MenuItem
      */
-    public MenuItem clearHistoryList(ObservableList list, PopOver popOver, ToggleButton button) {
+    public MenuItem clearHistoryList(ObservableList<String> list, PopOver popOver, ToggleButton button) {
         MenuItem deleteAll = new MenuItem("Clear all");
         deleteAll.setOnAction((event -> {
             list.clear();

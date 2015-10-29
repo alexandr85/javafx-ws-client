@@ -39,6 +39,7 @@ public class MainController {
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private static Client client;
     private final ObservableList<String> sendMessageList = FXCollections.observableArrayList();
+    private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
@@ -91,11 +92,12 @@ public class MainController {
         mainStage.setOnCloseRequest((event -> exitApplication()));
 
         // Update output message list view
+        outputText.setItems(outputMessageList);
         outputText.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        outputText.setCellFactory((listView) -> new OutputMessageCell(outputText));
+        outputText.setCellFactory((listView) -> new OutputMessageCell(outputMessageList));
         outputText.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
             c.next();
-            final int size = outputText.getItems().size();
+            final int size = outputMessageList.size();
             if (size > 0 && autoScrollStatus) {
                 outputText.scrollTo(size - 1);
             }
@@ -127,11 +129,9 @@ public class MainController {
         });
         outputText.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                if (event.getPickResult().getIntersectedNode() instanceof OutputMessageCell) {
-                    OutputMessageCell cell = (OutputMessageCell) event.getPickResult().getIntersectedNode();
-                    outputText.getSelectionModel().clearSelection();
-                    outputText.getSelectionModel().select(cell.getItem());
-                }
+                OutputMessageCell cell = (OutputMessageCell) event.getPickResult().getIntersectedNode();
+                outputText.getSelectionModel().clearSelection();
+                outputText.getSelectionModel().select(cell.getItem());
             }
         });
 
@@ -199,12 +199,109 @@ public class MainController {
     }
 
     /**
+     * Connected to websocket server if connectionStatus = false
+     * or disconnect from websocket server if connectionStatus = true
+     */
+    @FXML
+    private void actionConnectDisconnect() {
+        if (connectionStatus) {
+            try {
+                client.closeConnection();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                Dialogs.getExceptionDialog(e);
+            }
+        } else {
+            if (!serverUrl.getText().isEmpty()) {
+                Task task = new Task() {
+
+                    @Override
+                    protected Object call() throws Exception {
+                        Platform.runLater(() -> {
+                            serverUrl.setEditable(false);
+                            connectBtn.setDisable(true);
+                            connectBtn.setText("Connecting");
+                        });
+                        startClient();
+                        return null;
+                    }
+                };
+                new Thread(task).start();
+            }
+        }
+    }
+
+    /**
+     * Send websocket message
+     */
+    @FXML
+    private void sendWebsocketMessage() {
+        String sendMsg = messageText.getText();
+        if (!sendMsg.isEmpty()) {
+            sendMessageList.add(sendMsg);
+            addMessageToOutput(MessageType.SEND, sendMsg);
+            if (client != null) {
+                try {
+                    client.sendMessage(sendMsg);
+                } catch (IOException e) {
+                    Dialogs.getExceptionDialog(e);
+                }
+            }
+            messageText.clear();
+            messageText.requestFocus();
+        }
+        if (sendMessageList.size() > 0) {
+            messageSendHistoryBtn.setDisable(false);
+        }
+    }
+
+    /**
+     * Apply text filter for new response
+     */
+    @FXML
+    private void addToFilterList() {
+        if (filterText != null && !filterText.getText().isEmpty()) {
+            String filterString = filterText.getText();
+            MenuItem menuItem = new MenuItem(filterString);
+            menuItem.setOnAction((event -> {
+                filterList.getItems().remove(menuItem);
+                filterText.requestFocus();
+                if (filterList.getItems().size() == 0) {
+                    filterList.setDisable(true);
+                }
+            }));
+            filterList.getItems().addAll(menuItem);
+            if (filterList.getItems().size() > 0) {
+                filterList.setDisable(false);
+            }
+            filterText.clear();
+        }
+    }
+
+    /**
+     * Set on/off auto scroll output list status from menu bar
+     */
+    @FXML
+    private void changeAutoScrollStatus() {
+        String text = "Auto scroll ";
+        if (!autoScrollStatus) {
+            autoScrollLabel.setText(text.concat("on"));
+            autoScrollMenuItem.setText(text.concat("on"));
+            autoScrollStatus = true;
+        } else {
+            autoScrollLabel.setText(text.concat("off"));
+            autoScrollMenuItem.setText(text.concat("off"));
+            autoScrollStatus = false;
+        }
+    }
+
+    /**
      * Save output message to text file
      */
     @FXML
     private void saveOutputToFile() {
         StringBuilder builder = new StringBuilder();
-        for (OutputMessage message : outputText.getItems()) {
+        for (OutputMessage message : outputMessageList) {
             builder.append(String.format(OutputFormat.DEFAULT.getFormat().concat("\n"),
                     message.getFormattedTime(), message.getMessage()));
         }
@@ -252,39 +349,6 @@ public class MainController {
             return cell;
         });
         historyPopOver.setContentNode(historyPane);
-    }
-
-    /**
-     * Connected to websocket server if connectionStatus = false
-     * or disconnect from websocket server if connectionStatus = true
-     */
-    @FXML
-    private void actionConnectDisconnect() {
-        if (connectionStatus) {
-            try {
-                client.closeConnection();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                Dialogs.getExceptionDialog(e);
-            }
-        } else {
-            if (!serverUrl.getText().isEmpty()) {
-                Task task = new Task() {
-
-                    @Override
-                    protected Object call() throws Exception {
-                        Platform.runLater(() -> {
-                            serverUrl.setEditable(false);
-                            connectBtn.setDisable(true);
-                            connectBtn.setText("Connecting");
-                        });
-                        startClient();
-                        return null;
-                    }
-                };
-                new Thread(task).start();
-            }
-        }
     }
 
     /**
@@ -376,64 +440,13 @@ public class MainController {
     }
 
     /**
-     * Apply text filter for new response
-     */
-    @FXML
-    private void addToFilterList() {
-        if (filterText != null && !filterText.getText().isEmpty()) {
-            String filterString = filterText.getText();
-            MenuItem menuItem = new MenuItem(filterString);
-            menuItem.setOnAction((event -> {
-                filterList.getItems().remove(menuItem);
-                filterText.requestFocus();
-                if (filterList.getItems().size() == 0) {
-                    filterList.setDisable(true);
-                }
-            }));
-            filterList.getItems().addAll(menuItem);
-            if (filterList.getItems().size() > 0) {
-                filterList.setDisable(false);
-            }
-            filterText.clear();
-        }
-    }
-
-    /**
      * Add websocket response message to output text area
      *
      * @param type    Message type
      * @param message String message
      */
     private void addMessageToOutput(MessageType type, String message) {
-        Platform.runLater(() -> {
-            if (outputText != null) {
-                outputText.getItems().add(new OutputMessage(type, message));
-            }
-        });
-    }
-
-    /**
-     * Send websocket message
-     */
-    @FXML
-    private void sendWebsocketMessage() {
-        String sendMsg = messageText.getText();
-        if (!sendMsg.isEmpty()) {
-            sendMessageList.add(sendMsg);
-            addMessageToOutput(MessageType.SEND, sendMsg);
-            if (client != null) {
-                try {
-                    client.sendMessage(sendMsg);
-                } catch (IOException e) {
-                    Dialogs.getExceptionDialog(e);
-                }
-            }
-            messageText.clear();
-            messageText.requestFocus();
-        }
-        if (sendMessageList.size() > 0) {
-            messageSendHistoryBtn.setDisable(false);
-        }
+        Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
     }
 
     /**
@@ -447,20 +460,6 @@ public class MainController {
             Tooltip.install(status, statusTooltip);
         } else {
             statusTooltip.setText(message);
-        }
-    }
-
-    @FXML
-    private void changeAutoScrollStatus() {
-        String text = "Auto scroll ";
-        if (!autoScrollStatus) {
-            autoScrollLabel.setText(text.concat("on"));
-            autoScrollMenuItem.setText(text.concat("on"));
-            autoScrollStatus = true;
-        } else {
-            autoScrollLabel.setText(text.concat("off"));
-            autoScrollMenuItem.setText(text.concat("off"));
-            autoScrollStatus = false;
         }
     }
 }

@@ -1,8 +1,8 @@
 package ru.testing.client.gui.message;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import ru.testing.client.commons.MessageType;
@@ -18,10 +18,10 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
     private static final String IMAGES_SEND = "/images/arrow-up.png";
     private static final String IMAGES_RECEIVED = "/images/arrow-down.png";
     private ImageView imageView = new ImageView();
-    private ListView listView;
+    private ObservableList<OutputMessage> list;
 
-    public OutputMessageCell(ListView listView) {
-        this.listView = listView;
+    public OutputMessageCell(ObservableList<OutputMessage> list) {
+        this.list = list;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
                 m.getCopyCellMessage(cell),
                 m.getCopyCellTime(cell),
                 m.saveMessageToFile(cell),
-                m.clearListView(listView)
+                m.clearListView(list)
         );
         return contextMenu;
     }

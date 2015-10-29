@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FilesOperations {
 
-    private static final String TEXT_FILE_NAME = "output.txt";
+    private static final String TEXT_FILE_NAME = "logs/output.txt";
 
     /**
      * Save text to file
