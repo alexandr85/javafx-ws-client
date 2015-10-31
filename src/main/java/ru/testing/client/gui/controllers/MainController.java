@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -83,6 +82,8 @@ public class MainController {
      */
     @FXML
     private void initialize() {
+
+        serverUrl.setText("wss://echo.websocket.org");
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -322,7 +323,6 @@ public class MainController {
         list.setItems(sendMessageList);
         HBox historyPane = new HBox();
         historyPane.getChildren().addAll(list);
-        historyPane.setPadding(new Insets(5, 0, 5, 0));
 
         // Set message text from history
         list.setCellFactory(listView -> {
