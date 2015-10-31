@@ -26,7 +26,7 @@
             <MenuItem mnemonicParsing="false" text="Exit" onAction="#exitApplication"/>
         </Menu>
         <Menu text="View">
-            <MenuItem fx:id="autoScrollMenuItem" text="Auto scroll off" onAction="#changeAutoScrollStatus"/>
+            <CheckMenuItem fx:id="autoScrollMenuItem" text="Auto scroll" onAction="#changeAutoScrollStatus"/>
         </Menu>
     </MenuBar>
     <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"

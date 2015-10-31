@@ -44,7 +44,6 @@ public class MainController {
     private Stage mainStage;
     private Tooltip statusTooltip;
     private PopOver historyPopOver;
-    private boolean autoScrollStatus;
 
     public MainController(Stage mainStage) {
         this.mainStage = mainStage;
@@ -67,7 +66,7 @@ public class MainController {
     @FXML
     private Label autoScrollLabel;
     @FXML
-    private MenuItem autoScrollMenuItem;
+    private CheckMenuItem autoScrollMenuItem;
     @FXML
     private ToggleButton filterOnOffBtn;
     @FXML
@@ -98,7 +97,7 @@ public class MainController {
         outputText.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
             c.next();
             final int size = outputMessageList.size();
-            if (size > 0 && autoScrollStatus) {
+            if (size > 0 && autoScrollMenuItem.isSelected()) {
                 outputText.scrollTo(size - 1);
             }
         });
@@ -284,14 +283,10 @@ public class MainController {
     @FXML
     private void changeAutoScrollStatus() {
         String text = "Auto scroll ";
-        if (!autoScrollStatus) {
+        if (autoScrollMenuItem.isSelected()) {
             autoScrollLabel.setText(text.concat("on"));
-            autoScrollMenuItem.setText(text.concat("on"));
-            autoScrollStatus = true;
         } else {
             autoScrollLabel.setText(text.concat("off"));
-            autoScrollMenuItem.setText(text.concat("off"));
-            autoScrollStatus = false;
         }
     }
 
