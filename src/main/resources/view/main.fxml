@@ -8,6 +8,7 @@
 
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import org.controlsfx.control.cell.ImageGridCell?>
 <GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <columnConstraints>
@@ -53,7 +54,8 @@
         </padding>
         <GridPane hgap="5">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="65.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="460.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="40.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
@@ -62,24 +64,37 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="60.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
+                   prefHeight="25.0" prefWidth="36.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
                    styleClass="label_field">
                 <padding>
                     <Insets left="0" top="0" right="5" bottom="0"/>
                 </padding>
             </Label>
+            <ImageGridCell fx:id="editCookie" GridPane.columnIndex="1" onMouseClicked="#setCookieForRequest">
+                <graphic>
+                    <ImageView fitHeight="27" fitWidth="27">
+                        <Image url="@/images/cookie-edit.png"/>
+                    </ImageView>
+                </graphic>
+                <padding>
+                    <Insets left="0" top="0" right="5" bottom="0"/>
+                </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ImageGridCell>
             <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
                        minWidth="-Infinity" prefHeight="25.0" prefWidth="460.0"
-                       promptText="ws://host.name/path" GridPane.columnIndex="1">
+                       promptText="ws://host.name/path" GridPane.columnIndex="2">
                 <padding>
                     <Insets left="5.0"/>
                 </padding>
             </TextField>
             <Circle fx:id="status" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
-                    styleClass="disconnected" GridPane.columnIndex="2" GridPane.halignment="CENTER"/>
+                    styleClass="disconnected" GridPane.columnIndex="3" GridPane.halignment="CENTER"/>
             <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                     minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                    text="Connect" GridPane.columnIndex="3" onAction="#actionConnectDisconnect">
+                    text="Connect" GridPane.columnIndex="4" onAction="#actionConnectDisconnect">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>

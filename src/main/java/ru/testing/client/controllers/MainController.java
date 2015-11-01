@@ -7,11 +7,15 @@ import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
+import org.controlsfx.control.cell.ImageGridCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.OutputFormat;
@@ -41,6 +45,7 @@ public class MainController {
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private Client client;
+    private String cookieForRequest = "";
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
@@ -53,6 +58,8 @@ public class MainController {
 
     @FXML
     private TextField serverUrl;
+    @FXML
+    private ImageGridCell editCookie;
     @FXML
     private Button connectBtn;
     @FXML
@@ -202,6 +209,12 @@ public class MainController {
                 addToFilterList();
             }
         }));
+    }
+
+    @FXML
+    private void setCookieForRequest() {
+        cookieForRequest = Dialogs.getTextInputDialog(cookieForRequest, "Set request cookie");
+        LOGGER.debug("Cookie value: {}", cookieForRequest);
     }
 
     /**
@@ -422,7 +435,7 @@ public class MainController {
      */
     private void startClient() {
         try {
-            client = new Client(new URI(serverUrl.getText()));
+            client = new Client(new URI(serverUrl.getText()), cookieForRequest);
             client.setMessageHandler(new MessageHandler.Whole<String>() {
 
                 @Override

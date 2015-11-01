@@ -95,7 +95,7 @@ public class MainApp extends Application {
     private static void startConsoleClient(String url) {
         try {
             LOGGER.info("Connecting to {} ...", url);
-            final Client client = new Client(new URI(url));
+            final Client client = new Client(new URI(url), "");
             String sendMessage;
             client.setMessageHandler(new MessageHandler.Whole<String>() {
 

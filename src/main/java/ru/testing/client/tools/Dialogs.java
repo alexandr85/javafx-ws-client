@@ -1,10 +1,7 @@
 package ru.testing.client.tools;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
@@ -101,5 +98,20 @@ public abstract class Dialogs {
             alert.setContentText(message);
             alert.showAndWait();
         });
+    }
+
+    /**
+     * Show text input dialog
+     * @param value String old value
+     * @param title String modal window title
+     * @return String
+     */
+    public static String getTextInputDialog(String value, String title) {
+        TextInputDialog dialog = new TextInputDialog(value);
+        dialog.setTitle(title);
+        dialog.setHeaderText(null);
+        dialog.setContentText("Please, enter value");
+        Optional<String> result = dialog.showAndWait();
+        return result.orElse(value);
     }
 }

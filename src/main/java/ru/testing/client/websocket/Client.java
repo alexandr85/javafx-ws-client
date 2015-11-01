@@ -9,7 +9,7 @@ import ru.testing.client.tools.Dialogs;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * WebSocket client
@@ -24,11 +24,18 @@ public class Client extends Endpoint{
      * Default client constructor
      * @param endpointURI java.net.URI
      */
-    public Client(final URI endpointURI) throws Exception {
+    public Client(final URI endpointURI, final String cookies) throws Exception {
         ClientManager client = ClientManager.createClient();
         final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
                 .decoders(Collections.singletonList(SimpleDecoder.class))
                 .encoders(Collections.singletonList(SimpleEncoder.class))
+                .configurator(new ClientEndpointConfig.Configurator() {
+
+                    @Override
+                    public void beforeRequest(Map<String, List<String>> headers) {
+                        headers.put("Cookie", Collections.singletonList(cookies));
+                    }
+                })
                 .build();
         LOGGER.info("Connecting to {} ...", endpointURI.getHost());
         client.connectToServer(this, config, endpointURI);
