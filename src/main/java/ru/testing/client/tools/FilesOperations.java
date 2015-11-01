@@ -1,4 +1,4 @@
-package ru.testing.client.gui.tools;
+package ru.testing.client.tools;
 
 import javafx.application.Platform;
 
@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 public class FilesOperations {
 
-    private static final String TEXT_FILE_NAME = "logs/output.txt";
+    private static final String TEXT_FILE_NAME = "output/output.txt";
 
     /**
      * Save text to file
@@ -25,14 +25,14 @@ public class FilesOperations {
             writer.write(text);
         }
         catch (IOException io) {
-            Platform.runLater(() -> Dialogs.getExceptionDialog(io));
+            Dialogs.getExceptionDialog(io);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                    Dialogs.getInfoDialog("Save successful");
+                    Dialogs.getInfoDialog(String.format("Save successful in file %s", TEXT_FILE_NAME));
                 } catch (Exception e) {
-                    Platform.runLater(() -> Dialogs.getExceptionDialog(e));
+                    Dialogs.getExceptionDialog(e);
                 }
             }
         }

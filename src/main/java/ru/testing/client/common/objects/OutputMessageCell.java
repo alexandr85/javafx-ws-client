@@ -1,13 +1,13 @@
-package ru.testing.client.gui.message;
+package ru.testing.client.common.objects;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import ru.testing.client.commons.MessageType;
-import ru.testing.client.commons.OutputFormat;
-import ru.testing.client.gui.tools.ContextMenuItems;
+import ru.testing.client.common.MessageType;
+import ru.testing.client.common.OutputFormat;
+import ru.testing.client.tools.ContextMenuItems;
 
 /**
  * Output message cell factory

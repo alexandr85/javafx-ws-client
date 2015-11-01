@@ -1,6 +1,6 @@
-package ru.testing.client.gui.message;
+package ru.testing.client.common.objects;
 
-import ru.testing.client.commons.MessageType;
+import ru.testing.client.common.MessageType;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

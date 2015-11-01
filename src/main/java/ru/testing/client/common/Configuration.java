@@ -1,4 +1,4 @@
-package ru.testing.client.commons;
+package ru.testing.client.common;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;

@@ -1,4 +1,4 @@
-package ru.testing.client.commons;
+package ru.testing.client.common;
 
 /**
  * Application types constants

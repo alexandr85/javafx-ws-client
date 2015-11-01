@@ -1,4 +1,4 @@
-package ru.testing.client.commons;
+package ru.testing.client.common;
 
 /**
  * Enum class for constant output message string format

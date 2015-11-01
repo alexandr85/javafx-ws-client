@@ -3,8 +3,12 @@
 .text-field,
 .label,
 .toolbar {
-    -fx-font-family: "Arial";
-    -fx-font-size: 12px;
+    -fx-font-family: 'Helvetica', Arial, sans-serif;
+    -fx-font-size: 13px;
+}
+
+.label_field {
+    -fx-font-family: 'Consolas', monospace;
 }
 
 .menu-bar * {
@@ -31,10 +35,11 @@
     -fx-faint-focus-color: transparent;
 }
 
-.history_list {
+.pop_over_list {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-border-radius: 2px;
+    -fx-padding: 7px 1px;
 }
 
 .connected {
@@ -56,6 +61,10 @@
 .cell:selected {
     -fx-background-color: #066EC1;
     -fx-font-weight: bold;
+}
+
+.separator {
+    -fx-padding: 2px 0;
 }
 
 /* Scroll bar style for all list view  */

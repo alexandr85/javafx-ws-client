@@ -9,13 +9,14 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.commons.ApplicationType;
-import ru.testing.client.commons.Configuration;
-import ru.testing.client.gui.controllers.MainController;
+import ru.testing.client.common.ApplicationType;
+import ru.testing.client.common.Configuration;
+import ru.testing.client.controllers.MainController;
 import ru.testing.client.websocket.Client;
 
 import javax.swing.*;
 import javax.websocket.MessageHandler;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Scanner;
@@ -127,17 +128,18 @@ public class MainApp extends Application {
     private void setApplicationIcon(Stage stage) {
         try {
             URL iconUrl = getClass().getResource(APP_ICON_URL);
-            Image image = new Image(iconUrl.toExternalForm());
-            if (image.getHeight() == 0) {
-                throw new Exception();
-            }
-            stage.getIcons().addAll(image);
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
                 java.awt.Image imageForMac = new ImageIcon(iconUrl).getImage();
                 com.apple.eawt.Application.getApplication().setDockIconImage(imageForMac);
+            } else {
+                Image image = new Image(iconUrl.toExternalForm());
+                if (image.getHeight() == 0) {
+                    throw new FileNotFoundException();
+                }
+                stage.getIcons().addAll(image);
             }
         } catch (Exception e) {
-            LOGGER.error("Icon was not found");
+            LOGGER.error(String.format("Error load application icon: %s", e.getMessage()));
         }
     }
 }

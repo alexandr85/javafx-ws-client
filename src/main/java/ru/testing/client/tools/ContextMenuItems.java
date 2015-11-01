@@ -1,13 +1,13 @@
-package ru.testing.client.gui.tools;
+package ru.testing.client.tools;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import org.controlsfx.control.PopOver;
-import ru.testing.client.gui.message.OutputMessage;
+import ru.testing.client.common.objects.OutputMessage;
 
 /**
  * Class collected other menu items
@@ -16,30 +16,24 @@ public class ContextMenuItems {
 
     /**
      * Menu item for clear all cell in list view
-     * @param list ObservableList<OutputMessage>
+     * @param list ObservableList
      * @return MenuItem
      */
-    public MenuItem clearListView(ObservableList<OutputMessage> list) {
+    public MenuItem clearListView(ObservableList list) {
         MenuItem deleteAll = new MenuItem("Clear all");
         deleteAll.setOnAction((event -> list.clear()));
         return deleteAll;
     }
 
     /**
-     * Clear history send message pop over list
-     * @param list ObservableList send message list
-     * @param popOver PopOver
-     * @param button ToggleButton
+     * Menu item for delete selected item cell
+     * @param cell ListCell
      * @return MenuItem
      */
-    public MenuItem clearHistoryList(ObservableList<String> list, PopOver popOver, ToggleButton button) {
-        MenuItem deleteAll = new MenuItem("Clear all");
-        deleteAll.setOnAction((event -> {
-            list.clear();
-            popOver.hide();
-            button.setDisable(true);
-        }));
-        return deleteAll;
+    public MenuItem clearPopOverCell(ListCell cell) {
+        MenuItem deleteCell = new MenuItem("Clear cell");
+        deleteCell.setOnAction(event -> cell.getListView().getItems().remove(cell.getIndex()));
+        return deleteCell;
     }
 
     /**
