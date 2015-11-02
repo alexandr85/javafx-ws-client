@@ -1,15 +1,15 @@
-package ru.testing.client.common;
+package ru.testing.client.common.message;
 
 /**
  * Enum class for constant output message string format
  */
-public enum OutputFormat {
+public enum OutputMessageFormat {
 
     DEFAULT("%-12s %s");
 
     String format;
 
-    OutputFormat(String format) {
+    OutputMessageFormat(String format) {
         this.format = format;
     }
 

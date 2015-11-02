@@ -1,9 +1,9 @@
-package ru.testing.client.common;
+package ru.testing.client.common.message;
 
 /**
  * Class described constant message type
  */
-public enum MessageType {
+public enum OutputMessageType {
     RECEIVED,
     SEND
 }

@@ -43,8 +43,20 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" text="Auto scroll" onAction="#changeAutoScrollStatus"/>
         </Menu>
         <Menu text="Profile">
-            <MenuItem mnemonicParsing="false" text="Save profile"/>
-            <MenuItem mnemonicParsing="false" text="Load profile" onAction="#loadProfileData"/>
+            <MenuItem mnemonicParsing="false" text="Save profile" onAction="#saveProfileData">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20">
+                        <Image url="@/images/profile-save.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" text="Load profile" onAction="#loadProfileData">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20">
+                        <Image url="@/images/profile-load.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
         </Menu>
     </MenuBar>
     <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
@@ -175,7 +187,7 @@
                     <RowConstraints/>
                 </rowConstraints>
                 <Label fx:id="autoScrollLabel" minHeight="-Infinity" minWidth="-Infinity"
-                              mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0"
+                              mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0"
                               text="Auto scroll off" textAlignment="CENTER" GridPane.columnIndex="0"
                               GridPane.halignment="CENTER"/>
                 <FlowPane alignment="CENTER_LEFT" disable="false" hgap="10.0" maxHeight="-Infinity"

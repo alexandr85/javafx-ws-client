@@ -1,6 +1,4 @@
-package ru.testing.client.common.objects;
-
-import ru.testing.client.common.MessageType;
+package ru.testing.client.common.message;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,9 +12,9 @@ public class OutputMessage {
     private static final String TIME_FORMAT = "HH:mm:ss.SSS";
     private Date time;
     private String message;
-    private MessageType type;
+    private OutputMessageType type;
 
-    public OutputMessage(MessageType type, String message) {
+    public OutputMessage(OutputMessageType type, String message) {
         Calendar calendar = Calendar.getInstance();
         this.type = type;
         this.time = calendar.getTime();
@@ -50,9 +48,9 @@ public class OutputMessage {
 
     /**
      * Get cell message type
-     * @return MessageType
+     * @return OutputMessageType
      */
-    public MessageType getMessageType() {
+    public OutputMessageType getMessageType() {
         return type;
     }
 }

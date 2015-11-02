@@ -1,13 +1,11 @@
 package ru.testing.client.tools;
 
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import ru.testing.client.common.objects.OutputMessage;
+import ru.testing.client.common.message.OutputMessage;
 
 /**
  * Class collected other menu items

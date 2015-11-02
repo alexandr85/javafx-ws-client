@@ -1,12 +1,10 @@
-package ru.testing.client.common.objects;
+package ru.testing.client.common.message;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import ru.testing.client.common.MessageType;
-import ru.testing.client.common.OutputFormat;
 import ru.testing.client.tools.ContextMenuItems;
 
 /**
@@ -28,9 +26,9 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
     protected void updateItem(OutputMessage message, boolean empty) {
         super.updateItem(message, empty);
         if (message != null) {
-            setText(String.format(OutputFormat.DEFAULT.getFormat(), message.getFormattedTime(), message.getMessage()));
+            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), message.getFormattedTime(), message.getMessage()));
             String imageUrl;
-            if (message.getMessageType() == MessageType.SEND) {
+            if (message.getMessageType() == OutputMessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
                 imageUrl = IMAGES_SEND;
             } else {
@@ -48,7 +46,7 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
     }
 
     /**
-     * Context menu for history pop over
+     * Context menu for output message view
      * @param cell ListCell string
      * @return ContextMenu
      */

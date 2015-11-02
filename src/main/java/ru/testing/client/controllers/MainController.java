@@ -18,21 +18,19 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.cell.ImageGridCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.OutputFormat;
-import ru.testing.client.common.objects.Profile;
-import ru.testing.client.tools.ContextMenuItems;
+import ru.testing.client.common.message.*;
+import ru.testing.client.common.profile.*;
 import ru.testing.client.tools.Dialogs;
-import ru.testing.client.common.MessageType;
-import ru.testing.client.common.objects.OutputMessage;
-import ru.testing.client.common.objects.OutputMessageCell;
 import ru.testing.client.tools.FilesOperations;
-import ru.testing.client.tools.profile.ProfileData;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * FXML controller for main page
@@ -270,7 +268,7 @@ public class MainController {
         String sendMsg = sendMsgTextField.getText();
         if (!sendMsg.isEmpty()) {
             sendMsgList.add(sendMsg);
-            addMessageToOutput(MessageType.SEND, sendMsg);
+            addMessageToOutput(OutputMessageType.SEND, sendMsg);
             if (client != null) {
                 try {
                     client.sendMessage(sendMsg);
@@ -336,7 +334,7 @@ public class MainController {
     private void saveOutputToFile() {
         StringBuilder builder = new StringBuilder();
         for (OutputMessage message : outputMessageList) {
-            builder.append(String.format(OutputFormat.DEFAULT.getFormat().concat("\n"),
+            builder.append(String.format(OutputMessageFormat.DEFAULT.getFormat().concat("\n"),
                     message.getFormattedTime(), message.getMessage()));
         }
         new FilesOperations().saveTextToFile(builder.toString());
@@ -347,28 +345,73 @@ public class MainController {
      */
     @FXML
     private void loadProfileData() {
-        Profile profile = new ProfileData().loadProfile();
+        Profile profile = new FilesOperations().loadProfileData();
         if (profile != null) {
-            serverUrl.setText(profile.getServerUrl());
-            if (profile.getHistoryItem().size() > 0) {
-                sendMsgList.clear();
-                sendMsgList.setAll(profile.getHistoryItem());
-                sendMsgHistoryBtn.setDisable(false);
+
+            // Set ws server url
+            serverUrl.setText(profile.getServer().getUrl());
+
+            // Set send history
+            if (profile.getSendHistoryData() != null) {
+                List<ItemElement> sendMessageList = profile.getSendHistoryData().getItem();
+                if (sendMessageList.size() > 0) {
+                    sendMsgList.clear();
+                    sendMsgList.addAll(sendMessageList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
+                    sendMsgHistoryBtn.setDisable(false);
+                }
             }
-            if (profile.isAutoScroll()) {
+
+            // Set auto scroll status
+            if (profile.getOutputData().isAutoScrollOn()) {
                 autoScrollMenuItem.setSelected(true);
                 changeAutoScrollStatus();
             }
-            if (profile.isFilter()) {
-                filterOnOffBtn.setSelected(true);
-                changeFilterStatus();
-            }
-            if (profile.getFilterItem().size() > 0) {
-                filterList.clear();
-                filterList.addAll(profile.getFilterItem());
+
+            // Set filter
+            if (profile.getFilterData() != null) {
+                if (profile.getFilterData().isFilterOn()) {
+                    filterOnOffBtn.setSelected(true);
+                    changeFilterStatus();
+                }
+                List<ItemElement> filterList = profile.getFilterData().getItem();
+                if (filterList != null && filterList.size() > 0) {
+                    this.filterList.clear();
+                    this.filterList.addAll(filterList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
+                }
             }
             Dialogs.getInfoDialog("Profile load successful");
         }
+    }
+
+    /**
+     * Save profile data to xml
+     */
+    @FXML
+    private void saveProfileData() {
+        Profile profile = new Profile();
+
+        // Save ws server url
+        profile.setServer(new ServerData(serverUrl.getText()));
+
+        // Save send history
+        if (sendMsgList.size() > 0) {
+            List<ItemElement> sendMessageList = new ArrayList<>();
+            sendMessageList.addAll(sendMsgList.stream().map(ItemElement::new).collect(Collectors.toList()));
+            profile.setSendHistoryData(new SendHistoryData(sendMessageList));
+        }
+
+        // Save auto scroll status
+        profile.setOutputData(new OutputData(autoScrollMenuItem.isSelected()));
+
+        // Save filter
+        FilterData filter = new FilterData(filterOnOffBtn.isSelected());
+        if (filterList.size() > 0) {
+            List<ItemElement> historyList = new ArrayList<>();
+            historyList.addAll(filterList.stream().map(ItemElement::new).collect(Collectors.toList()));
+            filter.setItem(historyList);
+        }
+        profile.setFilterData(filter);
+        new FilesOperations().saveProfileData(profile);
     }
 
     /**
@@ -384,24 +427,7 @@ public class MainController {
         list.setMaxWidth(300);
         list.getStyleClass().add("pop_over_list");
         list.setItems(sendMsgList);
-        list.setCellFactory(listView -> {
-            final ListCell<String> cell = new ListCell<>();
-            cell.textProperty().bind(cell.itemProperty());
-            cell.setOnMouseClicked(event -> {
-                if (event.getClickCount() > 1) {
-                    String cellText = cell.getText();
-                    if (cellText != null && !cellText.isEmpty() && !sendMsgTextField.isDisable()) {
-                        sendMsgTextField.setText(cell.getText());
-                        historyPopOver.hide();
-                    }
-                }
-            });
-            ContextMenu contextMenu = new ContextMenu();
-            contextMenu.getItems().add(new ContextMenuItems()
-                    .clearListView(sendMsgList));
-            cell.setOnContextMenuRequested((event -> cell.setContextMenu(contextMenu)));
-            return cell;
-        });
+        list.setCellFactory(listView -> new HistoryMessageCell(sendMsgList, sendMsgTextField, historyPopOver));
         historyPopOver.setContentNode(list);
     }
 
@@ -418,15 +444,7 @@ public class MainController {
         list.setMaxWidth(300);
         list.getStyleClass().add("pop_over_list");
         list.setItems(filterList);
-        list.setCellFactory(listView -> {
-            final ListCell<String> cell = new ListCell<>();
-            cell.textProperty().bind(cell.itemProperty());
-            ContextMenu contextMenu = new ContextMenu();
-            ContextMenuItems menuItems = new ContextMenuItems();
-            contextMenu.getItems().addAll(menuItems.clearPopOverCell(cell), menuItems.clearListView(filterList));
-            cell.setOnContextMenuRequested(event -> cell.setContextMenu(contextMenu));
-            return cell;
-        });
+        list.setCellFactory(listView -> new FilterCell(filterList));
         filterPopOver.setContentNode(list);
     }
 
@@ -443,12 +461,12 @@ public class MainController {
                     if (filterOnOffBtn.isSelected() && filterList.size() > 0) {
                         for (String filterItem : filterList) {
                             if (message.contains(filterItem)) {
-                                addMessageToOutput(MessageType.RECEIVED, message);
+                                addMessageToOutput(OutputMessageType.RECEIVED, message);
                                 break;
                             }
                         }
                     } else {
-                        addMessageToOutput(MessageType.RECEIVED, message);
+                        addMessageToOutput(OutputMessageType.RECEIVED, message);
                     }
                 }
             });
@@ -524,7 +542,7 @@ public class MainController {
      * @param type    Message type
      * @param message String message
      */
-    private void addMessageToOutput(MessageType type, String message) {
+    private void addMessageToOutput(OutputMessageType type, String message) {
         Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
     }
 
