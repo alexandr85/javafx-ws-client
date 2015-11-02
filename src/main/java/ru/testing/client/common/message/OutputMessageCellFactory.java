@@ -10,7 +10,7 @@ import ru.testing.client.tools.ContextMenuItems;
 /**
  * Output message cell factory
  */
-public class OutputMessageCell extends ListCell<OutputMessage> {
+public class OutputMessageCellFactory extends ListCell<OutputMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
     private static final String IMAGES_SEND = "/images/arrow-up.png";
@@ -18,7 +18,7 @@ public class OutputMessageCell extends ListCell<OutputMessage> {
     private ImageView imageView = new ImageView();
     private ObservableList<OutputMessage> list;
 
-    public OutputMessageCell(ObservableList<OutputMessage> list) {
+    public OutputMessageCellFactory(ObservableList<OutputMessage> list) {
         this.list = list;
     }
 

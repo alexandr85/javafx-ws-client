@@ -45,14 +45,14 @@
         <Menu text="Profile">
             <MenuItem mnemonicParsing="false" text="Save profile" onAction="#saveProfileData">
                 <graphic>
-                    <ImageView fitHeight="20" fitWidth="20">
+                    <ImageView fitHeight="16" fitWidth="16">
                         <Image url="@/images/profile-save.png"/>
                     </ImageView>
                 </graphic>
             </MenuItem>
             <MenuItem mnemonicParsing="false" text="Load profile" onAction="#loadProfileData">
                 <graphic>
-                    <ImageView fitHeight="20" fitWidth="20">
+                    <ImageView fitHeight="16" fitWidth="16">
                         <Image url="@/images/profile-load.png"/>
                     </ImageView>
                 </graphic>

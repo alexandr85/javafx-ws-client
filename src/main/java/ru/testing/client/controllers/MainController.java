@@ -100,7 +100,7 @@ public class MainController {
         // Update output message list view
         outputTextView.setItems(outputMessageList);
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        outputTextView.setCellFactory((listView) -> new OutputMessageCell(outputMessageList));
+        outputTextView.setCellFactory((listView) -> new OutputMessageCellFactory(outputMessageList));
         outputTextView.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
             c.next();
             final int size = outputMessageList.size();
@@ -135,7 +135,7 @@ public class MainController {
         });
         outputTextView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                OutputMessageCell cell = (OutputMessageCell) event.getPickResult().getIntersectedNode();
+                OutputMessageCellFactory cell = (OutputMessageCellFactory) event.getPickResult().getIntersectedNode();
                 outputTextView.getSelectionModel().clearSelection();
                 outputTextView.getSelectionModel().select(cell.getItem());
             }
@@ -347,39 +347,43 @@ public class MainController {
     private void loadProfileData() {
         Profile profile = new FilesOperations().loadProfileData();
         if (profile != null) {
+            try {
+                // Set ws server url
+                serverUrl.setText(profile.getServer().getUrl());
 
-            // Set ws server url
-            serverUrl.setText(profile.getServer().getUrl());
-
-            // Set send history
-            if (profile.getSendHistoryData() != null) {
-                List<ItemElement> sendMessageList = profile.getSendHistoryData().getItem();
-                if (sendMessageList.size() > 0) {
-                    sendMsgList.clear();
-                    sendMsgList.addAll(sendMessageList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
-                    sendMsgHistoryBtn.setDisable(false);
+                // Set send history
+                if (profile.getSendHistoryData() != null) {
+                    List<ItemElement> sendMessageList = profile.getSendHistoryData().getItem();
+                    if (sendMessageList.size() > 0) {
+                        sendMsgList.clear();
+                        sendMsgList.addAll(sendMessageList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
+                        sendMsgHistoryBtn.setDisable(false);
+                    }
                 }
-            }
 
-            // Set auto scroll status
-            if (profile.getOutputData().isAutoScrollOn()) {
-                autoScrollMenuItem.setSelected(true);
-                changeAutoScrollStatus();
-            }
+                // Set auto scroll status
+                if (profile.getOutputData().isAutoScrollOn()) {
+                    autoScrollMenuItem.setSelected(true);
+                    changeAutoScrollStatus();
+                }
 
-            // Set filter
-            if (profile.getFilterData() != null) {
-                if (profile.getFilterData().isFilterOn()) {
-                    filterOnOffBtn.setSelected(true);
-                    changeFilterStatus();
+                // Set filter
+                if (profile.getFilterData() != null) {
+                    if (profile.getFilterData().isFilterOn()) {
+                        filterOnOffBtn.setSelected(true);
+                        changeFilterStatus();
+                    }
+                    List<ItemElement> filterList = profile.getFilterData().getItem();
+                    if (filterList != null && filterList.size() > 0) {
+                        this.filterList.clear();
+                        this.filterList.addAll(filterList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
+                    }
                 }
-                List<ItemElement> filterList = profile.getFilterData().getItem();
-                if (filterList != null && filterList.size() > 0) {
-                    this.filterList.clear();
-                    this.filterList.addAll(filterList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
-                }
+                Dialogs.getInfoDialog("Profile load successful");
+            } catch (Exception e) {
+                LOGGER.error("Error loading profile.xml: {}", e.getMessage());
+                Dialogs.getExceptionDialog(e);
             }
-            Dialogs.getInfoDialog("Profile load successful");
         }
     }
 
@@ -427,7 +431,7 @@ public class MainController {
         list.setMaxWidth(300);
         list.getStyleClass().add("pop_over_list");
         list.setItems(sendMsgList);
-        list.setCellFactory(listView -> new HistoryMessageCell(sendMsgList, sendMsgTextField, historyPopOver));
+        list.setCellFactory(listView -> new SendHistoryCellFactory(sendMsgList, sendMsgTextField, historyPopOver));
         historyPopOver.setContentNode(list);
     }
 
@@ -444,7 +448,7 @@ public class MainController {
         list.setMaxWidth(300);
         list.getStyleClass().add("pop_over_list");
         list.setItems(filterList);
-        list.setCellFactory(listView -> new FilterCell(filterList));
+        list.setCellFactory(listView -> new FilterCellFactory(filterList));
         filterPopOver.setContentNode(list);
     }
 

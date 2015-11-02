@@ -8,11 +8,11 @@ import ru.testing.client.tools.ContextMenuItems;
 /**
  * Filter cell factory
  */
-public class FilterCell extends ListCell<String> {
+public class FilterCellFactory extends ListCell<String> {
 
     private ObservableList<String> list;
 
-    public FilterCell(ObservableList<String> list) {
+    public FilterCellFactory(ObservableList<String> list) {
         this.list = list;
     }
 
@@ -21,7 +21,7 @@ public class FilterCell extends ListCell<String> {
         super.updateItem(message, empty);
         if (message != null) {
             setText(message);
-            setContextMenu(getOutputContextMenu(this));
+            setContextMenu(getFilterContextMenu(this));
         } else {
             setText(null);
             setGraphic(null);
@@ -33,7 +33,7 @@ public class FilterCell extends ListCell<String> {
      * @param cell ListCell string
      * @return ContextMenu
      */
-    private ContextMenu getOutputContextMenu(ListCell<String> cell) {
+    private ContextMenu getFilterContextMenu(ListCell<String> cell) {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
