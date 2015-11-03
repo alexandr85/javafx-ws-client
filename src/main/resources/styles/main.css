@@ -71,7 +71,7 @@
     -fx-padding: 2px 0;
 }
 
-/* Scroll bar style for all list view  */
+/* Scroll bar style for all list view */
 .list-view .scroll-bar:horizontal .track,
 .list-view .scroll-bar:vertical .track {
     -fx-background-color: transparent;
@@ -84,8 +84,7 @@
 .list-view .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 0;
-    -fx-padding: 0 10 0 0;
-
+    -fx-padding: 10 0 0 0;
 }
 
 .list-view .scroll-bar:vertical .increment-button ,
@@ -101,11 +100,9 @@
     -fx-padding: 0;
 }
 
-
 .list-view .scroll-bar:horizontal .thumb,
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: derive(black,90%);
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
-
 }

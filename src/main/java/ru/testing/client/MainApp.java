@@ -127,17 +127,16 @@ public class MainApp extends Application {
      */
     private void setApplicationIcon(Stage stage) {
         try {
-            URL iconUrl = getClass().getResource(APP_ICON_URL);
             if (System.getProperty("os.name").toLowerCase().contains("mac")) {
-                java.awt.Image imageForMac = new ImageIcon(iconUrl).getImage();
+                java.awt.Image imageForMac = new ImageIcon(getClass().getResource("/images/icon-512.png")).getImage();
                 com.apple.eawt.Application.getApplication().setDockIconImage(imageForMac);
-            } else {
-                Image image = new Image(iconUrl.toExternalForm());
-                if (image.getHeight() == 0) {
-                    throw new FileNotFoundException();
-                }
-                stage.getIcons().addAll(image);
             }
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-16.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-32.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-64.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-128.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-256.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
         } catch (Exception e) {
             LOGGER.error(String.format("Error load application icon: %s", e.getMessage()));
         }

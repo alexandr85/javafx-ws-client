@@ -179,17 +179,15 @@
             </padding>
             <GridPane>
                 <columnConstraints>
-                    <ColumnConstraints prefWidth="110"/>
+                    <ColumnConstraints prefWidth="120" halignment="CENTER"/>
                     <ColumnConstraints minWidth="10.0"/>
                     <ColumnConstraints minWidth="40.0"/>
                 </columnConstraints>
                 <rowConstraints>
                     <RowConstraints/>
                 </rowConstraints>
-                <Label fx:id="autoScrollLabel" minHeight="-Infinity" minWidth="-Infinity"
-                              mnemonicParsing="false" prefHeight="25.0" prefWidth="85.0"
-                              text="Auto scroll off" textAlignment="CENTER" GridPane.columnIndex="0"
-                              GridPane.halignment="CENTER"/>
+                <Label fx:id="autoScrollLabel" mnemonicParsing="false" maxWidth="-Infinity" text="Auto scroll off"
+                       GridPane.columnIndex="0"/>
                 <FlowPane alignment="CENTER_LEFT" disable="false" hgap="10.0" maxHeight="-Infinity"
                           maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                           prefHeight="35.0" prefWidth="420.0" styleClass="filter_block"
