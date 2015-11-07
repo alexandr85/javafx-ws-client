@@ -1,5 +1,5 @@
-## ![](src/main/resources/images/icon.png?raw=true) javafx-ws-client
-*JavaFx application WebSocket client for testing*
+## ![](src/main/resources/images/icon-32.png?raw=true) javafx-ws-client
+*JavaFx application client for testing WebSocket*
 
 Dependencies:
 * java 1.8.0_40 or later
