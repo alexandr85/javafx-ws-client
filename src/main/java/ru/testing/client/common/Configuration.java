@@ -17,7 +17,7 @@ public class Configuration {
             names = {"-a", "--app-type"},
             description = "Set application type"
     )
-    private ApplicationType type = ApplicationType.gui;
+    private ApplicationType type = ApplicationType.GUI;
 
     /**
      * Set application url for console application type

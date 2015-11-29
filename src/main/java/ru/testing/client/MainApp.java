@@ -16,9 +16,7 @@ import ru.testing.client.websocket.Client;
 
 import javax.swing.*;
 import javax.websocket.MessageHandler;
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Scanner;
 
 /**
@@ -50,7 +48,7 @@ public class MainApp extends Application {
             }
 
             // select application type
-            if (config.getType() == ApplicationType.console) {
+            if (config.getType() == ApplicationType.CONSOLE) {
                 if (config.getServerUrl().isEmpty()) {
                     LOGGER.error("WebSocket server url required");
                     parser.usage();

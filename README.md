@@ -8,6 +8,6 @@ Dependencies:
 Create runnable jar file:
 
 ````
-{project.path}$ mvn clean assembly:assembly
+{project.path}$ mvn package
 ````
 Can find created file on path: *target/ws.client-${version}.jar*

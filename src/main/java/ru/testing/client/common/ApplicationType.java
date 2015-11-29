@@ -5,5 +5,10 @@ package ru.testing.client.common;
  */
 public enum ApplicationType {
 
-    console, gui
+    CONSOLE, GUI;
+
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
 }
