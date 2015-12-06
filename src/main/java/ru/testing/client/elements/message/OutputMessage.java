@@ -1,4 +1,4 @@
-package ru.testing.client.common.message;
+package ru.testing.client.elements.message;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

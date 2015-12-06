@@ -1,9 +1,9 @@
-package ru.testing.client.common.message;
+package ru.testing.client.elements.message;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
-import ru.testing.client.tools.ContextMenuItems;
+import ru.testing.client.elements.ContextMenuItems;
 
 /**
  * Filter cell factory

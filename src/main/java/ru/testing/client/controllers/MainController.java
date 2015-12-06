@@ -1,27 +1,31 @@
 package ru.testing.client.controllers;
 
+import javafx.fxml.FXML;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
+import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.cell.ImageGridCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.message.*;
+import ru.testing.client.elements.message.*;
 import ru.testing.client.common.profile.*;
-import ru.testing.client.tools.Dialogs;
-import ru.testing.client.tools.FilesOperations;
+import ru.testing.client.elements.Dialogs;
+import ru.testing.client.common.FilesOperations;
+import ru.testing.client.common.Utils;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
@@ -29,7 +33,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +78,10 @@ public class MainController {
     @FXML
     private CheckMenuItem autoScrollMenuItem;
     @FXML
+    private CheckMenuItem showFilter;
+    @FXML
+    private VBox filterBar;
+    @FXML
     private ToggleButton filterOnOffBtn;
     @FXML
     private TextField filterTextField;
@@ -83,7 +90,13 @@ public class MainController {
     @FXML
     private ToggleButton filterListBtn;
     @FXML
+    private Label filterStatusLabel;
+    @FXML
     private Label timeDiffLabel;
+    @FXML
+    private CheckMenuItem showStatusBar;
+    @FXML
+    private StatusBar statusBar;
 
     /**
      * Method run then this controller initialize
@@ -101,60 +114,33 @@ public class MainController {
         outputTextView.setItems(outputMessageList);
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputTextView.setCellFactory((listView) -> new OutputMessageCellFactory(outputMessageList));
-        outputTextView.getItems().addListener((ListChangeListener<OutputMessage>) c -> {
-            c.next();
-            final int size = outputMessageList.size();
-            if (size > 0 && autoScrollMenuItem.isSelected()) {
-                outputTextView.scrollTo(size - 1);
-            }
-        });
-        outputTextView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<OutputMessage>) c -> {
-            if (c.next()) {
-                int selectedSize = c.getList().size();
-                if (selectedSize > 1) {
-                    long timeFirst = c.getList().get(0).getMilliseconds();
-                    long timeLast = c.getList().get(selectedSize - 1).getMilliseconds();
-                    long timeDiff = timeLast - timeFirst;
-                    long ms = timeDiff % 1000;
-                    long sec = TimeUnit.MILLISECONDS.toSeconds(timeDiff) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(timeDiff));
-                    long min = TimeUnit.MILLISECONDS.toMinutes(timeDiff);
-                    if (min > 29) {
-                        timeDiffLabel.setText("Time diff > 30m");
-                    } else if (min > 0) {
-                        timeDiffLabel.setText(String.format("%dm %ds %dms", min, sec, ms));
-                    } else if (sec > 0) {
-                        timeDiffLabel.setText(String.format("%ds %dms", sec, ms));
-                    } else {
-                        timeDiffLabel.setText(String.format("%dms", ms));
-                    }
-                } else {
-                    timeDiffLabel.setText("");
-                }
-            }
-        });
+        outputTextView.getItems().addListener(this::scrollToLastMessage);
+        outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
         outputTextView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                OutputMessageCellFactory cell = (OutputMessageCellFactory) event.getPickResult().getIntersectedNode();
-                outputTextView.getSelectionModel().clearSelection();
-                outputTextView.getSelectionModel().select(cell.getItem());
+                Node cell = event.getPickResult().getIntersectedNode();
+                if (cell instanceof OutputMessageCellFactory) {
+                    OutputMessageCellFactory cellFactory = (OutputMessageCellFactory) cell;
+                    outputTextView.getSelectionModel().clearSelection();
+                    outputTextView.getSelectionModel().select(cellFactory.getItem());
+                }
             }
         });
 
         // Connect or disconnect with websocket server
-        serverUrl.setOnKeyPressed((keyEvent) -> {
+        serverUrl.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 actionConnectDisconnect();
             }
         });
 
         // Send message
-        sendMsgTextField.setOnKeyPressed((keyEvent) -> {
+        sendMsgTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 sendWebsocketMessage();
             }
         });
-        sendMsgHistoryBtn.setOnAction((event -> {
+        sendMsgHistoryBtn.setOnAction(event -> {
             if (sendMsgHistoryBtn.isSelected()) {
                 if (historyPopOver == null) {
                     getHistoryPopOver();
@@ -163,7 +149,7 @@ public class MainController {
             } else {
                 historyPopOver.hide();
             }
-        }));
+        });
         sendMsgList.addListener((ListChangeListener<String>) c -> {
             if (c.next()) {
                 if (sendMsgList.size() > 0) {
@@ -202,11 +188,11 @@ public class MainController {
                 }
             }
         });
-        filterTextField.setOnKeyPressed((keyEvent -> {
+        filterTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
             }
-        }));
+        });
     }
 
     @FXML
@@ -286,19 +272,22 @@ public class MainController {
 
     @FXML
     private void changeFilterStatus() {
-        String btnText = "Filter ";
+        String text = "Filter ";
         if (filterOnOffBtn.isSelected()) {
             filterTextField.setDisable(false);
             filterAddBtn.setDisable(false);
             if (filterList.size() > 0) {
                 filterListBtn.setDisable(false);
             }
-            filterOnOffBtn.setText(btnText.concat("on"));
+            filterOnOffBtn.setText(text.concat("on"));
+            filterStatusLabel.setText(text.concat("on"));
+            filterTextField.requestFocus();
         } else {
             filterTextField.setDisable(true);
             filterAddBtn.setDisable(true);
             filterListBtn.setDisable(true);
-            filterOnOffBtn.setText(btnText.concat("off"));
+            filterOnOffBtn.setText(text.concat("off"));
+            filterStatusLabel.setText(text.concat("off"));
         }
     }
 
@@ -416,6 +405,26 @@ public class MainController {
         }
         profile.setFilterData(filter);
         new FilesOperations().saveProfileData(profile);
+    }
+
+    /**
+     * Show or hide status bar
+     */
+    @FXML
+    private void changesStatusBarVisible() {
+        boolean status = showStatusBar.isSelected();
+        statusBar.setVisible(status);
+        statusBar.setManaged(status);
+    }
+
+    /**
+     * Show or hide filter bar
+     */
+    @FXML
+    private void changeFilterVisible() {
+        boolean status = showFilter.isSelected();
+        filterBar.setVisible(status);
+        filterBar.setManaged(status);
     }
 
     /**
@@ -548,6 +557,38 @@ public class MainController {
      */
     private void addMessageToOutput(OutputMessageType type, String message) {
         Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
+    }
+
+    /**
+     * Scroll to last list message after new message added
+     *
+     * @param change ListChangeListener.Change<? extends OutputMessage>
+     */
+    private void scrollToLastMessage(ListChangeListener.Change<? extends OutputMessage> change) {
+        if (change.next()) {
+            final int size = outputMessageList.size();
+            if (size > 0 && autoScrollMenuItem.isSelected()) {
+                outputTextView.scrollTo(size - 1);
+            }
+        }
+    }
+
+    /**
+     * Show time diff between first and last selected message
+     *
+     * @param change ListChangeListener.Change<? extends OutputMessage>
+     */
+    private void selectedActions(ListChangeListener.Change<? extends OutputMessage> change) {
+        if (change.next()) {
+            int selectedSize = change.getList().size();
+            if (selectedSize > 1 && change.wasAdded()) {
+                long timeFirst = change.getList().get(0).getMilliseconds();
+                long timeLast = change.getList().get(selectedSize - 1).getMilliseconds();
+                timeDiffLabel.setText(Utils.getFormattedDiffTime(timeFirst, timeLast));
+            } else {
+                timeDiffLabel.setText("");
+            }
+        }
     }
 
     /**

@@ -1,11 +1,11 @@
-package ru.testing.client.common.message;
+package ru.testing.client.elements.message;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.PopOver;
-import ru.testing.client.tools.ContextMenuItems;
+import ru.testing.client.elements.ContextMenuItems;
 
 /**
  * History send message cell factory

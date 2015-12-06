@@ -1,11 +1,12 @@
-package ru.testing.client.tools;
+package ru.testing.client.elements;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import ru.testing.client.common.message.OutputMessage;
+import ru.testing.client.common.FilesOperations;
+import ru.testing.client.elements.message.OutputMessage;
 
 /**
  * Class collected other menu items
@@ -19,7 +20,7 @@ public class ContextMenuItems {
      */
     public MenuItem clearListView(ObservableList list) {
         MenuItem deleteAll = new MenuItem("Clear all");
-        deleteAll.setOnAction((event -> list.clear()));
+        deleteAll.setOnAction(event -> list.clear());
         return deleteAll;
     }
 
@@ -41,12 +42,12 @@ public class ContextMenuItems {
      */
     public MenuItem getCopyCellAll(ListCell<OutputMessage> cell) {
         MenuItem copyItem = new MenuItem("Copy cell");
-        copyItem.setOnAction((event -> {
+        copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
             content.putString(cell.getText());
             clipboard.setContent(content);
-        }));
+        });
         return copyItem;
     }
 
@@ -57,12 +58,12 @@ public class ContextMenuItems {
      */
     public MenuItem getCopyCellMessage(ListCell<OutputMessage> cell) {
         MenuItem copyItem = new MenuItem("Copy message");
-        copyItem.setOnAction((event -> {
+        copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
             content.putString(cell.getItem().getMessage());
             clipboard.setContent(content);
-        }));
+        });
         return copyItem;
     }
 
@@ -73,12 +74,12 @@ public class ContextMenuItems {
      */
     public MenuItem getCopyCellTime(ListCell<OutputMessage> cell) {
         MenuItem copyItem = new MenuItem("Copy time");
-        copyItem.setOnAction((event -> {
+        copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
             content.putString(cell.getItem().getFormattedTime());
             clipboard.setContent(content);
-        }));
+        });
         return copyItem;
     }
 
@@ -89,7 +90,7 @@ public class ContextMenuItems {
      */
     public MenuItem saveMessageToFile(ListCell<OutputMessage> cell) {
         MenuItem saveFileItem = new MenuItem("Save cell to file");
-        saveFileItem.setOnAction((event -> new FilesOperations().saveTextToFile(cell.getText())));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(cell.getText()));
         return saveFileItem;
     }
 }

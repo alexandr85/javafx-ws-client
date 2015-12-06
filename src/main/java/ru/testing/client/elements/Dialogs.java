@@ -1,4 +1,4 @@
-package ru.testing.client.tools;
+package ru.testing.client.elements;
 
 import javafx.application.Platform;
 import javafx.scene.control.*;

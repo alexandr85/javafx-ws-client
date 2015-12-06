@@ -1,9 +1,10 @@
-package ru.testing.client.tools;
+package ru.testing.client.common;
 
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.profile.Profile;
+import ru.testing.client.elements.Dialogs;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,7 +12,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * Tools for file operations

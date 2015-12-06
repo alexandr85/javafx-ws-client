@@ -1,4 +1,4 @@
-package ru.testing.client.common.message;
+package ru.testing.client.elements.message;
 
 /**
  * Class described constant message type

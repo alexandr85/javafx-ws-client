@@ -27,7 +27,6 @@ public class MainApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
-    private static final String APP_ICON_URL = "/images/icon.png";
 
     /**
      * Entry point to application
