@@ -3,8 +3,6 @@ package ru.testing.client.elements.message;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**
@@ -13,9 +11,6 @@ import ru.testing.client.elements.ContextMenuItems;
 public class OutputMessageCellFactory extends ListCell<OutputMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
-    private static final String IMAGES_SEND = "/images/arrow-up.png";
-    private static final String IMAGES_RECEIVED = "/images/arrow-down.png";
-    private ImageView imageView = new ImageView();
     private ObservableList<OutputMessage> list;
 
     public OutputMessageCellFactory(ObservableList<OutputMessage> list) {
@@ -27,16 +22,11 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
         super.updateItem(message, empty);
         if (message != null) {
             setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), message.getFormattedTime(), message.getMessage()));
-            String imageUrl;
             if (message.getMessageType() == OutputMessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
-                imageUrl = IMAGES_SEND;
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
-                imageUrl = IMAGES_RECEIVED;
             }
-            imageView.setImage(new Image(getClass().getResource(imageUrl).toExternalForm(), false));
-            setGraphic(imageView);
             setContextMenu(getOutputContextMenu(this));
         } else {
             setText(null);

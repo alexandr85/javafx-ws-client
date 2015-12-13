@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="200.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          stylesheets="/styles/http-settings.css">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
+        <padding>
+            <Insets top="7" bottom="7"/>
+        </padding>
+        <TextField fx:id="headerName" promptText="Header name" prefWidth="100"/>
+        <TextField fx:id="headerValue" promptText="Header value" prefWidth="150"/>
+        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                prefWidth="25.0" onAction="#addHeader">
+            <graphic>
+                <ImageView>
+                    <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
+                </ImageView>
+            </graphic>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </FlowPane>
+    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" fillWidth="true"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS" fillHeight="true"/>
+        </rowConstraints>
+        <GridPane.margin>
+            <Insets bottom="3.0" left="7.0" right="7.0"/>
+        </GridPane.margin>
+        <Label fx:id="noHeadersLabel" text="No custom headers" alignment="CENTER" prefHeight="140" prefWidth="300"/>
+        <ListView fx:id="headerList" visible="false" managed="false" prefHeight="150.0"/>
+    </GridPane>
+</GridPane>

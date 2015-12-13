@@ -75,7 +75,6 @@ public class MainApp extends Application {
         loader.setController(new MainController(primaryStage));
         Parent root = loader.load();
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(this.getClass().getResource("/styles/main.css").toExternalForm());
         setApplicationIcon(primaryStage);
         primaryStage.setTitle("WebSocket client");
         primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
@@ -92,7 +91,8 @@ public class MainApp extends Application {
     private static void startConsoleClient(String url) {
         try {
             LOGGER.info("Connecting to {} ...", url);
-            final Client client = new Client(new URI(url), "");
+            final Client client = new Client();
+            client.setEndpointURI(new URI(url));
             String sendMessage;
             client.setMessageHandler(new MessageHandler.Whole<String>() {
 

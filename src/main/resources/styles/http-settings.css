@@ -7,52 +7,9 @@
     -fx-font-size: 13px;
 }
 
-.label_field {
-    -fx-font-family: 'Consolas', monospace;
-}
-
-.menu-bar * {
-    -fx-font-size: 12px;
-    -fx-text-fill: black;
-}
-
-.menu-bar .menu * {
-    -fx-cursor: hand;
-}
-
-.output_grid {
-     -fx-border-color: #C5C5C5;
-     -fx-border-width: 1px;
-     -fx-border-radius: 3px;
-}
-
-.filter_block {
-    -fx-background-color: #DEDEDE;
-    -fx-border-color: #C5C5C5;
-    -fx-border-width: 1px;
-}
-
-.output_text {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-}
-
-.pop_over_list {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-radius: 2px;
-    -fx-padding: 7px 1px;
-}
-
-.connected {
-    -fx-fill: #5CB85C;
-}
-
-.disconnected {
-    -fx-fill: #D9534F;
-}
-
 .list-cell {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
     -fx-font-family: "Courier New";
 }
 
@@ -61,12 +18,8 @@
     -fx-text-fill: black;
 }
 
-.message_send {
-    -fx-background-color: #C9F8D4;
-}
-
 .cell:selected {
-    -fx-background-color: #066EC1;
+    -fx-background-color: #6DBCFC;
     -fx-font-weight: bold;
 }
 

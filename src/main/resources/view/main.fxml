@@ -8,10 +8,10 @@
 
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import org.controlsfx.control.cell.ImageGridCell?>
 <?import org.controlsfx.control.StatusBar?>
 <GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-          prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+          prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          stylesheets="/styles/main.css">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
     </columnConstraints>
@@ -33,6 +33,21 @@
                 </graphic>
             </MenuItem>
             <SeparatorMenuItem/>
+            <MenuItem mnemonicParsing="false" text="Load session" onAction="#loadProfileData">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/data-load.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" text="Save session" onAction="#saveProfileData">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/data-save.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <SeparatorMenuItem/>
             <MenuItem mnemonicParsing="false" text="Exit" onAction="#exitApplication">
                 <graphic>
                     <ImageView>
@@ -41,26 +56,10 @@
                 </graphic>
             </MenuItem>
         </Menu>
-        <Menu text="View">
+        <Menu text="Settings">
+            <CheckMenuItem fx:id="showStatusBar" text="Status bar" selected="true" onAction="#changesStatusBarVisible"/>
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll" onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
-            <CheckMenuItem fx:id="showStatusBar" text="Status bar" selected="true" onAction="#changesStatusBarVisible"/>
-        </Menu>
-        <Menu text="Profile">
-            <MenuItem mnemonicParsing="false" text="Save profile" onAction="#saveProfileData">
-                <graphic>
-                    <ImageView fitHeight="16" fitWidth="16">
-                        <Image url="@/images/profile-save.png"/>
-                    </ImageView>
-                </graphic>
-            </MenuItem>
-            <MenuItem mnemonicParsing="false" text="Load profile" onAction="#loadProfileData">
-                <graphic>
-                    <ImageView fitHeight="16" fitWidth="16">
-                        <Image url="@/images/profile-load.png"/>
-                    </ImageView>
-                </graphic>
-            </MenuItem>
         </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
@@ -86,19 +85,21 @@
                     <Insets left="0" top="0" right="5" bottom="0"/>
                 </padding>
             </Label>
-            <ImageGridCell fx:id="editCookie" GridPane.columnIndex="1" onMouseClicked="#setCookieForRequest">
+            <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1"
+                          prefHeight="25.0" prefWidth="25.0" text="" minHeight="-Infinity" minWidth="-Infinity"
+                          mnemonicParsing="false" contentDisplay="CENTER">
+                <tooltip>
+                    <Tooltip text="Set cookie data"/>
+                </tooltip>
                 <graphic>
-                    <ImageView fitHeight="27" fitWidth="27">
-                        <Image url="@/images/cookie-edit.png"/>
+                    <ImageView>
+                        <Image url="@/images/http-setting.png"/>
                     </ImageView>
                 </graphic>
-                <padding>
-                    <Insets left="0" top="0" right="5" bottom="0"/>
-                </padding>
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
-            </ImageGridCell>
+            </ToggleButton>
             <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
                        minWidth="-Infinity" prefHeight="25.0" prefWidth="505.0"
                        promptText="ws://host.name/path" GridPane.columnIndex="2">
@@ -108,7 +109,7 @@
             </TextField>
             <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                     minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                    text="Connect" GridPane.columnIndex="4" onAction="#actionConnectDisconnect">
+                    text="Connect" GridPane.columnIndex="4" onAction="#connectDisconnectAction">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
@@ -173,67 +174,122 @@
         <GridPane.margin>
             <Insets bottom="9.0" left="7.0" right="7.0" top="7.0"/>
         </GridPane.margin>
-        <ListView fx:id="outputTextView" editable="false" prefHeight="100.0" prefWidth="200.0"
+        <ListView fx:id="outputTextView" GridPane.rowIndex="0" editable="false" prefHeight="100.0" prefWidth="200.0"
                   styleClass="output_text"/>
-        <VBox GridPane.rowIndex="1" fx:id="filterBar" visible="false" managed="false">
-            <FlowPane alignment="CENTER" hgap="15.0" maxHeight="-Infinity" maxWidth="Infinity"
-                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="430.0"
-                      styleClass="filter_block" GridPane.columnIndex="1">
-                <padding>
-                    <Insets bottom="2"/>
-                </padding>
-                <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                              prefHeight="25.0" prefWidth="100.0" text="Filter off" textAlignment="CENTER"
-                              onAction="#changeFilterStatus">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </ToggleButton>
-                <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
-                           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                           prefHeight="25.0" prefWidth="150.0"/>
-                <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity"
-                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                        prefWidth="70.0" text="Add" onMouseClicked="#addToFilterList">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
-                              minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                              prefWidth="70.0" text="List">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </ToggleButton>
-            </FlowPane>
-        </VBox>
+        <FlowPane fx:id="filterBar" GridPane.rowIndex="1"  visible="false" managed="false" alignment="CENTER" hgap="15.0"
+                  maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
+                  prefWidth="480.0" styleClass="filter_block">
+            <padding>
+                <Insets bottom="2" left="100"/>
+            </padding>
+            <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                          prefHeight="25.0" prefWidth="25.0" textAlignment="CENTER"
+                          onAction="#changeFilterStatus">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/filter-off.png"/>
+                    </ImageView>
+                </graphic>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ToggleButton>
+            <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
+                       maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                       prefHeight="25.0" prefWidth="200.0"/>
+            <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity"
+                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                    prefWidth="25.0" onMouseClicked="#addToFilterList">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
+                    </ImageView>
+                </graphic>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+            <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
+                          minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                          prefWidth="25.0" text="">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
+                    </ImageView>
+                </graphic>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </ToggleButton>
+            <Label fx:id="filterCount" minWidth="100" maxWidth="100"/>
+        </FlowPane>
     </GridPane>
     <StatusBar maxHeight="25" GridPane.rowIndex="4" fx:id="statusBar" text="">
         <padding>
             <Insets bottom="3" top="4" left="15" right="15"/>
         </padding>
         <leftItems>
-            <Label fx:id="autoScrollLabel" mnemonicParsing="false" maxWidth="-Infinity" text="Auto scroll on">
+            <Label fx:id="autoScrollLabel" mnemonicParsing="false" maxWidth="-Infinity" text="auto scroll"
+                   contentDisplay="RIGHT">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/turn-on.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Auto scroll status"/>
+                </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
                 </padding>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="filterStatusLabel" mnemonicParsing="false" maxWidth="-Infinity" text="Filter off">
+            <Label fx:id="filterStatusLabel" mnemonicParsing="false" maxWidth="-Infinity" text="filter"
+                   contentDisplay="RIGHT">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/turn-off.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Filter status"/>
+                </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
                 </padding>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="timeDiffLabel" GridPane.columnIndex="2" GridPane.halignment="LEFT">
+            <Label fx:id="timeDiffLabel" mnemonicParsing="false" maxWidth="-Infinity">
+                <tooltip>
+                    <Tooltip text="Time difference"/>
+                </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
                 </padding>
             </Label>
         </leftItems>
         <rightItems>
-            <Circle fx:id="status" radius="10.0" stroke="#fa20201f" strokeType="INSIDE" styleClass="disconnected"/>
+            <Label fx:id="outputMsgCount" mnemonicParsing="false" maxWidth="-Infinity" text="0/0">
+                <tooltip>
+                    <Tooltip text="All / Selected messages"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="headerCount" mnemonicParsing="false" maxWidth="-Infinity" text="0">
+                <tooltip>
+                    <Tooltip text="Custom header"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <VBox alignment="CENTER" prefWidth="40">
+                <Circle fx:id="connectStatus" radius="10.0" stroke="#fa20201f" strokeType="INSIDE" styleClass="disconnected"/>
+            </VBox>
         </rightItems>
     </StatusBar>
 </GridPane>

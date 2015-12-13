@@ -6,21 +6,24 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.StatusBar;
-import org.controlsfx.control.cell.ImageGridCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.message.*;
 import ru.testing.client.common.profile.*;
 import ru.testing.client.elements.Dialogs;
@@ -46,10 +49,11 @@ public class MainController {
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private Client client;
-    private String cookieForRequest = "";
+    private List<Header> headers;
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
+    private PopOver httpSettingPopOver;
     private PopOver historyPopOver;
     private PopOver filterPopOver;
 
@@ -57,52 +61,85 @@ public class MainController {
         this.mainStage = mainStage;
     }
 
+    /**
+     * Menu buttons
+     */
+    @FXML
+    private CheckMenuItem showStatusBar;
+    @FXML
+    private CheckMenuItem autoScrollMenuItem;
+    @FXML
+    private CheckMenuItem showFilter;
+
+    /**
+     * Text fields
+     */
     @FXML
     private TextField serverUrl;
     @FXML
-    private ImageGridCell editCookie;
+    protected TextField sendMsgTextField;
+    @FXML
+    private TextField filterTextField;
+
+    /**
+     * Main buttons
+     */
+    @FXML
+    private ToggleButton httpSettings;
     @FXML
     private Button connectBtn;
-    @FXML
-    private Circle status;
-    @FXML
-    protected TextField sendMsgTextField;
     @FXML
     private Button messageSendBtn;
     @FXML
     protected ToggleButton sendMsgHistoryBtn;
     @FXML
-    private ListView<OutputMessage> outputTextView;
-    @FXML
-    private Label autoScrollLabel;
-    @FXML
-    private CheckMenuItem autoScrollMenuItem;
-    @FXML
-    private CheckMenuItem showFilter;
-    @FXML
-    private VBox filterBar;
-    @FXML
-    private ToggleButton filterOnOffBtn;
-    @FXML
-    private TextField filterTextField;
-    @FXML
     private Button filterAddBtn;
     @FXML
     private ToggleButton filterListBtn;
+    @FXML
+    private ToggleButton filterOnOffBtn;
+
+    /**
+     * List views
+     */
+    @FXML
+    private ListView<OutputMessage> outputTextView;
+
+    /**
+     * Labels
+     */
     @FXML
     private Label filterStatusLabel;
     @FXML
     private Label timeDiffLabel;
     @FXML
-    private CheckMenuItem showStatusBar;
+    private Label autoScrollLabel;
+    @FXML
+    private Label filterCount;
+    @FXML
+    private Label outputMsgCount;
+    @FXML
+    private Label headerCount;
+
+    /**
+     * Other elements
+     */
     @FXML
     private StatusBar statusBar;
+    @FXML
+    private FlowPane filterBar;
+    @FXML
+    private Circle connectStatus;
+
 
     /**
      * Method run then this controller initialize
      */
     @FXML
     private void initialize() {
+
+        // Default focus request
+        Platform.runLater(() -> outputTextView.requestFocus());
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -113,8 +150,8 @@ public class MainController {
         // Update output message list view
         outputTextView.setItems(outputMessageList);
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        outputTextView.setCellFactory((listView) -> new OutputMessageCellFactory(outputMessageList));
-        outputTextView.getItems().addListener(this::scrollToLastMessage);
+        outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList));
+        outputTextView.getItems().addListener(this::outputMessageListener);
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
         outputTextView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
@@ -127,10 +164,22 @@ public class MainController {
             }
         });
 
+        // Http setting pop over
+        httpSettings.setOnAction(event -> {
+            if (httpSettings.isSelected()) {
+                if (httpSettingPopOver == null) {
+                    getHttpSettingsPopOver();
+                }
+                httpSettingPopOver.show(httpSettings, -7);
+            } else {
+                httpSettingPopOver.hide();
+            }
+        });
+
         // Connect or disconnect with websocket server
         serverUrl.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                actionConnectDisconnect();
+                connectDisconnectAction();
             }
         });
 
@@ -145,7 +194,7 @@ public class MainController {
                 if (historyPopOver == null) {
                     getHistoryPopOver();
                 }
-                historyPopOver.show(sendMsgHistoryBtn, -10);
+                historyPopOver.show(sendMsgHistoryBtn, -7);
             } else {
                 historyPopOver.hide();
             }
@@ -177,14 +226,17 @@ public class MainController {
         });
         filterList.addListener((ListChangeListener<String>) c -> {
             if (c.next()) {
-                if (filterList.size() > 0 && filterOnOffBtn.isSelected()) {
+                int size = filterList.size();
+                if (size > 0 && filterOnOffBtn.isSelected()) {
                     filterListBtn.setDisable(false);
+                    filterCount.setText(String.valueOf(size));
                 } else {
                     filterListBtn.setDisable(true);
                     filterListBtn.setSelected(false);
                     if (filterPopOver != null) {
                         filterPopOver.hide();
                     }
+                    filterCount.setText("");
                 }
             }
         });
@@ -193,12 +245,6 @@ public class MainController {
                 addToFilterList();
             }
         });
-    }
-
-    @FXML
-    private void setCookieForRequest() {
-        cookieForRequest = Dialogs.getTextInputDialog(cookieForRequest, "Set request cookie");
-        LOGGER.debug("Cookie value: {}", cookieForRequest);
     }
 
     /**
@@ -218,7 +264,7 @@ public class MainController {
      * or disconnect from websocket server if connectionStatus = true
      */
     @FXML
-    private void actionConnectDisconnect() {
+    private void connectDisconnectAction() {
         if (connectionStatus) {
             try {
                 client.closeConnection();
@@ -272,22 +318,18 @@ public class MainController {
 
     @FXML
     private void changeFilterStatus() {
-        String text = "Filter ";
         if (filterOnOffBtn.isSelected()) {
-            filterTextField.setDisable(false);
+            filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
             filterAddBtn.setDisable(false);
-            if (filterList.size() > 0) {
-                filterListBtn.setDisable(false);
-            }
-            filterOnOffBtn.setText(text.concat("on"));
-            filterStatusLabel.setText(text.concat("on"));
+            filterTextField.setDisable(false);
             filterTextField.requestFocus();
+            filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
         } else {
+            filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
             filterTextField.setDisable(true);
             filterAddBtn.setDisable(true);
             filterListBtn.setDisable(true);
-            filterOnOffBtn.setText(text.concat("off"));
-            filterStatusLabel.setText(text.concat("off"));
+            filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
         }
     }
 
@@ -308,11 +350,10 @@ public class MainController {
      */
     @FXML
     private void changeAutoScrollStatus() {
-        String text = "Auto scroll ";
         if (autoScrollMenuItem.isSelected()) {
-            autoScrollLabel.setText(text.concat("on"));
+            autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
         } else {
-            autoScrollLabel.setText(text.concat("off"));
+            autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
         }
     }
 
@@ -428,7 +469,25 @@ public class MainController {
     }
 
     /**
-     * Method create and show message history window
+     * Get http settings pop over
+     */
+    private void getHttpSettingsPopOver() {
+        httpSettingPopOver = new PopOver();
+        httpSettingPopOver.setDetachable(false);
+        httpSettingPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
+        httpSettingPopOver.setOnHidden((event) -> httpSettings.setSelected(false));
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http-settings.fxml"));
+            loader.setController(new HttpSettingsController(this));
+            Parent root = loader.load();
+            httpSettingPopOver.setContentNode(root);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    /**
+     * Get message history pop over
      */
     private void getHistoryPopOver() {
         historyPopOver = new PopOver();
@@ -466,7 +525,10 @@ public class MainController {
      */
     private void startClient() {
         try {
-            client = new Client(new URI(serverUrl.getText()), cookieForRequest);
+            client = new Client();
+            client.setEndpointURI(new URI(serverUrl.getText()));
+            client.setHeaders(headers);
+            client.openConnection();
             client.setMessageHandler(new MessageHandler.Whole<String>() {
 
                 @Override
@@ -526,18 +588,19 @@ public class MainController {
     private void setConnectStatus(boolean isConnected) {
         if (isConnected) {
             Platform.runLater(() -> {
-                status.getStyleClass().clear();
-                status.getStyleClass().add("connected");
+                connectStatus.getStyleClass().clear();
+                connectStatus.getStyleClass().add("connected");
                 connectBtn.setText("Disconnect");
                 connectBtn.setDisable(false);
                 setCircleTooltip("Connected");
                 sendMsgTextField.setDisable(false);
                 messageSendBtn.setDisable(false);
+                httpSettings.setDisable(true);
             });
         } else {
             Platform.runLater(() -> {
-                status.getStyleClass().clear();
-                status.getStyleClass().add("disconnected");
+                connectStatus.getStyleClass().clear();
+                connectStatus.getStyleClass().add("disconnected");
                 serverUrl.setEditable(true);
                 connectBtn.setText("Connect");
                 connectBtn.setDisable(false);
@@ -545,6 +608,7 @@ public class MainController {
                 sendMsgTextField.setDisable(true);
                 messageSendBtn.setDisable(true);
                 connectionStatus = false;
+                httpSettings.setDisable(false);
             });
         }
     }
@@ -564,13 +628,23 @@ public class MainController {
      *
      * @param change ListChangeListener.Change<? extends OutputMessage>
      */
-    private void scrollToLastMessage(ListChangeListener.Change<? extends OutputMessage> change) {
+    private void outputMessageListener(ListChangeListener.Change<? extends OutputMessage> change) {
         if (change.next()) {
+            showAllMsgAndSelectedMsgCount();
             final int size = outputMessageList.size();
             if (size > 0 && autoScrollMenuItem.isSelected()) {
                 outputTextView.scrollTo(size - 1);
             }
         }
+    }
+
+    /**
+     * Show all output message and selected message count
+     */
+    private void showAllMsgAndSelectedMsgCount() {
+        outputMsgCount.setText(String.format("%s/%s",
+                outputMessageList.size(),
+                outputTextView.getSelectionModel().getSelectedItems().size()));
     }
 
     /**
@@ -580,6 +654,7 @@ public class MainController {
      */
     private void selectedActions(ListChangeListener.Change<? extends OutputMessage> change) {
         if (change.next()) {
+            showAllMsgAndSelectedMsgCount();
             int selectedSize = change.getList().size();
             if (selectedSize > 1 && change.wasAdded()) {
                 long timeFirst = change.getList().get(0).getMilliseconds();
@@ -599,9 +674,25 @@ public class MainController {
     private void setCircleTooltip(String message) {
         if (statusTooltip == null) {
             statusTooltip = new Tooltip(message);
-            Tooltip.install(status, statusTooltip);
+            Tooltip.install(connectStatus, statusTooltip);
         } else {
             statusTooltip.setText(message);
         }
+    }
+
+    /**
+     * Set headers list
+     * @param headers List<Header>
+     */
+    public void setHeaders(List<Header> headers) {
+        this.headers = headers;
+    }
+
+    /**
+     * Set custom header count
+     * @param i int
+     */
+    public void setHeaderCount(int i) {
+        headerCount.setText(String.valueOf(i));
     }
 }

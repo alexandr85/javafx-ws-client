@@ -1,10 +1,9 @@
 package ru.testing.client.websocket;
 
-import javafx.application.Platform;
 import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.Dialogs;
+import ru.testing.client.elements.headers.Header;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -17,28 +16,61 @@ import java.util.*;
 public class Client extends Endpoint{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
-    private static final int NORMAL_CLOSE_CODE = 1000;
+    private ClientManager client;
+    private ClientEndpointConfig config;
+    private URI endpointURI;
+    private List<Header> headerList;
     private Session session;
 
     /**
      * Default client constructor
-     * @param endpointURI java.net.URI
      */
-    public Client(final URI endpointURI, final String cookies) throws Exception {
-        ClientManager client = ClientManager.createClient();
-        final ClientEndpointConfig config = ClientEndpointConfig.Builder.create()
+    public Client() {
+        client = ClientManager.createClient();
+        config = ClientEndpointConfig.Builder.create()
                 .decoders(Collections.singletonList(SimpleDecoder.class))
                 .encoders(Collections.singletonList(SimpleEncoder.class))
                 .configurator(new ClientEndpointConfig.Configurator() {
 
                     @Override
                     public void beforeRequest(Map<String, List<String>> headers) {
-                        headers.put("Cookie", Collections.singletonList(cookies));
+                        if (headerList != null && headerList.size() > 0) {
+                            for (Header header : headerList) {
+                                headers.put(header.getHeaderName(), Collections.singletonList(header.getHeaderValue()));
+                            }
+                        }
                     }
                 })
                 .build();
-        LOGGER.info("Connecting to {} ...", endpointURI.getHost());
-        client.connectToServer(this, config, endpointURI);
+    }
+
+    /**
+     * Set endpoint url
+     * @param endpointURI URI
+     */
+    public void setEndpointURI(URI endpointURI) {
+        this.endpointURI = endpointURI;
+    }
+
+    /**
+     * Set request header
+     * @param headers List<Header>
+     */
+    public void setHeaders(List<Header> headers) {
+        this.headerList = headers;
+    }
+
+    /**
+     * Open websocket connection
+     * @throws Exception
+     */
+    public void openConnection() throws Exception {
+        if (session != null && session.isOpen()) {
+            LOGGER.warn("Session already connected!");
+        } else {
+            LOGGER.info("Connecting to {} ...", endpointURI.getHost());
+            client.connectToServer(this, config, endpointURI);
+        }
     }
 
     @Override
@@ -53,9 +85,6 @@ public class Client extends Endpoint{
     public void onClose(final Session session, final CloseReason reason) {
         if (!session.isOpen()) {
             LOGGER.info("Connection closed: {}", reason);
-            if (reason.getCloseCode().getCode() != NORMAL_CLOSE_CODE) {
-                Platform.runLater(() -> Dialogs.getWarningDialog(String.format("Connection closed: %s", reason)));
-            }
             this.session = null;
         }
     }
