@@ -152,6 +152,11 @@ public class MainController {
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList));
         outputTextView.getItems().addListener(this::outputMessageListener);
+        outputTextView.focusedProperty().addListener(observable -> {
+            if (!outputTextView.isFocused()) {
+                outputTextView.getSelectionModel().clearSelection();
+            }
+        });
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
         outputTextView.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
@@ -170,7 +175,7 @@ public class MainController {
                 if (httpSettingPopOver == null) {
                     getHttpSettingsPopOver();
                 }
-                httpSettingPopOver.show(httpSettings, -7);
+                httpSettingPopOver.show(httpSettings, -2);
             } else {
                 httpSettingPopOver.hide();
             }
@@ -320,16 +325,19 @@ public class MainController {
     private void changeFilterStatus() {
         if (filterOnOffBtn.isSelected()) {
             filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
+            filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
             filterAddBtn.setDisable(false);
             filterTextField.setDisable(false);
             filterTextField.requestFocus();
-            filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
+            if (filterList.size() > 0) {
+                filterListBtn.setDisable(false);
+            }
         } else {
             filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
-            filterTextField.setDisable(true);
-            filterAddBtn.setDisable(true);
-            filterListBtn.setDisable(true);
             filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
+            filterAddBtn.setDisable(true);
+            filterTextField.setDisable(true);
+            filterListBtn.setDisable(true);
         }
     }
 

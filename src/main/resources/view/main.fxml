@@ -58,36 +58,35 @@
         </Menu>
         <Menu text="Settings">
             <CheckMenuItem fx:id="showStatusBar" text="Status bar" selected="true" onAction="#changesStatusBarVisible"/>
-            <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll" onAction="#changeAutoScrollStatus"/>
+            <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
+                           onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
         </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-          prefWidth="570.0" GridPane.rowIndex="1" alignment="CENTER_LEFT" >
+          prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
         <padding>
             <Insets left="10.0"/>
         </padding>
-        <GridPane hgap="5">
+        <GridPane hgap="10">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="460.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="40.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="510.0" maxWidth="510.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="36.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
+                   prefHeight="25.0" prefWidth="30.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
                    styleClass="label_field">
                 <padding>
                     <Insets left="0" top="0" right="5" bottom="0"/>
                 </padding>
             </Label>
-            <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1"
-                          prefHeight="25.0" prefWidth="25.0" text="" minHeight="-Infinity" minWidth="-Infinity"
-                          mnemonicParsing="false" contentDisplay="CENTER">
+            <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="25.0" prefWidth="25.0" text=""
+                          minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER">
                 <tooltip>
                     <Tooltip text="Set cookie data"/>
                 </tooltip>
@@ -101,15 +100,15 @@
                 </cursor>
             </ToggleButton>
             <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                       minWidth="-Infinity" prefHeight="25.0" prefWidth="505.0"
-                       promptText="ws://host.name/path" GridPane.columnIndex="2">
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="510.0" promptText="ws://host.name/path"
+                       GridPane.columnIndex="2">
                 <padding>
                     <Insets left="5.0"/>
                 </padding>
             </TextField>
             <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                     minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                    text="Connect" GridPane.columnIndex="4" onAction="#connectDisconnectAction">
+                    text="Connect" GridPane.columnIndex="3" onAction="#connectDisconnectAction">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
@@ -117,13 +116,13 @@
         </GridPane>
     </VBox>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
-          prefWidth="570.0" GridPane.rowIndex="2">
+          prefWidth="660.0" GridPane.rowIndex="2">
         <padding>
             <Insets left="10.0"/>
         </padding>
-        <GridPane hgap="5">
+        <GridPane hgap="10">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="65.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" maxWidth="60.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="400.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
@@ -176,7 +175,7 @@
         </GridPane.margin>
         <ListView fx:id="outputTextView" GridPane.rowIndex="0" editable="false" prefHeight="100.0" prefWidth="200.0"
                   styleClass="output_text"/>
-        <FlowPane fx:id="filterBar" GridPane.rowIndex="1"  visible="false" managed="false" alignment="CENTER" hgap="15.0"
+        <FlowPane fx:id="filterBar" GridPane.rowIndex="1" visible="false" managed="false" alignment="CENTER" hgap="15.0"
                   maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
                   prefWidth="480.0" styleClass="filter_block">
             <padding>
@@ -288,7 +287,8 @@
             </Label>
             <Separator orientation="VERTICAL"/>
             <VBox alignment="CENTER" prefWidth="40">
-                <Circle fx:id="connectStatus" radius="10.0" stroke="#fa20201f" strokeType="INSIDE" styleClass="disconnected"/>
+                <Circle fx:id="connectStatus" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
+                        styleClass="disconnected"/>
             </VBox>
         </rightItems>
     </StatusBar>
