@@ -66,12 +66,12 @@
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
           prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
         <padding>
-            <Insets left="10.0"/>
+            <Insets left="20.0"/>
         </padding>
         <GridPane hgap="10">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="20.0" maxWidth="20.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="510.0" maxWidth="510.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="100.0"/>
             </columnConstraints>
@@ -79,7 +79,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="30.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
+                   prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_LEFT"
                    styleClass="label_field">
                 <padding>
                     <Insets left="0" top="0" right="5" bottom="0"/>
@@ -118,7 +118,7 @@
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
           prefWidth="660.0" GridPane.rowIndex="2">
         <padding>
-            <Insets left="10.0"/>
+            <Insets left="20.0"/>
         </padding>
         <GridPane hgap="10">
             <columnConstraints>
@@ -171,7 +171,7 @@
             <RowConstraints vgrow="NEVER"/>
         </rowConstraints>
         <GridPane.margin>
-            <Insets bottom="9.0" left="7.0" right="7.0" top="7.0"/>
+            <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
         </GridPane.margin>
         <ListView fx:id="outputTextView" GridPane.rowIndex="0" editable="false" prefHeight="100.0" prefWidth="200.0"
                   styleClass="output_text"/>
