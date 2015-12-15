@@ -119,7 +119,7 @@ public class MainController {
     @FXML
     private Label outputMsgCount;
     @FXML
-    private Label headerCount;
+    private Label headersCount;
 
     /**
      * Other elements
@@ -700,7 +700,7 @@ public class MainController {
      * Set custom header count
      * @param i int
      */
-    public void setHeaderCount(int i) {
-        headerCount.setText(String.valueOf(i));
+    public void setHeadersCount(int i) {
+        headersCount.setText(String.valueOf(i));
     }
 }

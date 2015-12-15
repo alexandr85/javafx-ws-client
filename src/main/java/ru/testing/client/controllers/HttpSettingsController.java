@@ -53,7 +53,7 @@ public class HttpSettingsController {
         headerList.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
-                mainController.setHeaderCount(size);
+                mainController.setHeadersCount(size);
                 if (size > 0) {
                     setHeaderVisible(true);
                 } else {
