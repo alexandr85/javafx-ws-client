@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
@@ -25,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.message.*;
-import ru.testing.client.common.profile.*;
+import ru.testing.client.common.sessions.*;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
@@ -35,6 +37,7 @@ import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +51,7 @@ public class MainController {
     private final ObservableList<String> sendMsgList = FXCollections.observableArrayList();
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
+    private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private Client client;
     private List<Header> headers;
     private boolean connectionStatus;
@@ -65,11 +69,19 @@ public class MainController {
      * Menu buttons
      */
     @FXML
+    private MenuItem saveOutputMenu;
+    @FXML
+    private MenuItem sessionsMenu;
+    @FXML
+    private MenuItem exitAppMenu;
+    @FXML
     private CheckMenuItem showStatusBar;
     @FXML
     private CheckMenuItem autoScrollMenuItem;
     @FXML
     private CheckMenuItem showFilter;
+    @FXML
+    private CheckMenuItem showFind;
 
     /**
      * Text fields
@@ -80,6 +92,8 @@ public class MainController {
     protected TextField sendMsgTextField;
     @FXML
     private TextField filterTextField;
+    @FXML
+    private TextField findTextField;
 
     /**
      * Main buttons
@@ -98,6 +112,8 @@ public class MainController {
     private ToggleButton filterListBtn;
     @FXML
     private ToggleButton filterOnOffBtn;
+    @FXML
+    private Button findTextBtn;
 
     /**
      * List views
@@ -129,6 +145,8 @@ public class MainController {
     @FXML
     private FlowPane filterBar;
     @FXML
+    private FlowPane findBar;
+    @FXML
     private Circle connectStatus;
 
 
@@ -140,6 +158,15 @@ public class MainController {
 
         // Default focus request
         Platform.runLater(() -> outputTextView.requestFocus());
+
+        // Set hot keys
+        setHotKey(exitAppMenu, KeyCode.X);
+        setHotKey(saveOutputMenu, KeyCode.S);
+        setHotKey(sessionsMenu, KeyCode.D);
+        setHotKey(showStatusBar, KeyCode.B);
+        setHotKey(autoScrollMenuItem, KeyCode.L);
+        setHotKey(showFilter, KeyCode.J);
+        setHotKey(showFind, KeyCode.F);
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -383,15 +410,16 @@ public class MainController {
      */
     @FXML
     private void loadProfileData() {
-        Profile profile = new FilesOperations().loadProfileData();
-        if (profile != null) {
+        Sessions sessions = new FilesOperations().loadProfileData();
+        Session session = sessions.getSession().get(0);
+        if (session != null) {
             try {
                 // Set ws server url
-                serverUrl.setText(profile.getServer().getUrl());
+                serverUrl.setText(session.getServer().getUrl());
 
                 // Set send history
-                if (profile.getSendHistoryData() != null) {
-                    List<ItemElement> sendMessageList = profile.getSendHistoryData().getItem();
+                if (session.getSendHistoryData() != null) {
+                    List<ItemElement> sendMessageList = session.getSendHistoryData().getItem();
                     if (sendMessageList.size() > 0) {
                         sendMsgList.clear();
                         sendMsgList.addAll(sendMessageList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
@@ -400,26 +428,26 @@ public class MainController {
                 }
 
                 // Set auto scroll status
-                if (profile.getOutputData().isAutoScrollOn()) {
+                if (session.getOutputData().isAutoScrollOn()) {
                     autoScrollMenuItem.setSelected(true);
                     changeAutoScrollStatus();
                 }
 
                 // Set filter
-                if (profile.getFilterData() != null) {
-                    if (profile.getFilterData().isFilterOn()) {
+                if (session.getFilterData() != null) {
+                    if (session.getFilterData().isFilterOn()) {
                         filterOnOffBtn.setSelected(true);
                         changeFilterStatus();
                     }
-                    List<ItemElement> filterList = profile.getFilterData().getItem();
+                    List<ItemElement> filterList = session.getFilterData().getItem();
                     if (filterList != null && filterList.size() > 0) {
                         this.filterList.clear();
                         this.filterList.addAll(filterList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
                     }
                 }
-                Dialogs.getInfoDialog("Profile load successful");
+                Dialogs.getInfoDialog("Session load successful");
             } catch (Exception e) {
-                LOGGER.error("Error loading profile.xml: {}", e.getMessage());
+                LOGGER.error("Error loading session.xml: {}", e.getMessage());
                 Dialogs.getExceptionDialog(e);
             }
         }
@@ -430,20 +458,21 @@ public class MainController {
      */
     @FXML
     private void saveProfileData() {
-        Profile profile = new Profile();
+        Session session = new Session();
 
         // Save ws server url
-        profile.setServer(new ServerData(serverUrl.getText()));
+        session.setName(Dialogs.getTextInputDialog("name", "Set session name"));
+        session.setServer(new ServerData(serverUrl.getText()));
 
         // Save send history
         if (sendMsgList.size() > 0) {
             List<ItemElement> sendMessageList = new ArrayList<>();
             sendMessageList.addAll(sendMsgList.stream().map(ItemElement::new).collect(Collectors.toList()));
-            profile.setSendHistoryData(new SendHistoryData(sendMessageList));
+            session.setSendHistoryData(new SendHistoryData(sendMessageList));
         }
 
         // Save auto scroll status
-        profile.setOutputData(new OutputData(autoScrollMenuItem.isSelected()));
+        session.setOutputData(new OutputData(autoScrollMenuItem.isSelected()));
 
         // Save filter
         FilterData filter = new FilterData(filterOnOffBtn.isSelected());
@@ -452,8 +481,10 @@ public class MainController {
             historyList.addAll(filterList.stream().map(ItemElement::new).collect(Collectors.toList()));
             filter.setItem(historyList);
         }
-        profile.setFilterData(filter);
-        new FilesOperations().saveProfileData(profile);
+        session.setFilterData(filter);
+        Sessions sessions = new Sessions();
+        sessions.setSession(Collections.singletonList(session));
+        new FilesOperations().saveProfileData(sessions);
     }
 
     /**
@@ -474,6 +505,16 @@ public class MainController {
         boolean status = showFilter.isSelected();
         filterBar.setVisible(status);
         filterBar.setManaged(status);
+    }
+
+    /**
+     * Show or hide find bar
+     */
+    @FXML
+    private void changeFindVisible() {
+        boolean status = showFind.isSelected();
+        findBar.setVisible(status);
+        findBar.setManaged(status);
     }
 
     /**
@@ -702,5 +743,18 @@ public class MainController {
      */
     public void setHeadersCount(int i) {
         headersCount.setText(String.valueOf(i));
+    }
+
+    /**
+     * Set hot key for menu element
+     * @param item MenuItem
+     * @param keyCode KeyCode
+     */
+    private void setHotKey(MenuItem item, KeyCode keyCode) {
+        KeyCombination.Modifier key = KeyCombination.CONTROL_DOWN;
+        if (platform == org.controlsfx.tools.Platform.OSX) {
+            key = KeyCombination.META_DOWN;
+        }
+        item.setAccelerator(new KeyCodeCombination(keyCode, key));
     }
 }

@@ -3,7 +3,8 @@ package ru.testing.client.common;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.profile.Profile;
+import ru.testing.client.common.sessions.Session;
+import ru.testing.client.common.sessions.Sessions;
 import ru.testing.client.elements.Dialogs;
 
 import javax.xml.bind.JAXBContext;
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 public class FilesOperations {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FilesOperations.class);
-    private static final String PROFILE_XML_DATA = "profile.xml";
+    private static final String SESSIONS_FILE = "sessions.xml";
     private static final String TEXT_FILE_NAME = "logs/output.txt";
 
     /**
@@ -55,37 +56,36 @@ public class FilesOperations {
      * Save profile data to xml file
      * @param jaxbElement Objects
      */
-    public void saveProfileData(Profile jaxbElement) {
+    public void saveProfileData(Sessions jaxbElement) {
         try {
-            JAXBContext context = JAXBContext.newInstance(Profile.class);
+            JAXBContext context = JAXBContext.newInstance(Sessions.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            marshaller.marshal(jaxbElement, new File(PROFILE_XML_DATA));
-            Dialogs.getInfoDialog("Profile successful saved");
+            marshaller.marshal(jaxbElement, new File(SESSIONS_FILE));
+            Dialogs.getInfoDialog("Session successful saved");
         } catch (JAXBException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getCause().getMessage());
         }
     }
 
     /**
      * Load profile data from xml file
-     * @return Profile
+     * @return Session
      */
-    public Profile loadProfileData() {
-        Profile profileXml = null;
-        File file = new File(PROFILE_XML_DATA);
+    public Sessions loadProfileData() {
+        File file = new File(SESSIONS_FILE);
         if (!file.exists()) {
-            Dialogs.getWarningDialog(String.format("File %s not found", PROFILE_XML_DATA));
+            Dialogs.getWarningDialog(String.format("File %s not found", SESSIONS_FILE));
             return null;
         }
         try {
-            JAXBContext context = JAXBContext.newInstance(Profile.class);
+            JAXBContext context = JAXBContext.newInstance(Session.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            profileXml = (Profile) unmarshaller.unmarshal(file);
+            return  (Sessions) unmarshaller.unmarshal(file);
         } catch (JAXBException e) {
             LOGGER.error(e.getMessage());
             Dialogs.getExceptionDialog(e);
+            return null;
         }
-        return profileXml;
     }
 }

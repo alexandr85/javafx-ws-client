@@ -1,4 +1,4 @@
-package ru.testing.client.common.profile;
+package ru.testing.client.common.sessions;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -8,19 +8,6 @@ public class FilterData {
 
     private List<ItemElement> item;
     private boolean filterOn;
-
-    public FilterData() {
-
-    }
-
-    public FilterData(boolean filterOn, List<ItemElement> item) {
-        this.filterOn = filterOn;
-        this.item = item;
-    }
-
-    public FilterData(List<ItemElement> item) {
-        this.item = item;
-    }
 
     public FilterData(boolean filterOn) {
         this.filterOn = filterOn;

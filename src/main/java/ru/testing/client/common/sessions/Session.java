@@ -1,25 +1,23 @@
-package ru.testing.client.common.profile;
+package ru.testing.client.common.sessions;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "profile")
-public class Profile {
+public class Session {
 
+    private String name;
     private ServerData server;
     private SendHistoryData sendHistoryData;
     private OutputData outputData;
     private FilterData filterData;
 
-    public Profile() {
-
+    public String getName() {
+        return name;
     }
 
-    public Profile(ServerData server, SendHistoryData sendHistoryData, OutputData outputData, FilterData filterData) {
-        this.server = server;
-        this.sendHistoryData = sendHistoryData;
-        this.outputData = outputData;
-        this.filterData = filterData;
+    @XmlAttribute(name = "name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ServerData getServer() {

@@ -1,14 +1,10 @@
-package ru.testing.client.common.profile;
+package ru.testing.client.common.sessions;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
 public class OutputData {
 
     private boolean autoScrollOn;
-
-    public OutputData() {
-
-    }
 
     public OutputData(boolean autoScrollOn) {
         this.autoScrollOn = autoScrollOn;

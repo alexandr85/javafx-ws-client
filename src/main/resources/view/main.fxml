@@ -25,30 +25,22 @@
     <MenuBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
              GridPane.rowIndex="0">
         <Menu text="File">
-            <MenuItem mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
+            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/save-output.png"/>
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <SeparatorMenuItem/>
-            <MenuItem mnemonicParsing="false" text="Load session" onAction="#loadProfileData">
+            <MenuItem fx:id="sessionsMenu" disable="true" mnemonicParsing="false" text="Sessions" onAction="#saveProfileData">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/data-load.png"/>
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" text="Save session" onAction="#saveProfileData">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/data-save.png"/>
-                    </ImageView>
-                </graphic>
-            </MenuItem>
             <SeparatorMenuItem/>
-            <MenuItem mnemonicParsing="false" text="Exit" onAction="#exitApplication">
+            <MenuItem fx:id="exitAppMenu" mnemonicParsing="false" text="Exit" onAction="#exitApplication">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/exit.png"/>
@@ -61,16 +53,17 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
+            <CheckMenuItem fx:id="showFind" mnemonicParsing="false" text="Find" onAction="#changeFindVisible"/>
         </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
           prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
         <padding>
-            <Insets left="15.0"/>
+            <Insets left="20.0"/>
         </padding>
         <GridPane hgap="5">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0" maxWidth="30.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="505.0" maxWidth="505.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="100.0"/>
@@ -79,12 +72,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="30.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
-                   styleClass="label_field">
-                <padding>
-                    <Insets left="0" top="0" right="5" bottom="0"/>
-                </padding>
-            </Label>
+                   prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_LEFT"
+                   styleClass="label_field"/>
             <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0" text=""
                           minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER">
                 <tooltip>
@@ -118,11 +107,11 @@
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
           prefWidth="660.0" GridPane.rowIndex="2">
         <padding>
-            <Insets left="15.0"/>
+            <Insets left="20.0"/>
         </padding>
         <GridPane hgap="5">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" maxWidth="60.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="55.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="400.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
@@ -131,12 +120,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                   prefHeight="25.0" prefWidth="60.0" text="Message" GridPane.columnIndex="0" alignment="CENTER_RIGHT"
-                   styleClass="label_field">
-                <padding>
-                    <Insets left="0" top="0" right="5" bottom="0"/>
-                </padding>
-            </Label>
+                   prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0" alignment="CENTER_LEFT"
+                   styleClass="label_field"/>
             <TextField fx:id="sendMsgTextField" disable="true" maxWidth="Infinity" minHeight="-Infinity"
                        minWidth="-Infinity" prefHeight="25.0" prefWidth="400.0" promptText="some text"
                        GridPane.columnIndex="1">
@@ -167,15 +152,33 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         </columnConstraints>
         <rowConstraints>
+            <RowConstraints vgrow="NEVER"/>
             <RowConstraints vgrow="SOMETIMES"/>
             <RowConstraints vgrow="NEVER"/>
         </rowConstraints>
         <GridPane.margin>
             <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
         </GridPane.margin>
-        <ListView fx:id="outputTextView" GridPane.rowIndex="0" editable="false" prefHeight="100.0" prefWidth="200.0"
+        <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false" alignment="CENTER" hgap="15.0"
+                  maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
+                  prefWidth="480.0" styleClass="filter_block">
+            <TextField fx:id="findTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"/>
+            <Button fx:id="findTextBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                    prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/find.png" requestedWidth="16" requestedHeight="16"/>
+                    </ImageView>
+                </graphic>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+        </FlowPane>
+        <ListView fx:id="outputTextView" GridPane.rowIndex="1" editable="false" prefHeight="100.0" prefWidth="200.0"
                   styleClass="output_text"/>
-        <FlowPane fx:id="filterBar" GridPane.rowIndex="1" visible="false" managed="false" alignment="CENTER" hgap="15.0"
+        <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER" hgap="15.0"
                   maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
                   prefWidth="480.0" styleClass="filter_block">
             <padding>
@@ -196,9 +199,8 @@
             <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
                        maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                        prefHeight="25.0" prefWidth="200.0"/>
-            <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity"
-                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                    prefWidth="25.0" onMouseClicked="#addToFilterList">
+            <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity" minWidth="-Infinity"
+                    mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>

@@ -1,4 +1,4 @@
-package ru.testing.client.common.profile;
+package ru.testing.client.common.sessions;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
