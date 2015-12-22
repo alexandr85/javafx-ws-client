@@ -32,7 +32,7 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem fx:id="sessionsMenu" disable="true" mnemonicParsing="false" text="Sessions" onAction="#saveProfileData">
+            <MenuItem fx:id="sessionsMenu" mnemonicParsing="false" text="Sessions" onAction="#showSessions">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/data-load.png"/>
@@ -75,7 +75,8 @@
                    prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_LEFT"
                    styleClass="label_field"/>
             <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0" text=""
-                          minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER">
+                          minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER"
+                          onAction="#showHttpSettings">
                 <tooltip>
                     <Tooltip text="Set headers data"/>
                 </tooltip>
@@ -159,7 +160,8 @@
         <GridPane.margin>
             <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
         </GridPane.margin>
-        <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false" alignment="CENTER" hgap="15.0"
+        <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false"
+                  alignment="CENTER" hgap="15.0"
                   maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
                   prefWidth="480.0" styleClass="filter_block">
             <TextField fx:id="findTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"

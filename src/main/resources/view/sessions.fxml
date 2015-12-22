@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="130.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          stylesheets="/styles/sessions.css">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
+        <padding>
+            <Insets top="7" bottom="7"/>
+        </padding>
+
+    </FlowPane>
+    <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" fillWidth="true"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS" fillHeight="true"/>
+        </rowConstraints>
+        <GridPane.margin>
+            <Insets bottom="2.0" left="7.0" right="7.0"/>
+        </GridPane.margin>
+
+    </GridPane>
+</GridPane>

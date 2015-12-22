@@ -6,7 +6,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -27,19 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.message.*;
-import ru.testing.client.common.sessions.*;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
+import ru.testing.client.elements.popovers.HttpSettingPopOver;
+import ru.testing.client.elements.popovers.SessionsPopOver;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * FXML controller for main page
@@ -57,13 +54,10 @@ public class MainController {
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
-    private PopOver httpSettingPopOver;
+    private HttpSettingPopOver httpSettingPopOver;
+    private SessionsPopOver sessionsPopOver;
     private PopOver historyPopOver;
     private PopOver filterPopOver;
-
-    public MainController(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
 
     /**
      * Menu buttons
@@ -149,6 +143,14 @@ public class MainController {
     @FXML
     private Circle connectStatus;
 
+    /**
+     * Main controller default contractor
+     * @param mainStage Stage
+     */
+    public MainController(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
 
     /**
      * Method run then this controller initialize
@@ -193,18 +195,6 @@ public class MainController {
                     outputTextView.getSelectionModel().clearSelection();
                     outputTextView.getSelectionModel().select(cellFactory.getItem());
                 }
-            }
-        });
-
-        // Http setting pop over
-        httpSettings.setOnAction(event -> {
-            if (httpSettings.isSelected()) {
-                if (httpSettingPopOver == null) {
-                    getHttpSettingsPopOver();
-                }
-                httpSettingPopOver.show(httpSettings, -2);
-            } else {
-                httpSettingPopOver.hide();
             }
         });
 
@@ -406,88 +396,6 @@ public class MainController {
     }
 
     /**
-     * Load profile data from xml file
-     */
-    @FXML
-    private void loadProfileData() {
-        Sessions sessions = new FilesOperations().loadProfileData();
-        Session session = sessions.getSession().get(0);
-        if (session != null) {
-            try {
-                // Set ws server url
-                serverUrl.setText(session.getServer().getUrl());
-
-                // Set send history
-                if (session.getSendHistoryData() != null) {
-                    List<ItemElement> sendMessageList = session.getSendHistoryData().getItem();
-                    if (sendMessageList.size() > 0) {
-                        sendMsgList.clear();
-                        sendMsgList.addAll(sendMessageList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
-                        sendMsgHistoryBtn.setDisable(false);
-                    }
-                }
-
-                // Set auto scroll status
-                if (session.getOutputData().isAutoScrollOn()) {
-                    autoScrollMenuItem.setSelected(true);
-                    changeAutoScrollStatus();
-                }
-
-                // Set filter
-                if (session.getFilterData() != null) {
-                    if (session.getFilterData().isFilterOn()) {
-                        filterOnOffBtn.setSelected(true);
-                        changeFilterStatus();
-                    }
-                    List<ItemElement> filterList = session.getFilterData().getItem();
-                    if (filterList != null && filterList.size() > 0) {
-                        this.filterList.clear();
-                        this.filterList.addAll(filterList.stream().map(ItemElement::getValue).collect(Collectors.toList()));
-                    }
-                }
-                Dialogs.getInfoDialog("Session load successful");
-            } catch (Exception e) {
-                LOGGER.error("Error loading session.xml: {}", e.getMessage());
-                Dialogs.getExceptionDialog(e);
-            }
-        }
-    }
-
-    /**
-     * Save profile data to xml
-     */
-    @FXML
-    private void saveProfileData() {
-        Session session = new Session();
-
-        // Save ws server url
-        session.setName(Dialogs.getTextInputDialog("name", "Set session name"));
-        session.setServer(new ServerData(serverUrl.getText()));
-
-        // Save send history
-        if (sendMsgList.size() > 0) {
-            List<ItemElement> sendMessageList = new ArrayList<>();
-            sendMessageList.addAll(sendMsgList.stream().map(ItemElement::new).collect(Collectors.toList()));
-            session.setSendHistoryData(new SendHistoryData(sendMessageList));
-        }
-
-        // Save auto scroll status
-        session.setOutputData(new OutputData(autoScrollMenuItem.isSelected()));
-
-        // Save filter
-        FilterData filter = new FilterData(filterOnOffBtn.isSelected());
-        if (filterList.size() > 0) {
-            List<ItemElement> historyList = new ArrayList<>();
-            historyList.addAll(filterList.stream().map(ItemElement::new).collect(Collectors.toList()));
-            filter.setItem(historyList);
-        }
-        session.setFilterData(filter);
-        Sessions sessions = new Sessions();
-        sessions.setSession(Collections.singletonList(session));
-        new FilesOperations().saveProfileData(sessions);
-    }
-
-    /**
      * Show or hide status bar
      */
     @FXML
@@ -518,20 +426,29 @@ public class MainController {
     }
 
     /**
+     * Show sessions pop over
+     */
+    @FXML
+    private void showSessions() {
+        if (sessionsPopOver == null) {
+            sessionsPopOver = new SessionsPopOver(this);
+        }
+        getMainParent().setDisable(true);
+        sessionsPopOver.show(mainStage);
+    }
+
+    /**
      * Get http settings pop over
      */
-    private void getHttpSettingsPopOver() {
-        httpSettingPopOver = new PopOver();
-        httpSettingPopOver.setDetachable(false);
-        httpSettingPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
-        httpSettingPopOver.setOnHidden((event) -> httpSettings.setSelected(false));
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http-settings.fxml"));
-            loader.setController(new HttpSettingsController(this));
-            Parent root = loader.load();
-            httpSettingPopOver.setContentNode(root);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+    @FXML
+    private void showHttpSettings() {
+        if (httpSettings.isSelected()) {
+            if (httpSettingPopOver == null) {
+                httpSettingPopOver = new HttpSettingPopOver(httpSettings, serverUrl, this);
+            }
+            httpSettingPopOver.show(httpSettings, -4);
+        } else {
+            httpSettingPopOver.hide();
         }
     }
 
@@ -756,5 +673,13 @@ public class MainController {
             key = KeyCombination.META_DOWN;
         }
         item.setAccelerator(new KeyCodeCombination(keyCode, key));
+    }
+
+    /**
+     * Get main parent node
+     * @return Parent
+     */
+    public Parent getMainParent() {
+        return mainStage.getScene().getRoot();
     }
 }
