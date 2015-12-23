@@ -151,7 +151,6 @@ public class MainController {
         this.mainStage = mainStage;
     }
 
-
     /**
      * Method run then this controller initialize
      */
@@ -433,10 +432,12 @@ public class MainController {
         if (sessionsPopOver == null) {
             sessionsPopOver = new SessionsPopOver(this);
         }
-        getMainParent().setDisable(true);
-        sessionsPopOver.show(mainStage,
-                mainStage.getX() + mainStage.getWidth()/2 - sessionsPopOver.getPopOverWidth()/2,
-                mainStage.getY() + mainStage.getHeight()/2 - sessionsPopOver.getPopOverHeight()/2);
+        if (!sessionsPopOver.isShowing()) {
+            getMainParent().setDisable(true);
+            sessionsPopOver.show(mainStage,
+                    mainStage.getX() + mainStage.getWidth()/2 - sessionsPopOver.getPopOverWidth()/2,
+                    mainStage.getY() + mainStage.getHeight()/2 - sessionsPopOver.getPopOverHeight()/2);
+        }
     }
 
     /**

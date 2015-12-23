@@ -3,8 +3,8 @@ package ru.testing.client.common;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.sessions.Session;
-import ru.testing.client.common.sessions.Sessions;
+import ru.testing.client.elements.sessions.Session;
+import ru.testing.client.elements.sessions.Sessions;
 import ru.testing.client.elements.Dialogs;
 
 import javax.xml.bind.JAXBContext;

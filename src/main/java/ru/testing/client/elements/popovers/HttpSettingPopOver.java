@@ -21,8 +21,8 @@ public class HttpSettingPopOver extends PopOver {
     private ToggleButton httpSettings;
     private TextField serverUrl;
 
-    public HttpSettingPopOver(ToggleButton httpSettings, TextField serverUrl, MainController mainController) {
-        this.httpSettings = httpSettings;
+    public HttpSettingPopOver(ToggleButton httpBtn, TextField serverUrl, MainController mainController) {
+        this.httpSettings = httpBtn;
         this.serverUrl = serverUrl;
 
         // Pop over settings
@@ -31,7 +31,7 @@ public class HttpSettingPopOver extends PopOver {
         this.setOnHidden(event -> onHiddenAction());
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http-settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http.fxml"));
             loader.setController(new HttpSettingsController(mainController));
             Parent root = loader.load();
             this.setContentNode(root);

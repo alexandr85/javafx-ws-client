@@ -17,14 +17,13 @@ public class SessionsPopOver extends PopOver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionsPopOver.class);
     private static final double WIDTH = 320.0;
-    private static final double HEIGHT = 130.0;
+    private static final double HEIGHT = 190.0;
 
     public SessionsPopOver(MainController mainController) {
 
         // Pop over settings
         this.setTitle("Sessions");
         this.setHeaderAlwaysVisible(true);
-        this.setHideOnEscape(false);
         this.setCornerRadius(0);
         this.setAutoHide(false);
         this.setDetachable(false);
