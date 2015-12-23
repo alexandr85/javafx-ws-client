@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.controllers.HttpSettingsController;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SessionsController;
 
@@ -17,6 +16,8 @@ import java.io.IOException;
 public class SessionsPopOver extends PopOver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionsPopOver.class);
+    private static final double WIDTH = 320.0;
+    private static final double HEIGHT = 130.0;
 
     public SessionsPopOver(MainController mainController) {
 
@@ -29,6 +30,8 @@ public class SessionsPopOver extends PopOver {
         this.setDetachable(false);
         this.setOpacity(1);
         this.setArrowSize(0);
+        this.setWidth(WIDTH);
+        this.setHeight(HEIGHT);
         this.setOnHidden(event -> mainController.getMainParent().setDisable(false));
 
         try {
@@ -39,5 +42,14 @@ public class SessionsPopOver extends PopOver {
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
+    }
+
+
+    public double getPopOverWidth() {
+        return WIDTH;
+    }
+
+    public double getPopOverHeight() {
+        return HEIGHT;
     }
 }

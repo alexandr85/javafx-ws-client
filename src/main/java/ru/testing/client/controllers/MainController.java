@@ -434,7 +434,9 @@ public class MainController {
             sessionsPopOver = new SessionsPopOver(this);
         }
         getMainParent().setDisable(true);
-        sessionsPopOver.show(mainStage);
+        sessionsPopOver.show(mainStage,
+                mainStage.getX() + mainStage.getWidth()/2 - sessionsPopOver.getPopOverWidth()/2,
+                mainStage.getY() + mainStage.getHeight()/2 - sessionsPopOver.getPopOverHeight()/2);
     }
 
     /**
