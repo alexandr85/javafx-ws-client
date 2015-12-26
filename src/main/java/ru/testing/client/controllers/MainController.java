@@ -31,11 +31,14 @@ import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
 import ru.testing.client.elements.popovers.HttpSettingPopOver;
 import ru.testing.client.elements.popovers.SessionsPopOver;
+import ru.testing.client.elements.sessions.ItemElement;
+import ru.testing.client.elements.sessions.Session;
 import ru.testing.client.websocket.Client;
 
 import javax.websocket.MessageHandler;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -441,6 +444,17 @@ public class MainController {
     }
 
     /**
+     * Get sessions pop over
+     * @return SessionsPopOver
+     */
+    public SessionsPopOver getSessionsPopOver() {
+        if (sessionsPopOver == null) {
+            showSessions();
+        }
+        return sessionsPopOver;
+    }
+
+    /**
      * Get http settings pop over
      */
     @FXML
@@ -453,6 +467,68 @@ public class MainController {
         } else {
             httpSettingPopOver.hide();
         }
+    }
+
+    /**
+     * Get websocket server url from field
+     * @return String
+     */
+    public String getServerUrl() {
+        return serverUrl.getText();
+    }
+
+    /**
+     * Set data from selected session
+     * @param session Session
+     */
+    public void setDataFromSession(Session session) {
+        if (session != null) {
+            serverUrl.setText(session.getServer().getUrl());
+
+            // Set filter data
+            filterOnOffBtn.setSelected(session.getFilterData().isFilterOn());
+            filterList.clear();
+            List<ItemElement> filterItems = session.getFilterData().getItems();
+            if (filterItems != null) {
+                filterItems.stream().forEach(item -> filterList.add(item.getValue()));
+            }
+            changeFilterStatus();
+
+            // Set send message data
+            sendMsgList.clear();
+            List<ItemElement> sendMsgItems = session.getSendHistoryData().getItem();
+            if (sendMsgItems != null) {
+                sendMsgItems.stream().forEach(item -> sendMsgList.add(item.getValue()));
+            }
+        }
+    }
+
+    /**
+     * Get send message list
+     * @return List<ItemElement>
+     */
+    public List<ItemElement> getSendMsgList() {
+        List<ItemElement> items = new ArrayList<>();
+        sendMsgList.stream().forEach(s -> items.add(new ItemElement(s)));
+        return items;
+    }
+
+    /**
+     * Get on off filter status
+     * @return boolean
+     */
+    public boolean getFilterStatus() {
+        return filterOnOffBtn.isSelected();
+    }
+
+    /**
+     * Get filter items list
+     * @return List<ItemElement>
+     */
+    public List<ItemElement> getFilterItems() {
+        List<ItemElement> items = new ArrayList<>();
+        filterList.stream().forEach(s -> items.add(new ItemElement(s)));
+        return items;
     }
 
     /**

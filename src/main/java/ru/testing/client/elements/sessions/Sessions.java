@@ -10,14 +10,14 @@ import java.util.List;
 @XmlRootElement(name = "sessions")
 public class Sessions {
 
-    private List<Session> session;
+    private List<Session> sessions;
 
-    public List<Session> getSession() {
-        return session;
+    public List<Session> getSessions() {
+        return sessions;
     }
 
     @XmlElement(name = "session")
-    public void setSession(List<Session> session) {
-        this.session = session;
+    public void setSessions(List<Session> session) {
+        this.sessions = session;
     }
 }

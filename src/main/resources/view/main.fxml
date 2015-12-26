@@ -53,7 +53,7 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
-            <CheckMenuItem fx:id="showFind" mnemonicParsing="false" text="Find" onAction="#changeFindVisible"/>
+            <CheckMenuItem fx:id="showFind" disable="true" mnemonicParsing="false" text="Find" onAction="#changeFindVisible"/>
         </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"

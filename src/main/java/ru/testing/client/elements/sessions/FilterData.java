@@ -6,20 +6,25 @@ import java.util.List;
 
 public class FilterData {
 
-    private List<ItemElement> item;
+    private List<ItemElement> items;
     private boolean filterOn;
 
-    public FilterData(boolean filterOn) {
-        this.filterOn = filterOn;
+    public FilterData() {
+
     }
 
-    public List<ItemElement> getItem() {
-        return item;
+    public FilterData(boolean filterOn, List<ItemElement> items) {
+        this.filterOn = filterOn;
+        this.items = items;
+    }
+
+    public List<ItemElement> getItems() {
+        return items;
     }
 
     @XmlElement(name = "item")
-    public void setItem(List<ItemElement> item) {
-        this.item = item;
+    public void setItems(List<ItemElement> items) {
+        this.items = items;
     }
 
     public boolean isFilterOn() {

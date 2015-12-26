@@ -10,7 +10,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import ru.testing.client.elements.sessions.SessionsCellFactory;
+import ru.testing.client.common.FilesOperations;
+import ru.testing.client.elements.sessions.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Sessions controller
@@ -18,7 +22,8 @@ import ru.testing.client.elements.sessions.SessionsCellFactory;
 public class SessionsController {
 
     private MainController mainController;
-    private ObservableList<String> sessionsList = FXCollections.observableArrayList();
+    private ObservableList<Session> sessionsList = FXCollections.observableArrayList();
+    private FilesOperations filesOperations = new FilesOperations();
 
     /**
      * Labels
@@ -30,7 +35,7 @@ public class SessionsController {
      * List view
      */
     @FXML
-    private ListView<String> sessionsListView;
+    private ListView<Session> sessionsListView;
 
     /**
      * Text fields
@@ -49,8 +54,8 @@ public class SessionsController {
     private void initialize() {
         Platform.runLater(() -> noSessionsLabel.requestFocus());
         sessionsListView.setItems(sessionsList);
-        sessionsListView.setCellFactory(listView -> new SessionsCellFactory(sessionsList));
-        sessionsListView.getItems().addListener((ListChangeListener<String>) change -> {
+        sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, mainController));
+        sessionsListView.getItems().addListener((ListChangeListener<Session>) change -> {
             if (change.next()) {
                 int size = sessionsList.size();
                 if (size > 0) {
@@ -67,6 +72,8 @@ public class SessionsController {
                 addSession();
             }
         });
+
+        readSessionsFromFile();
     }
 
     /**
@@ -74,10 +81,42 @@ public class SessionsController {
      */
     @FXML
     private void addSession() {
-        if (sessionName != null && !sessionName.getText().isEmpty()) {
-            sessionsList.add(sessionName.getText());
+        String sName = sessionName.getText();
+        if (!sName.isEmpty()) {
+            Sessions sessions = readSessionsFromFile();
+            List<Session> sessionsList = sessions.getSessions();
+            if (sessionsList == null) {
+                sessionsList = new ArrayList<>();
+            }
+            sessionsList.add(new Session(
+                    sName,
+                    new ServerData(mainController.getServerUrl()),
+                    new SendHistoryData(mainController.getSendMsgList()),
+                    new FilterData(mainController.getFilterStatus(), mainController.getFilterItems()))
+            );
+            sessions.setSessions(sessionsList);
+            filesOperations.saveSessionsData(sessions);
             sessionName.clear();
+            readSessionsFromFile();
         }
+    }
+
+    /**
+     * Read sessions from file add collect sessions list
+     * @return Sessions
+     */
+    public Sessions readSessionsFromFile() {
+        Sessions sessions = filesOperations.readSessionsData();
+        if (sessions != null && sessionsList != null) {
+            List<Session> sessionList = sessions.getSessions();
+            if (sessionList != null && sessionList.size() > 0) {
+                sessionsList.clear();
+                sessions.getSessions().stream().forEach(session -> sessionsList.add(session));
+            }
+        } else {
+            sessions = new Sessions();
+        }
+        return sessions;
     }
 
     /**

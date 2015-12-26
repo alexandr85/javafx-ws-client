@@ -6,6 +6,10 @@ public class ItemElement {
 
     private String value;
 
+    public ItemElement() {
+
+    }
+
     public ItemElement(String value) {
         this.value = value;
     }

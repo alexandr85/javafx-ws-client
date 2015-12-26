@@ -8,8 +8,18 @@ public class Session {
     private String name;
     private ServerData server;
     private SendHistoryData sendHistoryData;
-    private OutputData outputData;
     private FilterData filterData;
+
+    public Session() {
+
+    }
+
+    public Session(String name, ServerData server, SendHistoryData sendHistoryData, FilterData filterData) {
+        this.name = name;
+        this.server = server;
+        this.sendHistoryData = sendHistoryData;
+        this.filterData = filterData;
+    }
 
     public String getName() {
         return name;
@@ -36,15 +46,6 @@ public class Session {
     @XmlElement(name = "sendHistory")
     public void setSendHistoryData(SendHistoryData sendHistoryData) {
         this.sendHistoryData = sendHistoryData;
-    }
-
-    public OutputData getOutputData() {
-        return outputData;
-    }
-
-    @XmlElement(name = "output")
-    public void setOutputData(OutputData outputData) {
-        this.outputData = outputData;
     }
 
     public FilterData getFilterData() {

@@ -3,7 +3,6 @@ package ru.testing.client.common;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.sessions.Session;
 import ru.testing.client.elements.sessions.Sessions;
 import ru.testing.client.elements.Dialogs;
 
@@ -56,13 +55,12 @@ public class FilesOperations {
      * Save profile data to xml file
      * @param jaxbElement Objects
      */
-    public void saveProfileData(Sessions jaxbElement) {
+    public void saveSessionsData(Sessions jaxbElement) {
         try {
             JAXBContext context = JAXBContext.newInstance(Sessions.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(jaxbElement, new File(SESSIONS_FILE));
-            Dialogs.getInfoDialog("Session successful saved");
         } catch (JAXBException e) {
             LOGGER.error(e.getCause().getMessage());
         }
@@ -72,20 +70,39 @@ public class FilesOperations {
      * Load profile data from xml file
      * @return Session
      */
-    public Sessions loadProfileData() {
+    public Sessions readSessionsData() {
         File file = new File(SESSIONS_FILE);
-        if (!file.exists()) {
-            Dialogs.getWarningDialog(String.format("File %s not found", SESSIONS_FILE));
-            return null;
-        }
+        boolean canRead = false;
         try {
-            JAXBContext context = JAXBContext.newInstance(Session.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return  (Sessions) unmarshaller.unmarshal(file);
-        } catch (JAXBException e) {
-            LOGGER.error(e.getMessage());
-            Dialogs.getExceptionDialog(e);
+            if (!file.exists()) {
+                canRead = file.createNewFile();
+            }
+            canRead = file.canRead();
+        } catch (IOException io) {
+            LOGGER.error(io.getMessage());
+        }
+        if (canRead) {
+            try {
+                JAXBContext context = JAXBContext.newInstance(Sessions.class);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                return  (Sessions) unmarshaller.unmarshal(file);
+            } catch (JAXBException e) {
+                LOGGER.error(e.getCause().getMessage());
+                return null;
+            }
+        } else {
+            LOGGER.error("Can't read {} file", SESSIONS_FILE);
             return null;
         }
+    }
+
+
+
+    /**
+     * Get sessions file name
+     * @return String
+     */
+    public static String getSessionsFile() {
+        return SESSIONS_FILE;
     }
 }

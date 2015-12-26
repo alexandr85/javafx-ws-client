@@ -6,7 +6,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import ru.testing.client.common.FilesOperations;
+import ru.testing.client.controllers.MainController;
+import ru.testing.client.controllers.SessionsController;
 import ru.testing.client.elements.message.OutputMessage;
+import ru.testing.client.elements.sessions.Session;
+import ru.testing.client.elements.sessions.Sessions;
+
+import java.util.Iterator;
 
 /**
  * Class collected other menu items
@@ -92,5 +98,43 @@ public class ContextMenuItems {
         MenuItem saveFileItem = new MenuItem("Save cell to file");
         saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(cell.getText()));
         return saveFileItem;
+    }
+
+    /**
+     * Delete selected session
+     * @param cell ListCell<Session>
+     * @return MenuItem
+     */
+    public MenuItem deleteSession(ListCell<Session> cell, SessionsController sessionsController) {
+        MenuItem deleteSession = new MenuItem("Delete");
+        deleteSession.setOnAction(event -> {
+            FilesOperations filesOperations = new FilesOperations();
+            Sessions sessions = filesOperations.readSessionsData();
+            Iterator<Session> iterator = sessions.getSessions().iterator();
+            while (iterator.hasNext()) {
+                Session session = iterator.next();
+                if (session.getName().equals(cell.getItem().getName())) {
+                    iterator.remove();
+                }
+            }
+            filesOperations.saveSessionsData(sessions);
+            sessionsController.readSessionsFromFile();
+        });
+        return deleteSession;
+    }
+
+    /**
+     * Set session data from selected session
+     * @param cell ListCell<Session> cell
+     * @param mainController MainController
+     * @return MenuItem
+     */
+    public MenuItem loadSession(ListCell<Session> cell, MainController mainController) {
+        MenuItem loadSession = new MenuItem("Load");
+        loadSession.setOnAction(event -> {
+            mainController.setDataFromSession(cell.getItem());
+            mainController.getSessionsPopOver().hide();
+        });
+        return loadSession;
     }
 }
