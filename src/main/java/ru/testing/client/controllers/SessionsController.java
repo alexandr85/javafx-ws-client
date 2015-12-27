@@ -73,7 +73,7 @@ public class SessionsController {
             }
         });
 
-        readSessionsFromFile();
+        readSessions();
     }
 
     /**
@@ -83,7 +83,7 @@ public class SessionsController {
     private void addSession() {
         String sName = sessionName.getText();
         if (!sName.isEmpty()) {
-            Sessions sessions = readSessionsFromFile();
+            Sessions sessions = readSessions();
             List<Session> sessionsList = sessions.getSessions();
             if (sessionsList == null) {
                 sessionsList = new ArrayList<>();
@@ -97,7 +97,7 @@ public class SessionsController {
             sessions.setSessions(sessionsList);
             filesOperations.saveSessionsData(sessions);
             sessionName.clear();
-            readSessionsFromFile();
+            readSessions();
         }
     }
 
@@ -105,12 +105,12 @@ public class SessionsController {
      * Read sessions from file add collect sessions list
      * @return Sessions
      */
-    public Sessions readSessionsFromFile() {
+    public Sessions readSessions() {
         Sessions sessions = filesOperations.readSessionsData();
-        if (sessions != null && sessionsList != null) {
+        if (sessions != null) {
             List<Session> sessionList = sessions.getSessions();
+            sessionsList.clear();
             if (sessionList != null && sessionList.size() > 0) {
-                sessionsList.clear();
                 sessions.getSessions().stream().forEach(session -> sessionsList.add(session));
             }
         } else {

@@ -118,7 +118,7 @@ public class ContextMenuItems {
                 }
             }
             filesOperations.saveSessionsData(sessions);
-            sessionsController.readSessionsFromFile();
+            sessionsController.readSessions();
         });
         return deleteSession;
     }
