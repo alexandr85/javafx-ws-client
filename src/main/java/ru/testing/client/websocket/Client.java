@@ -8,16 +8,18 @@ import ru.testing.client.elements.headers.Header;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * WebSocket client
  */
-public class Client extends Endpoint{
+public class Client extends Endpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
-    private ClientManager client;
-    private ClientEndpointConfig config;
+    private final ClientManager client;
+    private final ClientEndpointConfig config;
     private URI endpointURI;
     private List<Header> headerList;
     private Session session;
@@ -36,7 +38,12 @@ public class Client extends Endpoint{
                     public void beforeRequest(Map<String, List<String>> headers) {
                         if (headerList != null && headerList.size() > 0) {
                             for (Header header : headerList) {
-                                headers.put(header.getHeaderName(), Collections.singletonList(header.getHeaderValue()));
+                                String headerName = header.getHeaderName();
+                                if (headers.containsKey(headerName)) {
+                                    headers.get(headerName).add(String.format(";%s", header.getHeaderValue()));
+                                } else {
+                                    headers.put(headerName, Collections.singletonList(header.getHeaderValue()));
+                                }
                             }
                         }
                     }
@@ -46,6 +53,7 @@ public class Client extends Endpoint{
 
     /**
      * Set endpoint url
+     *
      * @param endpointURI URI
      */
     public void setEndpointURI(URI endpointURI) {
@@ -54,6 +62,7 @@ public class Client extends Endpoint{
 
     /**
      * Set request header
+     *
      * @param headers List<Header>
      */
     public void setHeaders(List<Header> headers) {
@@ -62,6 +71,7 @@ public class Client extends Endpoint{
 
     /**
      * Open websocket connection
+     *
      * @throws Exception
      */
     public void openConnection() throws Exception {
@@ -91,6 +101,7 @@ public class Client extends Endpoint{
 
     /**
      * Set message handler for output response message
+     *
      * @param messageHandler MessageHandler.Whole<String>
      */
     public void setMessageHandler(MessageHandler.Whole<String> messageHandler) {
@@ -101,6 +112,7 @@ public class Client extends Endpoint{
 
     /**
      * Send string message to websocket session
+     *
      * @param message String
      * @throws IOException
      */
@@ -112,6 +124,7 @@ public class Client extends Endpoint{
 
     /**
      * Get connection status
+     *
      * @return boolean
      */
     public boolean isOpenConnection() {
@@ -122,10 +135,12 @@ public class Client extends Endpoint{
      * Method close current connection
      */
     public void closeConnection() {
-        try {
-            session.close();
-        } catch (IOException e) {
-            LOGGER.error("Close connection error: {}", e.getCause());
+        if (session != null) {
+            try {
+                session.close();
+            } catch (IOException e) {
+                LOGGER.error("Close connection error: {}", e.getCause());
+            }
         }
     }
 }

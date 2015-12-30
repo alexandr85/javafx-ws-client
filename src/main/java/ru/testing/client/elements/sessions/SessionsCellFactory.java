@@ -1,11 +1,11 @@
 package ru.testing.client.elements.sessions;
 
-import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SessionsController;
 import ru.testing.client.elements.ContextMenuItems;
+import ru.testing.client.elements.sessions.session.Session;
 
 /**
  * Sessions cell factory
@@ -26,6 +26,12 @@ public class SessionsCellFactory extends ListCell<Session> {
         if (session != null) {
             setText(String.format("%s", session.getName()));
             setContextMenu(getSessionContextMenu(this));
+            setOnMouseClicked(event -> {
+                if (event.getClickCount() > 1) {
+                    mainController.setDataFromSession(session);
+                    mainController.getSessionsPopOver().hide();
+                }
+            });
         } else {
             setText(null);
             setGraphic(null);

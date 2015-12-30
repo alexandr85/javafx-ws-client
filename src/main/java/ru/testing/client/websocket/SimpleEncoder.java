@@ -4,6 +4,7 @@ import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
+@SuppressWarnings("WeakerAccess")
 public class SimpleEncoder implements Encoder.Text<String> {
 
     @Override

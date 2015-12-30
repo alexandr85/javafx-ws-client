@@ -17,7 +17,7 @@ public class Configuration {
             names = {"-a", "--app-type"},
             description = "Set application type"
     )
-    private ApplicationType type = ApplicationType.GUI;
+    private final ApplicationType type = ApplicationType.GUI;
 
     /**
      * Set application url for console application type
@@ -27,17 +27,6 @@ public class Configuration {
             description = "Server url for WebSocket connection (ws[s]://host:port/path/to/websocket)"
     )
     private String serverUrl;
-
-    /**
-     * Sets the default time in milliseconds
-     * after which any web socket sessions in this container will be closed
-     * if it has been inactive.
-     */
-    @Parameter(
-            names = {"-t", "--timeout"},
-            description = "Connection timeout"
-    )
-    private int timeout = 5000;
 
     /**
      * Show console application help
@@ -63,14 +52,6 @@ public class Configuration {
      */
     public String getServerUrl() {
         return serverUrl;
-    }
-
-    /**
-     * Connection timeout
-     * @return int (default: 5000)
-     */
-    public int getTimeout() {
-        return timeout;
     }
 
     /**

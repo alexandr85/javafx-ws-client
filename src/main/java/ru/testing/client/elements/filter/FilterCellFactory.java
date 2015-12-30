@@ -1,4 +1,4 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.elements.filter;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;

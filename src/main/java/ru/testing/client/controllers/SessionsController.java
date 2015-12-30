@@ -11,7 +11,12 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import ru.testing.client.common.FilesOperations;
+import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.sessions.*;
+import ru.testing.client.elements.sessions.session.FilterData;
+import ru.testing.client.elements.sessions.session.SendHistoryData;
+import ru.testing.client.elements.sessions.session.ServerData;
+import ru.testing.client.elements.sessions.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +72,7 @@ public class SessionsController {
             }
         });
 
+
         sessionName.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ENTER) {
                 addSession();
@@ -88,17 +94,35 @@ public class SessionsController {
             if (sessionsList == null) {
                 sessionsList = new ArrayList<>();
             }
-            sessionsList.add(new Session(
-                    sName,
-                    new ServerData(mainController.getServerUrl()),
-                    new SendHistoryData(mainController.getSendMsgList()),
-                    new FilterData(mainController.getFilterStatus(), mainController.getFilterItems()))
-            );
-            sessions.setSessions(sessionsList);
-            filesOperations.saveSessionsData(sessions);
-            sessionName.clear();
-            readSessions();
+            if (!existSessionName(sessionsList, sName)) {
+                sessionsList.add(new Session(
+                        sName,
+                        new ServerData(mainController.getServerUrl()),
+                        new SendHistoryData(mainController.getSendMsgItems()),
+                        new FilterData(mainController.getFilterStatus(), mainController.getFilterItems()))
+                );
+                sessions.setSessions(sessionsList);
+                filesOperations.saveSessionsData(sessions);
+                sessionName.clear();
+                readSessions();
+            } else {
+                Dialogs.getWarningDialog("This session name is exist in list");
+            }
         }
+    }
+
+    /**
+     * Verify exist session name in list
+     * @param sessionsList currenct List<Session>
+     * @return boolean
+     */
+    private boolean existSessionName(List<Session> sessionsList, String newName) {
+        for (Session session : sessionsList) {
+            if (session.getName().equals(newName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

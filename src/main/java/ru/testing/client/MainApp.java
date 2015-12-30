@@ -13,9 +13,9 @@ import ru.testing.client.common.ApplicationType;
 import ru.testing.client.common.Configuration;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.websocket.Client;
+import ru.testing.client.websocket.ConsoleMessageHandler;
 
 import javax.swing.*;
-import javax.websocket.MessageHandler;
 import java.net.URI;
 import java.util.Scanner;
 
@@ -90,28 +90,24 @@ public class MainApp extends Application {
      */
     private static void startConsoleClient(String url) {
         try {
-            LOGGER.info("Connecting to {} ...", url);
             final Client client = new Client();
             client.setEndpointURI(new URI(url));
-            String sendMessage;
-            client.setMessageHandler(new MessageHandler.Whole<String>() {
-
-                @Override
-                public void onMessage(String message) {
-                    LOGGER.info("Request: {}", message);
+            client.openConnection();
+            if (client.isOpenConnection()) {
+                String sendMessage;
+                client.setMessageHandler(new ConsoleMessageHandler());
+                LOGGER.info("For disconnect from server type 'exit'");
+                while (true) {
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.print("Send message: ");
+                    sendMessage = scanner.nextLine();
+                    if (sendMessage.equals("exit")) {
+                        client.closeConnection();
+                        break;
+                    }
+                    client.sendMessage(sendMessage);
+                    Thread.sleep(2000);
                 }
-            });
-            LOGGER.info("For disconnect from server type 'exit'");
-            while (true) {
-                Scanner scanner = new Scanner(System.in);
-                System.out.print("Send message: ");
-                sendMessage = scanner.nextLine();
-                if (sendMessage.equals("exit")) {
-                    client.closeConnection();
-                    break;
-                }
-                client.sendMessage(sendMessage);
-                Thread.sleep(2000);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -135,7 +131,7 @@ public class MainApp extends Application {
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-256.png")));
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
         } catch (Exception e) {
-            LOGGER.error(String.format("Error load application icon: %s", e.getMessage()));
+            LOGGER.error("Error load application icon: {}", e.getMessage());
         }
     }
 }

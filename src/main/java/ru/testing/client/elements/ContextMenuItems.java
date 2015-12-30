@@ -9,7 +9,7 @@ import ru.testing.client.common.FilesOperations;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SessionsController;
 import ru.testing.client.elements.message.OutputMessage;
-import ru.testing.client.elements.sessions.Session;
+import ru.testing.client.elements.sessions.session.Session;
 import ru.testing.client.elements.sessions.Sessions;
 
 import java.util.Iterator;

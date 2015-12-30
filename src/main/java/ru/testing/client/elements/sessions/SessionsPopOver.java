@@ -1,4 +1,4 @@
-package ru.testing.client.elements.popovers;
+package ru.testing.client.elements.sessions;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -16,12 +16,12 @@ import ru.testing.client.elements.headers.HeadersCellFactory;
 /**
  * Http settings controller
  */
-public class HttpSettingsController {
+public class HeadersController {
 
     private MainController mainController;
     private ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
 
-    public HttpSettingsController(MainController mainController) {
+    public HeadersController(MainController mainController) {
         this.mainController = mainController;
     }
 

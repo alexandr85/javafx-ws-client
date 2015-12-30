@@ -21,6 +21,7 @@ import static javafx.scene.control.Alert.AlertType.WARNING;
  * Examples @link {http://code.makery.ch/blog/javafx-dialogs-official/}
  */
 public abstract class Dialogs {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(Dialogs.class);
 
     /**
@@ -33,6 +34,7 @@ public abstract class Dialogs {
             alert.setTitle("Information");
             alert.setHeaderText(null);
             alert.setContentText(info);
+
             alert.showAndWait();
         });
     }

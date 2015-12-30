@@ -1,5 +1,7 @@
 package ru.testing.client.elements.sessions;
 
+import ru.testing.client.elements.sessions.session.Session;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
