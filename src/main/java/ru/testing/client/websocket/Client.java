@@ -8,9 +8,10 @@ import ru.testing.client.elements.headers.Header;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.singletonList;
 
 /**
  * WebSocket client
@@ -21,7 +22,7 @@ public class Client extends Endpoint {
     private final ClientManager client;
     private final ClientEndpointConfig config;
     private URI endpointURI;
-    private List<Header> headerList;
+    private List<Header> headersList;
     private Session session;
 
     /**
@@ -30,21 +31,27 @@ public class Client extends Endpoint {
     public Client() {
         client = ClientManager.createClient();
         config = ClientEndpointConfig.Builder.create()
-                .decoders(Collections.singletonList(SimpleDecoder.class))
-                .encoders(Collections.singletonList(SimpleEncoder.class))
+                .decoders(singletonList(SimpleDecoder.class))
+                .encoders(singletonList(SimpleEncoder.class))
                 .configurator(new ClientEndpointConfig.Configurator() {
 
                     @Override
                     public void beforeRequest(Map<String, List<String>> headers) {
-                        if (headerList != null && headerList.size() > 0) {
-                            for (Header header : headerList) {
-                                String headerName = header.getHeaderName();
-                                if (headers.containsKey(headerName)) {
-                                    headers.get(headerName).add(String.format(";%s", header.getHeaderValue()));
-                                } else {
-                                    headers.put(headerName, Collections.singletonList(header.getHeaderValue()));
+                        try {
+                            if (headersList != null && headersList.size() > 0) {
+                                for (Header header : headersList) {
+                                    String headerName = header.getName();
+                                    if (headers.containsKey(headerName)) {
+                                        String value = headers.get(headerName).get(0)
+                                                .concat(String.format(";%s", header.getValue()));
+                                        headers.put(headerName, singletonList(value));
+                                    } else {
+                                        headers.put(headerName, singletonList(header.getValue()));
+                                    }
                                 }
                             }
+                        } catch (Exception e) {
+                            LOGGER.error("Add headers:", e);
                         }
                     }
                 })
@@ -66,7 +73,7 @@ public class Client extends Endpoint {
      * @param headers List<Header>
      */
     public void setHeaders(List<Header> headers) {
-        this.headerList = headers;
+        this.headersList = headers;
     }
 
     /**

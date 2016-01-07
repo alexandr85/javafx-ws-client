@@ -20,7 +20,7 @@ public class HeadersCellFactory extends ListCell<Header> {
     protected void updateItem(Header header, boolean empty) {
         super.updateItem(header, empty);
         if (header != null) {
-            setText(String.format("%s: %s", header.getHeaderName(), header.getHeaderValue()));
+            setText(String.format("%s: %s", header.getName(), header.getValue()));
             setContextMenu(getHeaderContextMenu(this));
         } else {
             setText(null);

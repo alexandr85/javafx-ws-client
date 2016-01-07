@@ -4,6 +4,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 public class ItemElement {
 
+    private String name;
     private String value;
 
     public ItemElement() {
@@ -12,6 +13,20 @@ public class ItemElement {
 
     public ItemElement(String value) {
         this.value = value;
+    }
+
+    public ItemElement(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @XmlAttribute(name = "name")
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getValue() {

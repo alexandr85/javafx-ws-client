@@ -15,7 +15,7 @@ import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.sessions.*;
 import ru.testing.client.elements.sessions.session.FilterData;
 import ru.testing.client.elements.sessions.session.SendHistoryData;
-import ru.testing.client.elements.sessions.session.ServerData;
+import ru.testing.client.elements.sessions.session.ConnectionData;
 import ru.testing.client.elements.sessions.session.Session;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class SessionsController {
             if (!existSessionName(sessionsList, sName)) {
                 sessionsList.add(new Session(
                         sName,
-                        new ServerData(mainController.getServerUrl()),
+                        new ConnectionData(mainController.getServerUrl(), mainController.getHeadersItems()),
                         new SendHistoryData(mainController.getSendMsgItems()),
                         new FilterData(mainController.getFilterStatus(), mainController.getFilterItems()))
                 );

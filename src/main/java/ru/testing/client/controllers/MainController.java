@@ -52,7 +52,6 @@ public class MainController {
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private Client client;
-    private List<Header> headers;
     private boolean connectionStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
@@ -76,8 +75,6 @@ public class MainController {
     private CheckMenuItem autoScrollMenuItem;
     @FXML
     private CheckMenuItem showFilter;
-    @FXML
-    private CheckMenuItem showFind;
 
     /**
      * Text fields
@@ -169,7 +166,6 @@ public class MainController {
         setHotKey(showStatusBar, KeyCode.B);
         setHotKey(autoScrollMenuItem, KeyCode.L);
         setHotKey(showFilter, KeyCode.J);
-        setHotKey(showFind, KeyCode.F);
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -205,6 +201,9 @@ public class MainController {
                 connectDisconnectAction();
             }
         });
+
+        // Init headers pop over
+        headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
 
         // Send message
         sendMsgTextField.setOnKeyPressed(keyEvent -> {
@@ -368,6 +367,8 @@ public class MainController {
             filterList.add(filterTextField.getText());
             filterTextField.clear();
             filterTextField.requestFocus();
+        } else {
+            filterTextField.requestFocus();
         }
     }
 
@@ -417,16 +418,6 @@ public class MainController {
     }
 
     /**
-     * Show or hide find bar
-     */
-    @FXML
-    private void changeFindVisible() {
-        boolean status = showFind.isSelected();
-        findBar.setVisible(status);
-        findBar.setManaged(status);
-    }
-
-    /**
      * Show sessions pop over
      */
     @FXML
@@ -443,14 +434,11 @@ public class MainController {
     }
 
     /**
-     * Get http settings pop over
+     * Get headers pop over
      */
     @FXML
-    private void showHttpSettings() {
+    private void showHeadersPopOver() {
         if (httpSettings.isSelected()) {
-            if (headersPopOver == null) {
-                headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
-            }
             headersPopOver.show(httpSettings, -4);
         } else {
             headersPopOver.hide();
@@ -516,16 +504,25 @@ public class MainController {
      */
     public void setDataFromSession(Session session) {
         if (session != null) {
-            serverUrl.setText(session.getServer().getUrl());
+
+            // Set connection data
+            serverUrl.setText(session.getConnect().getUrl());
+            List<Header> headers = getHeadersList();
+            headers.clear();
+            List<ItemElement> items = session.getConnect().getHeaders();
+            if (items != null) {
+                items.stream().forEach(item -> headers.add(new Header(item.getName(), item.getValue())));
+                setHeadersCount(items.size());
+            }
 
             // Set filter data
             filterOnOffBtn.setSelected(session.getFilterData().isFilterOn());
             filterList.clear();
-            List<ItemElement> filterItems = session.getFilterData().getItems();
-            if (filterItems != null) {
-                filterItems.stream().forEach(item -> filterList.add(item.getValue()));
-                if (filterItems.size() > 0) {
-                    filterCount.setText(String.valueOf(filterItems.size()));
+            items = session.getFilterData().getItems();
+            if (items != null) {
+                items.stream().forEach(item -> filterList.add(item.getValue()));
+                if (items.size() > 0) {
+                    filterCount.setText(String.valueOf(items.size()));
                 }
             }
             changeFilterStatus();
@@ -582,7 +579,7 @@ public class MainController {
         try {
             client = new Client();
             client.setEndpointURI(new URI(serverUrl.getText()));
-            client.setHeaders(headers);
+            client.setHeaders(getHeadersList());
             client.openConnection();
             client.setMessageHandler(new FXMessageHandler(this));
             connectionStatus = true;
@@ -721,11 +718,22 @@ public class MainController {
     }
 
     /**
-     * Set headers list
-     * @param headers List<Header>
+     * Get headers list
+     * @return List<ItemElement>
      */
-    public void setHeaders(List<Header> headers) {
-        this.headers = headers;
+    public List<ItemElement> getHeadersItems() {
+        List<ItemElement> items = new ArrayList<>();
+        List<Header> headers = getHeadersList();
+        headers.stream().forEach(header -> items.add(new ItemElement(header.getName(), header.getValue())));
+        return items;
+    }
+
+    /**
+     * Get headers list
+     * @return ObservableList<Header>
+     */
+    private List<Header> getHeadersList() {
+        return headersPopOver.getHeadersController().getHeaderObservableList();
     }
 
     /**

@@ -53,7 +53,6 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
-            <CheckMenuItem fx:id="showFind" disable="true" mnemonicParsing="false" text="Find" onAction="#changeFindVisible"/>
         </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
@@ -76,7 +75,7 @@
                    styleClass="label_field"/>
             <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0" text=""
                           minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER"
-                          onAction="#showHttpSettings">
+                          onAction="#showHeadersPopOver">
                 <tooltip>
                     <Tooltip text="Set headers data"/>
                 </tooltip>

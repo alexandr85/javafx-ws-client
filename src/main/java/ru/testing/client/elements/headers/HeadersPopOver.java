@@ -18,6 +18,7 @@ import java.io.IOException;
 public class HeadersPopOver extends PopOver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadersPopOver.class);
+    private HeadersController headersController;
     private ToggleButton httpSettings;
     private TextField serverUrl;
 
@@ -32,12 +33,21 @@ public class HeadersPopOver extends PopOver {
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http.fxml"));
-            loader.setController(new HeadersController(mainController));
+            headersController = new HeadersController(mainController);
+            loader.setController(headersController);
             Parent root = loader.load();
             this.setContentNode(root);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
+    }
+
+    /**
+     * Get headers controller
+     * @return HeadersController
+     */
+    public HeadersController getHeadersController() {
+        return headersController;
     }
 
     /**

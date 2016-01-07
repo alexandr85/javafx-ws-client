@@ -5,27 +5,27 @@ package ru.testing.client.elements.headers;
  */
 public class Header {
 
-    private String headerName;
-    private String headerValue;
+    private String name;
+    private String value;
 
-    public Header(String headerName, String headerValue) {
-        this.headerName = headerName;
-        this.headerValue = headerValue;
+    public Header(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
     /**
      * Get header name
      * @return String
      */
-    public String getHeaderName() {
-        return headerName;
+    public String getName() {
+        return name;
     }
 
     /**
      * Get header value
      * @return String
      */
-    public String getHeaderValue() {
-        return headerValue;
+    public String getValue() {
+        return value;
     }
 }

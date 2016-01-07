@@ -89,7 +89,6 @@ public class HeadersController {
                         headerName.clear();
                         headerValue.clear();
                     });
-                    mainController.setHeaders(headerList.getItems());
                     headerName.requestFocus();
                 } else {
                     Dialogs.getWarningDialog("Headers max size is 9");
@@ -100,6 +99,14 @@ public class HeadersController {
         } else {
             headerName.requestFocus();
         }
+    }
+
+    /**
+     * Get headers list
+     * @return ObservableList<Header>
+     */
+    public ObservableList<Header> getHeaderObservableList() {
+        return headerObservableList;
     }
 
     /**

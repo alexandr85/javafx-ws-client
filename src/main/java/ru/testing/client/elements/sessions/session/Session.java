@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 public class Session {
 
     private String name;
-    private ServerData server;
+    private ConnectionData connect;
     private SendHistoryData sendHistoryData;
     private FilterData filterData;
 
@@ -14,9 +14,9 @@ public class Session {
 
     }
 
-    public Session(String name, ServerData server, SendHistoryData sendHistoryData, FilterData filterData) {
+    public Session(String name, ConnectionData connect, SendHistoryData sendHistoryData, FilterData filterData) {
         this.name = name;
-        this.server = server;
+        this.connect = connect;
         this.sendHistoryData = sendHistoryData;
         this.filterData = filterData;
     }
@@ -30,20 +30,20 @@ public class Session {
         this.name = name;
     }
 
-    public ServerData getServer() {
-        return server;
+    public ConnectionData getConnect() {
+        return connect;
     }
 
-    @XmlElement(name = "websocket")
-    public void setServer(ServerData server) {
-        this.server = server;
+    @XmlElement(name = "connect")
+    public void setConnect(ConnectionData connect) {
+        this.connect = connect;
     }
 
     public SendHistoryData getSendHistoryData() {
         return sendHistoryData;
     }
 
-    @XmlElement(name = "sendHistory")
+    @XmlElement(name = "send_history")
     public void setSendHistoryData(SendHistoryData sendHistoryData) {
         this.sendHistoryData = sendHistoryData;
     }

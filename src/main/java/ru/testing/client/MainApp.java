@@ -67,21 +67,25 @@ public class MainApp extends Application {
     /**
      * Start javafx application window
      * @param primaryStage Stage
-     * @throws Exception
      */
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
         loader.setController(new MainController(primaryStage));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        setApplicationIcon(primaryStage);
-        primaryStage.setTitle("WebSocket client");
-        primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
-        primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(true);
-        primaryStage.show();
+        try {
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            setApplicationIcon(primaryStage);
+            primaryStage.setTitle("WebSocket client");
+            primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
+            primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
+            primaryStage.setScene(scene);
+            primaryStage.setResizable(true);
+            primaryStage.show();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            System.exit(1);
+        }
     }
 
     /**
