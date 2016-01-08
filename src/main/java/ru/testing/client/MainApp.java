@@ -2,6 +2,7 @@ package ru.testing.client;
 
 import com.beust.jcommander.JCommander;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,9 +10,13 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.qatools.properties.PropertyLoader;
+import ru.testing.client.common.AppProperties;
 import ru.testing.client.common.ApplicationType;
 import ru.testing.client.common.Configuration;
+import ru.testing.client.common.github.GitHub;
 import ru.testing.client.controllers.MainController;
+import ru.testing.client.elements.Dialogs;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.ConsoleMessageHandler;
 
@@ -27,6 +32,7 @@ public class MainApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
+    private static AppProperties properties;
 
     /**
      * Entry point to application
@@ -34,6 +40,7 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         Configuration config = new Configuration();
+        properties = PropertyLoader.newInstance().populate(AppProperties.class);
         JCommander parser = new JCommander();
         parser.setProgramName("java -jar ws.client-${version}.jar");
         parser.addObject(config);
@@ -76,12 +83,18 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage);
-            primaryStage.setTitle("WebSocket client");
+            primaryStage.setTitle(String.format("WebSocket client v%s", properties.getVertion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
+            primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
+            Platform.runLater(() -> {
+                if (isAvailableNewVersion()) {
+                    Dialogs.getWarningDialog("New version is available! Please, update client");
+                }
+            });
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             System.exit(1);
@@ -137,5 +150,14 @@ public class MainApp extends Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Verify available new client version on git hub
+     * @return boolean
+     */
+    private boolean isAvailableNewVersion() {
+        GitHub git = new GitHub(properties);
+        return git.getLastVersion() > properties.getVertion();
     }
 }
