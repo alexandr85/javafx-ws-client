@@ -32,6 +32,6 @@ public class GitHubTest {
     public void testTagVersion() {
         GitHub git = new GitHub(properties);
         Double version = properties.getVertion();
-        assertThat("Version value", git.getLastVersion(), greaterThanOrEqualTo(version));
+        assertThat("Version value", git.getLastVersion(), both(lessThanOrEqualTo(version)).and(greaterThan(1.0)));
     }
 }

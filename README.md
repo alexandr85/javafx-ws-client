@@ -1,13 +1,22 @@
-## ![](src/main/resources/images/icon-32.png?raw=true) javafx-ws-client
-*JavaFx application client for testing WebSocket*
+## ![](src/main/resources/images/icon-32.png?raw=true) *JavaFX websocket client*
 
-Dependencies:
+###### Features:
+* Connect to ws:// and wss:// websocket server
+* Use custom headers for http connection
+* Filtered incoming socket message
+* Collected sent message history
+* Save output messages to text file
+* Save sessions for load them after
+* Show session info in status bar
+
+---
+
+###### Dependencies:
 * java 1.8.0_40 or later
 * maven 3
 
-Create runnable jar file:
+---
 
-````
-{project.path}$ mvn package
-````
-Can find created file on path: *target/ws.client-${version}.jar*
+###### Create package:
+* execute command `{project.path}$ mvn clean assembly:assembly` 
+* find it on path `{project.path}$ target/ws.client.jar` 

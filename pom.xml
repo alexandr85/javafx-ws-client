@@ -12,25 +12,19 @@
         <appName>ws.client</appName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <jetty.version>9.3.4.RC0</jetty.version>
-        <jcommander.version>1.48</jcommander.version>
+        <tyrus.version>1.12</tyrus.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-client-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.tyrus</groupId>
             <artifactId>tyrus-client</artifactId>
-            <version>1.12</version>
+            <version>${tyrus.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.tyrus</groupId>
             <artifactId>tyrus-container-grizzly-client</artifactId>
-            <version>1.12</version>
+            <version>${tyrus.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
@@ -50,7 +44,7 @@
         <dependency>
             <groupId>com.beust</groupId>
             <artifactId>jcommander</artifactId>
-            <version>${jcommander.version}</version>
+            <version>1.48</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -97,7 +91,7 @@
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <configuration>
-                        <finalName>${appName}-${version}</finalName>
+                        <finalName>${appName}</finalName>
                         <archive>
                             <manifest>
                                 <mainClass>ru.testing.client.MainApp</mainClass>
@@ -113,29 +107,6 @@
                             <phase>package</phase>
                             <goals>
                                 <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- Ant tasks create zip archive -->
-                <plugin>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>1.8</version>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <configuration>
-                                <target>
-                                    <zip destfile="${basedir}/target/${appName}-${version}.zip">
-                                        <zipfileset dir="${basedir}" includes="LICENSE"/>
-                                        <zipfileset dir="${basedir}" includes="README.md"/>
-                                        <zipfileset dir="${build.directory}" includes="${appName}-${version}.jar"/>
-                                    </zip>
-                                </target>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
                             </goals>
                         </execution>
                     </executions>

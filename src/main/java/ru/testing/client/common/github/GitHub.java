@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.AppProperties;
@@ -30,23 +29,16 @@ public class GitHub {
      */
     public GitHub(AppProperties properties) {
         this.properties = properties;
-        Task task = new Task() {
-            @Override
-            protected Object call() throws Exception {
-                String url = properties.getTagsUrl();
-                try {
-                    if (!url.isEmpty()) {
-                        List<TagInfo> tags = createRequest();
-                        setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v","")));
-                    }
-                } catch (IOException | NumberFormatException e) {
-                    LOGGER.error(e.getMessage());
-                    setLastVersion(1.0);
-                }
-                return null;
+        String url = properties.getTagsUrl();
+        try {
+            if (!url.isEmpty()) {
+                List<TagInfo> tags = createRequest();
+                setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v","")));
             }
-        };
-        task.run();
+        } catch (IOException | NumberFormatException e) {
+            LOGGER.error(e.getMessage());
+            setLastVersion(1.0);
+        }
     }
 
     /**
