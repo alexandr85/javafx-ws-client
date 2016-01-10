@@ -2,7 +2,6 @@ package ru.testing.client;
 
 import com.beust.jcommander.JCommander;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,7 +15,6 @@ import ru.testing.client.common.ApplicationType;
 import ru.testing.client.common.Configuration;
 import ru.testing.client.common.github.GitHub;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.elements.Dialogs;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.ConsoleMessageHandler;
 
@@ -90,11 +88,7 @@ public class MainApp extends Application {
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            Platform.runLater(() -> {
-                if (isAvailableNewVersion()) {
-                    Dialogs.getWarningDialog("New version is available! Please, update client");
-                }
-            });
+            new GitHub(properties);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             System.exit(1);
@@ -150,14 +144,5 @@ public class MainApp extends Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }
-    }
-
-    /**
-     * Verify available new client version on git hub
-     * @return boolean
-     */
-    private boolean isAvailableNewVersion() {
-        GitHub git = new GitHub(properties);
-        return git.getLastVersion() > properties.getVertion();
     }
 }
