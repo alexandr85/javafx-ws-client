@@ -11,10 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Optional;
 
-import static javafx.scene.control.Alert.AlertType.CONFIRMATION;
-import static javafx.scene.control.Alert.AlertType.INFORMATION;
-import static javafx.scene.control.Alert.AlertType.ERROR;
-import static javafx.scene.control.Alert.AlertType.WARNING;
+import static javafx.scene.control.Alert.AlertType.*;
 
 /**
  * Class contains javafx modal dialogs
@@ -26,6 +23,7 @@ public abstract class Dialogs {
 
     /**
      * Show info message
+     *
      * @param info String message
      */
     public static void getInfoDialog(String info) {
@@ -87,6 +85,7 @@ public abstract class Dialogs {
 
     /**
      * Show confirmation dialog
+     *
      * @param message String
      * @return boolean
      */
@@ -101,6 +100,7 @@ public abstract class Dialogs {
 
     /**
      * Show warning message dialog
+     *
      * @param message String
      */
     public static void getWarningDialog(String message) {
@@ -115,6 +115,7 @@ public abstract class Dialogs {
 
     /**
      * Show text input dialog
+     *
      * @param value String old value
      * @param title String modal window title
      * @return String

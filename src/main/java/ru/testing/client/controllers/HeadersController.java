@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import ru.testing.client.elements.Dialogs;
@@ -49,6 +50,7 @@ public class HeadersController {
     private void initialize() {
         Platform.runLater(() -> noHeadersLabel.requestFocus());
         headerList.setItems(headerObservableList);
+        headerList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         headerList.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
         headerList.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
@@ -103,6 +105,7 @@ public class HeadersController {
 
     /**
      * Get headers list
+     *
      * @return ObservableList<Header>
      */
     public ObservableList<Header> getHeaderObservableList() {
@@ -111,6 +114,7 @@ public class HeadersController {
 
     /**
      * Show or hide headers list
+     *
      * @param visible boolean visible status
      */
     private void setHeaderVisible(boolean visible) {

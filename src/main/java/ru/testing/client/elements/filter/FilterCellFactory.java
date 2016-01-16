@@ -30,6 +30,7 @@ public class FilterCellFactory extends ListCell<String> {
 
     /**
      * Context menu for filter pop over
+     *
      * @param cell ListCell string
      * @return ContextMenu
      */

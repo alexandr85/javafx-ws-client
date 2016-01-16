@@ -42,9 +42,9 @@ public class GitHub extends Thread {
         try {
             if (!url.isEmpty()) {
                 List<TagInfo> tags = createRequest();
-                setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v","")));
+                setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v", "")));
             }
-            if (properties.getVertion() < getLastVersion()) {
+            if (properties.getVersion() < getLastVersion()) {
                 Platform.runLater(() -> Dialogs.getWarningDialog("New version is available! Please, update client"));
             }
             LOGGER.debug("Last version on git hub: {}", getLastVersion());
@@ -56,6 +56,7 @@ public class GitHub extends Thread {
 
     /**
      * Get rest client
+     *
      * @return com.sun.jersey.api.client.Client
      */
     private Client getClient() {
@@ -69,6 +70,7 @@ public class GitHub extends Thread {
 
     /**
      * Create request
+     *
      * @return List<TagInfo>
      * @throws IOException
      */
@@ -76,11 +78,13 @@ public class GitHub extends Thread {
         WebResource resource = getClient().resource(properties.getTagsUrl());
         ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>(){});
+        return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>() {
+        });
     }
 
     /**
      * Get last tag version from git hub
+     *
      * @return Double
      */
     public double getLastVersion() {
@@ -89,6 +93,7 @@ public class GitHub extends Thread {
 
     /**
      * Set last tag version
+     *
      * @param lastVersion double
      */
     private void setLastVersion(double lastVersion) {

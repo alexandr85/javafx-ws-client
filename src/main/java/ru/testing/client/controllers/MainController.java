@@ -1,19 +1,17 @@
 package ru.testing.client.controllers;
 
-import javafx.fxml.FXML;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
-import javafx.scene.Node;
+import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -21,14 +19,17 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.filter.FilterCellFactory;
-import ru.testing.client.elements.headers.Header;
-import ru.testing.client.elements.history.SendHistoryCellFactory;
-import ru.testing.client.elements.message.*;
-import ru.testing.client.elements.Dialogs;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
+import ru.testing.client.elements.Dialogs;
+import ru.testing.client.elements.filter.FilterCellFactory;
+import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.headers.HeadersPopOver;
+import ru.testing.client.elements.history.SendHistoryCellFactory;
+import ru.testing.client.elements.message.OutputMessage;
+import ru.testing.client.elements.message.OutputMessageCellFactory;
+import ru.testing.client.elements.message.OutputMessageFormat;
+import ru.testing.client.elements.message.OutputMessageType;
 import ru.testing.client.elements.sessions.SessionsPopOver;
 import ru.testing.client.elements.sessions.session.ItemElement;
 import ru.testing.client.elements.sessions.session.Session;
@@ -144,6 +145,7 @@ public class MainController {
 
     /**
      * Main controller default contractor
+     *
      * @param mainStage Stage
      */
     public MainController(Stage mainStage) {
@@ -184,16 +186,6 @@ public class MainController {
             }
         });
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
-        outputTextView.setOnMouseClicked(event -> {
-            if (event.getButton() == MouseButton.SECONDARY) {
-                Node cell = event.getPickResult().getIntersectedNode();
-                if (cell instanceof OutputMessageCellFactory) {
-                    OutputMessageCellFactory cellFactory = (OutputMessageCellFactory) cell;
-                    outputTextView.getSelectionModel().clearSelection();
-                    outputTextView.getSelectionModel().select(cellFactory.getItem());
-                }
-            }
-        });
 
         // Connect or disconnect with websocket server
         serverUrl.setOnKeyPressed(keyEvent -> {
@@ -428,8 +420,8 @@ public class MainController {
         if (!sessionsPopOver.isShowing()) {
             getMainParent().setDisable(true);
             sessionsPopOver.show(mainStage,
-                    mainStage.getX() + mainStage.getWidth()/2 - sessionsPopOver.getPopOverWidth()/2,
-                    mainStage.getY() + mainStage.getHeight()/2 - sessionsPopOver.getPopOverHeight()/2);
+                    mainStage.getX() + mainStage.getWidth() / 2 - sessionsPopOver.getPopOverWidth() / 2,
+                    mainStage.getY() + mainStage.getHeight() / 2 - sessionsPopOver.getPopOverHeight() / 2);
         }
     }
 
@@ -447,6 +439,7 @@ public class MainController {
 
     /**
      * Get sessions pop over
+     *
      * @return SessionsPopOver
      */
     public SessionsPopOver getSessionsPopOver() {
@@ -492,6 +485,7 @@ public class MainController {
 
     /**
      * Get websocket server url from field
+     *
      * @return String
      */
     public String getServerUrl() {
@@ -500,6 +494,7 @@ public class MainController {
 
     /**
      * Set data from selected session
+     *
      * @param session Session
      */
     public void setDataFromSession(Session session) {
@@ -538,6 +533,7 @@ public class MainController {
 
     /**
      * Get send message list
+     *
      * @return List<ItemElement>
      */
     public List<ItemElement> getSendMsgItems() {
@@ -548,6 +544,7 @@ public class MainController {
 
     /**
      * Get on off filter status
+     *
      * @return boolean
      */
     public boolean getFilterStatus() {
@@ -556,6 +553,7 @@ public class MainController {
 
     /**
      * Get observable filter list
+     *
      * @return ObservableList<String>
      */
     public ObservableList<String> getFilterList() {
@@ -564,6 +562,7 @@ public class MainController {
 
     /**
      * Get filter items list
+     *
      * @return List<ItemElement>
      */
     public List<ItemElement> getFilterItems() {
@@ -719,6 +718,7 @@ public class MainController {
 
     /**
      * Get headers list
+     *
      * @return List<ItemElement>
      */
     public List<ItemElement> getHeadersItems() {
@@ -730,6 +730,7 @@ public class MainController {
 
     /**
      * Get headers list
+     *
      * @return ObservableList<Header>
      */
     private List<Header> getHeadersList() {
@@ -738,6 +739,7 @@ public class MainController {
 
     /**
      * Set custom header count
+     *
      * @param i int
      */
     public void setHeadersCount(int i) {
@@ -746,7 +748,8 @@ public class MainController {
 
     /**
      * Set hot key for menu element
-     * @param item MenuItem
+     *
+     * @param item    MenuItem
      * @param keyCode KeyCode
      */
     private void setHotKey(MenuItem item, KeyCode keyCode) {
@@ -759,6 +762,7 @@ public class MainController {
 
     /**
      * Get main parent node
+     *
      * @return Parent
      */
     public Parent getMainParent() {

@@ -41,7 +41,7 @@ public class GitHubTest {
                 LOGGER.error(e.getMessage());
             }
         }
-        Double version = properties.getVertion();
+        Double version = properties.getVersion();
         assertThat("Version value", git.getLastVersion(), both(lessThanOrEqualTo(version)).and(greaterThan(1.0)));
     }
 }

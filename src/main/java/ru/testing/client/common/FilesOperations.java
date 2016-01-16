@@ -3,8 +3,8 @@ package ru.testing.client.common;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.sessions.Sessions;
 import ru.testing.client.elements.Dialogs;
+import ru.testing.client.elements.sessions.Sessions;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -24,6 +24,7 @@ public class FilesOperations {
 
     /**
      * Save text to file
+     *
      * @param text String
      */
     public void saveTextToFile(String text) {
@@ -36,8 +37,7 @@ public class FilesOperations {
             writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(TEXT_FILE_NAME), StandardCharsets.UTF_8));
             writer.write(text);
-        }
-        catch (IOException io) {
+        } catch (IOException io) {
             Dialogs.getExceptionDialog(io);
         } finally {
             if (writer != null) {
@@ -53,6 +53,7 @@ public class FilesOperations {
 
     /**
      * Save profile data to xml file
+     *
      * @param jaxbElement Objects
      */
     public void saveSessionsData(Sessions jaxbElement) {
@@ -68,6 +69,7 @@ public class FilesOperations {
 
     /**
      * Load profile data from xml file
+     *
      * @return Session
      */
     public Sessions readSessionsData() {
@@ -85,7 +87,7 @@ public class FilesOperations {
             try {
                 JAXBContext context = JAXBContext.newInstance(Sessions.class);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
-                return  (Sessions) unmarshaller.unmarshal(file);
+                return (Sessions) unmarshaller.unmarshal(file);
             } catch (JAXBException e) {
                 LOGGER.error(e.getCause().getMessage());
                 return null;
@@ -97,9 +99,9 @@ public class FilesOperations {
     }
 
 
-
     /**
      * Get sessions file name
+     *
      * @return String
      */
     public static String getSessionsFile() {

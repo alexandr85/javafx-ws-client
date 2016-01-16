@@ -10,7 +10,7 @@ import ru.qatools.properties.Resource;
 public interface AppProperties {
 
     @Property("version")
-    Double getVertion();
+    Double getVersion();
 
     @Property("tags.url")
     String getTagsUrl();

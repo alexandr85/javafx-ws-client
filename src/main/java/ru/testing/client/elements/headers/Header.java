@@ -15,6 +15,7 @@ public class Header {
 
     /**
      * Get header name
+     *
      * @return String
      */
     public String getName() {
@@ -23,6 +24,7 @@ public class Header {
 
     /**
      * Get header value
+     *
      * @return String
      */
     public String getValue() {

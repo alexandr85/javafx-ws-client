@@ -23,6 +23,7 @@ public class OutputMessage {
 
     /**
      * Get text message from cell
+     *
      * @return String
      */
     public String getMessage() {
@@ -31,6 +32,7 @@ public class OutputMessage {
 
     /**
      * Get message cell time
+     *
      * @return String long
      */
     public long getMilliseconds() {
@@ -39,6 +41,7 @@ public class OutputMessage {
 
     /**
      * Get formatted time string for display in cell
+     *
      * @return String
      */
     public String getFormattedTime() {
@@ -48,6 +51,7 @@ public class OutputMessage {
 
     /**
      * Get cell message type
+     *
      * @return OutputMessageType
      */
     public OutputMessageType getMessageType() {

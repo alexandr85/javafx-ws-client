@@ -9,8 +9,9 @@ public class Utils {
 
     /**
      * Format diff time from milliseconds
+     *
      * @param timeFirst long
-     * @param timeLast long
+     * @param timeLast  long
      * @return String
      */
     public static String getFormattedDiffTime(long timeFirst, long timeLast) {

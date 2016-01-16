@@ -45,6 +45,7 @@ public class SendHistoryCellFactory extends ListCell<String> {
 
     /**
      * Context menu for history pop over
+     *
      * @param cell ListCell string
      * @return ContextMenu
      */

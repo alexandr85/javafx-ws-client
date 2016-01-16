@@ -34,6 +34,7 @@ public class MainApp extends Application {
 
     /**
      * Entry point to application
+     *
      * @param args String[]
      */
     public static void main(String[] args) {
@@ -71,6 +72,7 @@ public class MainApp extends Application {
 
     /**
      * Start javafx application window
+     *
      * @param primaryStage Stage
      */
     @Override
@@ -81,7 +83,7 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage);
-            primaryStage.setTitle(String.format("WebSocket client v%s", properties.getVertion()));
+            primaryStage.setTitle(String.format("WebSocket client v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
@@ -97,6 +99,7 @@ public class MainApp extends Application {
 
     /**
      * Start console websocket client
+     *
      * @param url String
      */
     private static void startConsoleClient(String url) {
@@ -127,6 +130,7 @@ public class MainApp extends Application {
 
     /**
      * Set application icon
+     *
      * @param stage Stage
      */
     private void setApplicationIcon(Stage stage) {

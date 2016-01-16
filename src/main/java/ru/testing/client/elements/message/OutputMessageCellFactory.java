@@ -1,9 +1,10 @@
 package ru.testing.client.elements.message;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import ru.testing.client.elements.ContextMenuItems;
+
+import static ru.testing.client.elements.message.OutputMessageType.SEND;
 
 /**
  * Output message cell factory
@@ -18,16 +19,15 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
     }
 
     @Override
-    protected void updateItem(OutputMessage message, boolean empty) {
-        super.updateItem(message, empty);
-        if (message != null) {
-            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), message.getFormattedTime(), message.getMessage()));
-            if (message.getMessageType() == OutputMessageType.SEND) {
+    protected void updateItem(OutputMessage item, boolean empty) {
+        super.updateItem(item, empty);
+        if (item != null) {
+            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
+            if (item.getMessageType() == SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
             }
-            setContextMenu(getOutputContextMenu(this));
         } else {
             setText(null);
             setGraphic(null);
@@ -35,19 +35,52 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
         }
     }
 
+    @Override
+    protected boolean isItemChanged(OutputMessage oldItem, OutputMessage newItem) {
+        ListView<OutputMessage> listView = getListView();
+        MultipleSelectionModel<OutputMessage> selectionModel = listView.getSelectionModel();
+        if (selectionModel.getSelectedItems().size() > 1) {
+            setContextMenu(getMultiContextMenu(selectionModel.getSelectedItems()));
+        } else {
+            setContextMenu(getSingleContextMenu(this));
+        }
+        return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
+    }
+
     /**
      * Context menu for output message view
+     *
      * @param cell ListCell string
      * @return ContextMenu
      */
-    private ContextMenu getOutputContextMenu(ListCell<OutputMessage> cell) {
+    private ContextMenu getSingleContextMenu(ListCell<OutputMessage> cell) {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.getCopyCellAll(cell),
-                m.getCopyCellMessage(cell),
-                m.getCopyCellTime(cell),
+                m.copyCellMessage(cell),
+                m.copyCellTime(cell),
+                m.copyCellAll(cell),
                 m.saveMessageToFile(cell),
+                new SeparatorMenuItem(),
+                m.clearListView(list)
+        );
+        return contextMenu;
+    }
+
+    /**
+     * Context menu for output message view
+     *
+     * @return ContextMenu
+     */
+    private ContextMenu getMultiContextMenu(ObservableList<OutputMessage> selectedList) {
+        ContextMenu contextMenu = new ContextMenu();
+        ContextMenuItems m = new ContextMenuItems();
+        contextMenu.getItems().addAll(
+                m.copySelected(selectedList),
+                m.saveSelectedToFile(selectedList),
+                m.saveSelectedSendToFile(selectedList),
+                m.saveSelectedRecentToFile(selectedList),
+                new SeparatorMenuItem(),
                 m.clearListView(list)
         );
         return contextMenu;

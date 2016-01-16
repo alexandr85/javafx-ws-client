@@ -27,16 +27,16 @@ public class HeadersPopOver extends PopOver {
         this.serverUrl = serverUrl;
 
         // Pop over settings
-        this.setDetachable(false);
-        this.setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
-        this.setOnHidden(event -> onHiddenAction());
+        setDetachable(false);
+        setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
+        setOnHidden(event -> onHiddenAction());
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http.fxml"));
             headersController = new HeadersController(mainController);
             loader.setController(headersController);
             Parent root = loader.load();
-            this.setContentNode(root);
+            setContentNode(root);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
@@ -44,6 +44,7 @@ public class HeadersPopOver extends PopOver {
 
     /**
      * Get headers controller
+     *
      * @return HeadersController
      */
     public HeadersController getHeadersController() {

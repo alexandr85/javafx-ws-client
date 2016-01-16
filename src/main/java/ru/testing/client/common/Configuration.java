@@ -40,6 +40,7 @@ public class Configuration {
 
     /**
      * Get application type
+     *
      * @return String console|gui (default: console)
      */
     public ApplicationType getType() {
@@ -48,6 +49,7 @@ public class Configuration {
 
     /**
      * Get WebSocket server url
+     *
      * @return String (ws[s]://host:port/path/to/websocket)
      */
     public String getServerUrl() {
@@ -55,7 +57,8 @@ public class Configuration {
     }
 
     /**
-     * Show help aplication options
+     * Show help application options
+     *
      * @return boolean
      */
     public boolean isHelp() {

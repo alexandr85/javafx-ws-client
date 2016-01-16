@@ -8,14 +8,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.sessions.*;
+import ru.testing.client.elements.sessions.Sessions;
+import ru.testing.client.elements.sessions.SessionsCellFactory;
+import ru.testing.client.elements.sessions.session.ConnectionData;
 import ru.testing.client.elements.sessions.session.FilterData;
 import ru.testing.client.elements.sessions.session.SendHistoryData;
-import ru.testing.client.elements.sessions.session.ConnectionData;
 import ru.testing.client.elements.sessions.session.Session;
 
 import java.util.ArrayList;
@@ -59,6 +61,7 @@ public class SessionsController {
     private void initialize() {
         Platform.runLater(() -> noSessionsLabel.requestFocus());
         sessionsListView.setItems(sessionsList);
+        sessionsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, mainController));
         sessionsListView.getItems().addListener((ListChangeListener<Session>) change -> {
             if (change.next()) {
@@ -113,7 +116,8 @@ public class SessionsController {
 
     /**
      * Verify exist session name in list
-     * @param sessionsList currenct List<Session>
+     *
+     * @param sessionsList current List<Session>
      * @return boolean
      */
     private boolean existSessionName(List<Session> sessionsList, String newName) {
@@ -127,6 +131,7 @@ public class SessionsController {
 
     /**
      * Read sessions from file add collect sessions list
+     *
      * @return Sessions
      */
     public Sessions readSessions() {
@@ -145,6 +150,7 @@ public class SessionsController {
 
     /**
      * Show or hide sessions list
+     *
      * @param visible boolean visible status
      */
     private void setSessionsListVisible(boolean visible) {
