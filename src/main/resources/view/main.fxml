@@ -52,6 +52,22 @@
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
         </Menu>
+        <Menu text="Help">
+            <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/download.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem text="About" onAction="#getAboutFromWeb">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/info.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
     </MenuBar>
     <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
           prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
@@ -269,6 +285,7 @@
             </Label>
         </leftItems>
         <rightItems>
+            <Separator orientation="VERTICAL"/>
             <Label fx:id="outputMsgCount" mnemonicParsing="false" maxWidth="-Infinity" text="0/0">
                 <tooltip>
                     <Tooltip text="All / Selected messages"/>
