@@ -8,6 +8,10 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -18,6 +22,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.AppProperties;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
 import ru.testing.client.elements.Dialogs;
@@ -35,8 +40,10 @@ import ru.testing.client.elements.sessions.session.Session;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.FXMessageHandler;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +58,7 @@ public class MainController {
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
+    private AppProperties properties;
     private Client client;
     private boolean connectionStatus;
     private Stage mainStage;
@@ -147,7 +155,8 @@ public class MainController {
      *
      * @param mainStage Stage
      */
-    public MainController(Stage mainStage) {
+    public MainController(Stage mainStage, AppProperties properties) {
+        this.properties = properties;
         this.mainStage = mainStage;
     }
 
@@ -430,6 +439,22 @@ public class MainController {
         } else {
             getFilterPopOver().hide();
         }
+    }
+
+    /**
+     * Go to web page for get last tag version
+     */
+    @FXML
+    private void getLastTagVersionFromWeb() {
+        goToWebPage(properties.getLastTagUrl());
+    }
+
+    /**
+     * Go to web page for get about info
+     */
+    @FXML
+    private void getAboutFromWeb() {
+        goToWebPage(properties.getAboutUrl());
     }
 
     /**
@@ -800,5 +825,21 @@ public class MainController {
      */
     public Parent getMainParent() {
         return mainStage.getScene().getRoot();
+    }
+
+    /**
+     * Go to desktop browser page action
+     *
+     * @param url String
+     */
+    private void goToWebPage(String url) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+            try {
+                desktop.browse(new URL(url).toURI());
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
     }
 }
