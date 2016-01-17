@@ -37,13 +37,6 @@
     -fx-faint-focus-color: transparent;
 }
 
-.pop_over_list {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-radius: 2px;
-    -fx-padding: 7px 1px;
-}
-
 .connected {
     -fx-fill: #5CB85C;
 }

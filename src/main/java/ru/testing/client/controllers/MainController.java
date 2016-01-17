@@ -15,17 +15,16 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import org.controlsfx.control.PopOver;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.filter.FilterCellFactory;
+import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.headers.HeadersPopOver;
-import ru.testing.client.elements.history.SendHistoryCellFactory;
+import ru.testing.client.elements.history.SendHistoryPopOver;
 import ru.testing.client.elements.message.OutputMessage;
 import ru.testing.client.elements.message.OutputMessageCellFactory;
 import ru.testing.client.elements.message.OutputMessageFormat;
@@ -58,8 +57,8 @@ public class MainController {
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
     private SessionsPopOver sessionsPopOver;
-    private PopOver historyPopOver;
-    private PopOver filterPopOver;
+    private SendHistoryPopOver historyPopOver;
+    private FilterListPopOver filterPopOver;
 
     /**
      * Menu buttons
@@ -194,23 +193,10 @@ public class MainController {
             }
         });
 
-        // Init headers pop over
-        headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
-
         // Send message
         sendMsgTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 sendWebsocketMessage();
-            }
-        });
-        sendMsgHistoryBtn.setOnAction(event -> {
-            if (sendMsgHistoryBtn.isSelected()) {
-                if (historyPopOver == null) {
-                    getHistoryPopOver();
-                }
-                historyPopOver.show(sendMsgHistoryBtn, -7);
-            } else {
-                historyPopOver.hide();
             }
         });
         sendMsgList.addListener((ListChangeListener<String>) c -> {
@@ -220,24 +206,12 @@ public class MainController {
                 } else {
                     sendMsgHistoryBtn.setDisable(true);
                     sendMsgHistoryBtn.setSelected(false);
-                    if (historyPopOver != null) {
-                        historyPopOver.hide();
-                    }
+                    getHistoryPopOver().hide();
                 }
             }
         });
 
         // Filter
-        filterListBtn.setOnAction(event -> {
-            if (filterListBtn.isSelected()) {
-                if (filterPopOver == null) {
-                    getFilterPopOver();
-                }
-                filterPopOver.show(filterListBtn, -10);
-            } else {
-                filterPopOver.hide();
-            }
-        });
         filterList.addListener((ListChangeListener<String>) c -> {
             if (c.next()) {
                 int size = filterList.size();
@@ -247,9 +221,7 @@ public class MainController {
                 } else {
                     filterListBtn.setDisable(true);
                     filterListBtn.setSelected(false);
-                    if (filterPopOver != null) {
-                        filterPopOver.hide();
-                    }
+                    getFilterPopOver().hide();
                     filterCount.setText("");
                 }
             }
@@ -414,14 +386,13 @@ public class MainController {
      */
     @FXML
     private void showSessions() {
-        if (sessionsPopOver == null) {
-            sessionsPopOver = new SessionsPopOver(this);
-        }
-        if (!sessionsPopOver.isShowing()) {
+        if (!getSessionsPopOver().isShowing()) {
             getMainParent().setDisable(true);
-            sessionsPopOver.show(mainStage,
-                    mainStage.getX() + mainStage.getWidth() / 2 - sessionsPopOver.getPopOverWidth() / 2,
-                    mainStage.getY() + mainStage.getHeight() / 2 - sessionsPopOver.getPopOverHeight() / 2);
+            getSessionsPopOver().show(
+                    mainStage,
+                    mainStage.getX() + mainStage.getWidth() / 2 - getSessionsPopOver().getPopOverWidth() / 2,
+                    mainStage.getY() + mainStage.getHeight() / 2 - getSessionsPopOver().getPopOverHeight() / 2
+            );
         }
     }
 
@@ -431,10 +402,58 @@ public class MainController {
     @FXML
     private void showHeadersPopOver() {
         if (httpSettings.isSelected()) {
-            headersPopOver.show(httpSettings, -4);
+            getHeadersPopOver().show(httpSettings, -4);
         } else {
-            headersPopOver.hide();
+            getHeadersPopOver().hide();
         }
+    }
+
+    /**
+     * Show message history pop over
+     */
+    @FXML
+    private void showSendHistoryPopOver() {
+        if (sendMsgHistoryBtn.isSelected()) {
+            getHistoryPopOver().show(sendMsgHistoryBtn, -7);
+        } else {
+            getHistoryPopOver().hide();
+        }
+    }
+
+    /**
+     * Method create and show message history window
+     */
+    @FXML
+    private void showFilterListPopOver() {
+        if (filterListBtn.isSelected()) {
+            getFilterPopOver().show(filterListBtn, -10);
+        } else {
+            getFilterPopOver().hide();
+        }
+    }
+
+    /**
+     * Get http headers pop over
+     *
+     * @return HeadersPopOver
+     */
+    public HeadersPopOver getHeadersPopOver() {
+        if (headersPopOver == null) {
+            headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
+        }
+        return headersPopOver;
+    }
+
+    /**
+     * Get send message history pop over
+     *
+     * @return SendHistoryPopOver
+     */
+    public SendHistoryPopOver getHistoryPopOver() {
+        if (historyPopOver == null) {
+            historyPopOver = new SendHistoryPopOver(this);
+        }
+        return historyPopOver;
     }
 
     /**
@@ -444,43 +463,57 @@ public class MainController {
      */
     public SessionsPopOver getSessionsPopOver() {
         if (sessionsPopOver == null) {
-            showSessions();
+            sessionsPopOver = new SessionsPopOver(this);
         }
         return sessionsPopOver;
     }
 
     /**
-     * Get message history pop over
+     * Get filter list pop over
+     *
+     * @return FilterListPopOver
      */
-    private void getHistoryPopOver() {
-        historyPopOver = new PopOver();
-        historyPopOver.setDetachable(false);
-        historyPopOver.setArrowLocation(PopOver.ArrowLocation.TOP_RIGHT);
-        historyPopOver.setOnHidden((event) -> sendMsgHistoryBtn.setSelected(false));
-        ListView<String> list = new ListView<>();
-        list.setMaxHeight(150);
-        list.setMaxWidth(300);
-        list.getStyleClass().add("pop_over_list");
-        list.setItems(sendMsgList);
-        list.setCellFactory(listView -> new SendHistoryCellFactory(sendMsgList, sendMsgTextField, historyPopOver));
-        historyPopOver.setContentNode(list);
+    public FilterListPopOver getFilterPopOver() {
+        if (filterPopOver == null) {
+            filterPopOver = new FilterListPopOver(this);
+        }
+        return filterPopOver;
     }
 
     /**
-     * Method create and show message history window
+     * Send message history toggle button
+     *
+     * @return ToggleButton
      */
-    private void getFilterPopOver() {
-        filterPopOver = new PopOver();
-        filterPopOver.setDetachable(false);
-        filterPopOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-        filterPopOver.setOnHidden((event -> filterListBtn.setSelected(false)));
-        ListView<String> list = new ListView<>();
-        list.setMaxHeight(150);
-        list.setMaxWidth(300);
-        list.getStyleClass().add("pop_over_list");
-        list.setItems(filterList);
-        list.setCellFactory(listView -> new FilterCellFactory(filterList));
-        filterPopOver.setContentNode(list);
+    public ToggleButton getSendMsgHistoryBtn() {
+        return sendMsgHistoryBtn;
+    }
+
+    /**
+     * Send message observable list
+     *
+     * @return ObservableList<String>
+     */
+    public ObservableList<String> getSendMsgList() {
+        return sendMsgList;
+    }
+
+    /**
+     * Send message field
+     *
+     * @return TextField
+     */
+    public TextField getSendMsgTextField() {
+        return sendMsgTextField;
+    }
+
+    /**
+     * Get filter list toggle button
+     *
+     * @return ToggleButton
+     */
+    public ToggleButton getFilterListBtn() {
+        return filterListBtn;
     }
 
     /**
@@ -622,8 +655,8 @@ public class MainController {
      * @param isConnected boolean
      */
     private void setConnectStatus(boolean isConnected) {
-        if (isConnected) {
-            Platform.runLater(() -> {
+        Platform.runLater(() -> {
+            if (isConnected) {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("connected");
                 connectBtn.setText("Disconnect");
@@ -632,9 +665,8 @@ public class MainController {
                 sendMsgTextField.setDisable(false);
                 messageSendBtn.setDisable(false);
                 httpSettings.setDisable(true);
-            });
-        } else {
-            Platform.runLater(() -> {
+                sessionsMenu.setDisable(true);
+            } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
                 serverUrl.setEditable(true);
@@ -645,8 +677,9 @@ public class MainController {
                 messageSendBtn.setDisable(true);
                 connectionStatus = false;
                 httpSettings.setDisable(false);
-            });
-        }
+                sessionsMenu.setDisable(false);
+            }
+        });
     }
 
     /**
@@ -734,7 +767,7 @@ public class MainController {
      * @return ObservableList<Header>
      */
     private List<Header> getHeadersList() {
-        return headersPopOver.getHeadersController().getHeaderObservableList();
+        return getHeadersPopOver().getHeadersController().getHeaderObservableList();
     }
 
     /**

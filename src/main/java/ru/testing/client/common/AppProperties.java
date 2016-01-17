@@ -14,4 +14,7 @@ public interface AppProperties {
 
     @Property("tags.url")
     String getTagsUrl();
+
+    @Property("last.tag.release")
+    String getLastTagUrl();
 }

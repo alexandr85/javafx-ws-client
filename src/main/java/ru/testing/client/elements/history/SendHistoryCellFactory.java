@@ -5,6 +5,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.PopOver;
+import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**
@@ -16,9 +17,9 @@ public class SendHistoryCellFactory extends ListCell<String> {
     private TextField sendMsgTextField;
     private PopOver historyPopOver;
 
-    public SendHistoryCellFactory(ObservableList<String> list, TextField sendMsgTextField, PopOver historyPopOver) {
-        this.list = list;
-        this.sendMsgTextField = sendMsgTextField;
+    public SendHistoryCellFactory(MainController mainController, PopOver historyPopOver) {
+        this.list = mainController.getSendMsgList();
+        this.sendMsgTextField = mainController.getSendMsgTextField();
         this.historyPopOver = historyPopOver;
     }
 

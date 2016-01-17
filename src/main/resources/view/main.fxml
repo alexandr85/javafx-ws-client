@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.shape.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Circle?>
 <?import org.controlsfx.control.StatusBar?>
 <GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
@@ -140,7 +138,7 @@
             <ToggleButton fx:id="sendMsgHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
                           maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                           mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="History"
-                          GridPane.columnIndex="3">
+                          GridPane.columnIndex="3" onAction="#showSendHistoryPopOver">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
@@ -213,7 +211,7 @@
             </Button>
             <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
                           minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                          prefWidth="25.0" text="">
+                          prefWidth="25.0" onAction="#showFilterListPopOver">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
