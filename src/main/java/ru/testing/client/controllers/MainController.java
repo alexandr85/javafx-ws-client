@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -47,6 +48,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.controlsfx.tools.Platform.OSX;
+
 /**
  * FXML controller for main page
  */
@@ -71,6 +74,8 @@ public class MainController {
     /**
      * Menu buttons
      */
+    @FXML
+    private MenuBar menuBar;
     @FXML
     private MenuItem saveOutputMenu;
     @FXML
@@ -165,6 +170,11 @@ public class MainController {
      */
     @FXML
     private void initialize() {
+
+        // Menu bar position for mac os
+        if (platform == OSX) {
+            menuBar.setUseSystemMenuBar(true);
+        }
 
         // Default focus request
         Platform.runLater(() -> outputTextView.requestFocus());
@@ -812,7 +822,7 @@ public class MainController {
      */
     private void setHotKey(MenuItem item, KeyCode keyCode) {
         KeyCombination.Modifier key = KeyCombination.CONTROL_DOWN;
-        if (platform == org.controlsfx.tools.Platform.OSX) {
+        if (platform == OSX) {
             key = KeyCombination.META_DOWN;
         }
         item.setAccelerator(new KeyCodeCombination(keyCode, key));

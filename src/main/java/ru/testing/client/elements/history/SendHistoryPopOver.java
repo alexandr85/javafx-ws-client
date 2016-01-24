@@ -16,6 +16,8 @@ public class SendHistoryPopOver extends PopOver {
         this.mainController = mainController;
         setDetachable(false);
         setArrowLocation(ArrowLocation.TOP_RIGHT);
+        setHeaderAlwaysVisible(true);
+        setTitle("Send message history");
         setOnHidden(event -> mainController.getSendMsgHistoryBtn().setSelected(false));
         setContentNode(getList());
     }

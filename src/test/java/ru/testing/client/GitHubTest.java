@@ -31,7 +31,7 @@ public class GitHubTest {
         assertThat("Git hub url scheme", url, startsWith("https://"));
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 30000)
     public void testTagVersion() {
         GitHub git = new GitHub(properties);
         while (git.isAlive()) {

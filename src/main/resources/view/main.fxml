@@ -14,14 +14,13 @@
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="NEVER"/>
         <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
         <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
         <RowConstraints vgrow="SOMETIMES"/>
         <RowConstraints vgrow="NEVER"/>
     </rowConstraints>
-    <MenuBar maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0"
-             GridPane.rowIndex="0">
+    <MenuBar fx:id="menuBar" GridPane.rowIndex="0">
         <Menu text="File">
             <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
                 <graphic>
@@ -69,10 +68,10 @@
             </MenuItem>
         </Menu>
     </MenuBar>
-    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0"
           prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
         <padding>
-            <Insets left="20.0"/>
+            <Insets left="20.0" top="4"/>
         </padding>
         <GridPane hgap="5">
             <columnConstraints>
@@ -118,16 +117,16 @@
             </Button>
         </GridPane>
     </VBox>
-    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0"
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0"
           prefWidth="660.0" GridPane.rowIndex="2">
         <padding>
-            <Insets left="20.0"/>
+            <Insets left="20.0" bottom="3"/>
         </padding>
         <GridPane hgap="5">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="55.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="400.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="477.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="23.0"/>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
             </columnConstraints>
             <rowConstraints>
@@ -143,22 +142,29 @@
                     <Insets left="5.0"/>
                 </padding>
             </TextField>
+            <ToggleButton fx:id="sendMsgHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
+                          maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                          prefHeight="22.0" prefWidth="22.0" GridPane.columnIndex="2" onAction="#showSendHistoryPopOver">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+                <tooltip>
+                    <Tooltip text="Send message history list"/>
+                </tooltip>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/history.png"/>
+                    </ImageView>
+                </graphic>
+            </ToggleButton>
             <Button fx:id="messageSendBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
                     maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="2"
+                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="3"
                     onAction="#sendWebsocketMessage">
                 <cursor>
                     <Cursor fx:constant="HAND"/>
                 </cursor>
             </Button>
-            <ToggleButton fx:id="sendMsgHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
-                          maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="History"
-                          GridPane.columnIndex="3" onAction="#showSendHistoryPopOver">
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </ToggleButton>
         </GridPane>
     </VBox>
     <GridPane prefHeight="400.0" styleClass="output_grid" GridPane.rowIndex="3">
