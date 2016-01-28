@@ -68,7 +68,7 @@
             </MenuItem>
         </Menu>
     </MenuBar>
-    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0"
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0"
           prefWidth="660.0" GridPane.rowIndex="1" alignment="CENTER_LEFT">
         <padding>
             <Insets left="20.0" top="4"/>
@@ -117,7 +117,7 @@
             </Button>
         </GridPane>
     </VBox>
-    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="34.0"
+    <VBox maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="35.0"
           prefWidth="660.0" GridPane.rowIndex="2">
         <padding>
             <Insets left="20.0" bottom="3"/>
