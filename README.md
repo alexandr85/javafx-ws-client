@@ -17,6 +17,10 @@
 
 ---
 
-###### Create package:
+###### Create jar package:
 * execute command `{project.path}$ mvn clean assembly:assembly` 
-* find it on path `{project.path}$ target/ws.client.jar` 
+* find it on path `{project.path}$ target/ws.client.jar`
+ 
+###### Create mac os bundle package:
+* execute command `{project.path}$ mvn clean package appbundle:bundle` 
+* find it on path `{project.path}$ target/javafx-ws-client-{version}/ws.client.app`

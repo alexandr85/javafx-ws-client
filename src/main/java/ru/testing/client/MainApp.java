@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.qatools.properties.PropertyLoader;
@@ -21,6 +22,8 @@ import ru.testing.client.websocket.ConsoleMessageHandler;
 import javax.swing.*;
 import java.net.URI;
 import java.util.Scanner;
+
+import static org.controlsfx.tools.Platform.OSX;
 
 /**
  * Main application class
@@ -78,11 +81,12 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
-        loader.setController(new MainController(primaryStage, properties));
+        MainController controller = new MainController(primaryStage, properties);
+        loader.setController(controller);
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            setApplicationIcon(primaryStage);
+            setApplicationIcon(primaryStage, controller);
             primaryStage.setTitle(String.format("WebSocket client v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
@@ -133,11 +137,15 @@ public class MainApp extends Application {
      *
      * @param stage Stage
      */
-    private void setApplicationIcon(Stage stage) {
+    private void setApplicationIcon(Stage stage, MainController controller) {
         try {
-            if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            if (Platform.getCurrent() == OSX) {
                 java.awt.Image imageForMac = new ImageIcon(getClass().getResource("/images/icon-512.png")).getImage();
                 com.apple.eawt.Application.getApplication().setDockIconImage(imageForMac);
+
+                // Menu bar position for mac os
+                controller.getMenuBar().setUseSystemMenuBar(true);
+                controller.getExitAppMenu().setVisible(false);
             }
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-16.png")));
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-32.png")));

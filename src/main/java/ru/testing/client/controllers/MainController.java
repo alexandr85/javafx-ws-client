@@ -171,11 +171,6 @@ public class MainController {
     @FXML
     private void initialize() {
 
-        // Menu bar position for mac os
-        if (platform == OSX) {
-            menuBar.setUseSystemMenuBar(true);
-        }
-
         // Default focus request
         Platform.runLater(() -> outputTextView.requestFocus());
 
@@ -549,6 +544,24 @@ public class MainController {
      */
     public ToggleButton getFilterListBtn() {
         return filterListBtn;
+    }
+
+    /**
+     * Application exit menu item
+     *
+     * @return MenuItem
+     */
+    public MenuItem getExitAppMenu() {
+        return exitAppMenu;
+    }
+
+    /**
+     * Application menu toolbar
+     *
+     * @return MenuBar
+     */
+    public MenuBar getMenuBar() {
+        return menuBar;
     }
 
     /**
