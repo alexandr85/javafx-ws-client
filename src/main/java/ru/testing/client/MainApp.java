@@ -16,8 +16,8 @@ import ru.testing.client.common.ApplicationType;
 import ru.testing.client.common.Configuration;
 import ru.testing.client.common.github.GitHub;
 import ru.testing.client.controllers.MainController;
+import ru.testing.client.websocket.MessageHandler;
 import ru.testing.client.websocket.Client;
-import ru.testing.client.websocket.ConsoleMessageHandler;
 
 import javax.swing.*;
 import java.net.URI;
@@ -87,7 +87,7 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, controller);
-            primaryStage.setTitle(String.format("WebSocket client v%s", properties.getVersion()));
+            primaryStage.setTitle(String.format("WebSocket Client v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
@@ -113,7 +113,7 @@ public class MainApp extends Application {
             client.openConnection();
             if (client.isOpenConnection()) {
                 String sendMessage;
-                client.setMessageHandler(new ConsoleMessageHandler());
+                client.setMessageHandler(new MessageHandler());
                 LOGGER.info("For disconnect from server type 'exit'");
                 while (true) {
                     Scanner scanner = new Scanner(System.in);
@@ -146,13 +146,14 @@ public class MainApp extends Application {
                 // Menu bar position for mac os
                 controller.getMenuBar().setUseSystemMenuBar(true);
                 controller.getExitAppMenu().setVisible(false);
+            } else {
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-16.png")));
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-32.png")));
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-64.png")));
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-128.png")));
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-256.png")));
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
             }
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-16.png")));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-32.png")));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-64.png")));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-128.png")));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-256.png")));
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }

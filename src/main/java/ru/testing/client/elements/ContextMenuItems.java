@@ -50,7 +50,7 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param cell ListCell<String>
+     * @param cell ListCell<OutputMessage>
      * @return MenuItem
      */
     public MenuItem copyCellAll(ListCell<OutputMessage> cell) {
@@ -67,7 +67,7 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param cell ListCell<String>
+     * @param cell ListCell<OutputMessage>
      * @return MenuItem
      */
     public MenuItem copyCellMessage(ListCell<OutputMessage> cell) {
@@ -85,6 +85,23 @@ public class ContextMenuItems {
      * Menu item 'copy' for copy string to clipboard
      *
      * @param cell ListCell<String>
+     * @return MenuItem
+     */
+    public MenuItem copyCellText(ListCell<String> cell) {
+        MenuItem copyItem = new MenuItem("Copy message");
+        copyItem.setOnAction(event -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            content.putString(cell.getText());
+            clipboard.setContent(content);
+        });
+        return copyItem;
+    }
+
+    /**
+     * Menu item 'copy' for copy string to clipboard
+     *
+     * @param cell ListCell<OutputMessage>
      * @return MenuItem
      */
     public MenuItem copyCellTime(ListCell<OutputMessage> cell) {

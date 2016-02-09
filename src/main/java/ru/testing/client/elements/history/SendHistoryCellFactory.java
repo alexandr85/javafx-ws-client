@@ -54,6 +54,7 @@ public class SendHistoryCellFactory extends ListCell<String> {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
+                m.copyCellText(cell),
                 m.clearPopOverCell(cell),
                 m.clearListView(list)
         );

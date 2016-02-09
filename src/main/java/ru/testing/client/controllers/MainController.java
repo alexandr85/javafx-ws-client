@@ -39,7 +39,7 @@ import ru.testing.client.elements.sessions.SessionsPopOver;
 import ru.testing.client.elements.sessions.session.ItemElement;
 import ru.testing.client.elements.sessions.session.Session;
 import ru.testing.client.websocket.Client;
-import ru.testing.client.websocket.FXMessageHandler;
+import ru.testing.client.websocket.MessageHandler;
 
 import java.awt.*;
 import java.io.IOException;
@@ -661,7 +661,7 @@ public class MainController {
             client.setEndpointURI(new URI(serverUrl.getText()));
             client.setHeaders(getHeadersList());
             client.openConnection();
-            client.setMessageHandler(new FXMessageHandler(this));
+            client.setMessageHandler(new MessageHandler(this));
             connectionStatus = true;
         } catch (Exception e) {
             LOGGER.error(e.getLocalizedMessage());

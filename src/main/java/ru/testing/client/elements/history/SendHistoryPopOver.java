@@ -10,15 +10,20 @@ import ru.testing.client.controllers.MainController;
  */
 public class SendHistoryPopOver extends PopOver {
 
+    private static final double WIDTH = 430.0;
+    private static final double HEIGHT = 120.0;
     private MainController mainController;
 
     public SendHistoryPopOver(MainController mainController) {
         this.mainController = mainController;
         setDetachable(false);
         setArrowLocation(ArrowLocation.TOP_RIGHT);
-        setHeaderAlwaysVisible(true);
+        setHeaderAlwaysVisible(false);
         setTitle("Send message history");
-        setOnHidden(event -> mainController.getSendMsgHistoryBtn().setSelected(false));
+        setOnHidden(event -> {
+            mainController.getSendMsgHistoryBtn().setSelected(false);
+            mainController.getMainParent().requestFocus();
+        });
         setContentNode(getList());
     }
 
@@ -30,8 +35,8 @@ public class SendHistoryPopOver extends PopOver {
     private ListView<String> getList() {
         ListView<String> list = new ListView<>();
         list.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        list.setMaxHeight(150);
-        list.setMaxWidth(300);
+        list.setPrefWidth(WIDTH);
+        list.setMaxHeight(HEIGHT);
         list.setStyle("-fx-focus-color: transparent;" +
                 "-fx-faint-focus-color: transparent;" +
                 "-fx-border-radius: 2px; " +

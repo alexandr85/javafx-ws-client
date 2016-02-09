@@ -9,7 +9,7 @@
     <version>1.7</version>
 
     <properties>
-        <project.name>ws.client</project.name>
+        <project.name>WSClient</project.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <tyrus.version>1.12</tyrus.version>
