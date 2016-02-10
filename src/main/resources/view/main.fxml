@@ -252,7 +252,7 @@
         </padding>
         <leftItems>
             <Label fx:id="autoScrollLabel" mnemonicParsing="false" maxWidth="-Infinity" text="auto scroll"
-                   contentDisplay="RIGHT">
+                   contentDisplay="RIGHT" onMouseClicked="#changeAutoScrollStatus">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/turn-on.png"/>
@@ -264,10 +264,13 @@
                 <padding>
                     <Insets left="10" right="10" top="2"/>
                 </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Label>
             <Separator orientation="VERTICAL"/>
             <Label fx:id="filterStatusLabel" mnemonicParsing="false" maxWidth="-Infinity" text="filter"
-                   contentDisplay="RIGHT">
+                   contentDisplay="RIGHT" onMouseClicked="#changeFilterStatus">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/turn-off.png"/>
@@ -279,6 +282,9 @@
                 <padding>
                     <Insets left="10" right="10" top="2"/>
                 </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
             </Label>
             <Separator orientation="VERTICAL"/>
             <Label fx:id="timeDiffLabel" mnemonicParsing="false" maxWidth="-Infinity">

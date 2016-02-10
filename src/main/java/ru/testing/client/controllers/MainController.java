@@ -63,7 +63,7 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties;
     private Client client;
-    private boolean connectionStatus;
+    private boolean connectionStatus, autoScrollStatus = true, filterStatus;
     private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
@@ -318,7 +318,16 @@ public class MainController {
 
     @FXML
     private void changeFilterStatus() {
-        if (filterOnOffBtn.isSelected()) {
+        if (filterStatus) {
+            filterOnOffBtn.setSelected(false);
+            filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
+            filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
+            filterAddBtn.setDisable(true);
+            filterTextField.setDisable(true);
+            filterListBtn.setDisable(true);
+            filterStatus = false;
+        } else {
+            filterOnOffBtn.setSelected(true);
             filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
             filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
             filterAddBtn.setDisable(false);
@@ -327,12 +336,7 @@ public class MainController {
             if (filterList.size() > 0) {
                 filterListBtn.setDisable(false);
             }
-        } else {
-            filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
-            filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
-            filterAddBtn.setDisable(true);
-            filterTextField.setDisable(true);
-            filterListBtn.setDisable(true);
+            filterStatus = true;
         }
     }
 
@@ -355,10 +359,14 @@ public class MainController {
      */
     @FXML
     private void changeAutoScrollStatus() {
-        if (autoScrollMenuItem.isSelected()) {
-            autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
-        } else {
+        if (autoScrollStatus) {
             autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
+            autoScrollMenuItem.setSelected(false);
+            autoScrollStatus = false;
+        } else {
+            autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
+            autoScrollMenuItem.setSelected(true);
+            autoScrollStatus = true;
         }
     }
 
@@ -592,7 +600,7 @@ public class MainController {
             }
 
             // Set filter data
-            filterOnOffBtn.setSelected(session.getFilterData().isFilterOn());
+            filterStatus = session.getFilterData().isFilterOn();
             filterList.clear();
             items = session.getFilterData().getItems();
             if (items != null) {
@@ -629,7 +637,7 @@ public class MainController {
      * @return boolean
      */
     public boolean getFilterStatus() {
-        return filterOnOffBtn.isSelected();
+        return filterStatus;
     }
 
     /**
@@ -749,7 +757,7 @@ public class MainController {
         if (change.next()) {
             showAllMsgAndSelectedMsgCount();
             final int size = outputMessageList.size();
-            if (size > 0 && autoScrollMenuItem.isSelected()) {
+            if (size > 0 && autoScrollStatus) {
                 outputTextView.scrollTo(size - 1);
             }
         }
