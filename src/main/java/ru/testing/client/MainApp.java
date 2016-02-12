@@ -20,6 +20,7 @@ import ru.testing.client.websocket.MessageHandler;
 import ru.testing.client.websocket.Client;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Scanner;
 
@@ -95,8 +96,9 @@ public class MainApp extends Application {
             primaryStage.setResizable(true);
             primaryStage.show();
             new GitHub(properties);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+        } catch (IOException e) {
+            LOGGER.error("Error load fxml view!");
+            e.printStackTrace();
             System.exit(1);
         }
     }
