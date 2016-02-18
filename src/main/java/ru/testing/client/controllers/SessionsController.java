@@ -1,36 +1,27 @@
 package ru.testing.client.controllers;
 
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import ru.testing.client.common.FilesOperations;
+import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.sessions.Sessions;
 import ru.testing.client.elements.sessions.SessionsCellFactory;
-import ru.testing.client.elements.sessions.session.ConnectionData;
-import ru.testing.client.elements.sessions.session.FilterData;
-import ru.testing.client.elements.sessions.session.SendHistoryData;
-import ru.testing.client.elements.sessions.session.Session;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static ru.testing.client.common.db.Data.getData;
 
 /**
  * Sessions controller
  */
 public class SessionsController {
 
-    private MainController mainController;
+    private MainController main;
     private ObservableList<Session> sessionsList = FXCollections.observableArrayList();
-    private FilesOperations filesOperations = new FilesOperations();
 
     /**
      * Labels
@@ -51,7 +42,7 @@ public class SessionsController {
     private TextField sessionName;
 
     public SessionsController(MainController mainController) {
-        this.mainController = mainController;
+        main = mainController;
     }
 
     /**
@@ -62,7 +53,7 @@ public class SessionsController {
         Platform.runLater(() -> noSessionsLabel.requestFocus());
         sessionsListView.setItems(sessionsList);
         sessionsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, mainController));
+        sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, main));
         sessionsListView.getItems().addListener((ListChangeListener<Session>) change -> {
             if (change.next()) {
                 int size = sessionsList.size();
@@ -75,14 +66,12 @@ public class SessionsController {
             }
         });
 
-
         sessionName.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ENTER) {
                 addSession();
             }
         });
-
-        readSessions();
+        getData().getSessions().stream().forEach(session -> sessionsList.add(session));
     }
 
     /**
@@ -92,24 +81,41 @@ public class SessionsController {
     private void addSession() {
         String sName = sessionName.getText();
         if (!sName.isEmpty()) {
-            Sessions sessions = readSessions();
-            List<Session> sessionsList = sessions.getSessions();
-            if (sessionsList == null) {
-                sessionsList = new ArrayList<>();
-            }
+            main.setProgressVisible(true);
             if (!existSessionName(sessionsList, sName)) {
-                sessionsList.add(new Session(
-                        sName,
-                        new ConnectionData(mainController.getServerUrl(), mainController.getHeadersItems()),
-                        new SendHistoryData(mainController.getSendMsgItems()),
-                        new FilterData(mainController.getFilterStatus(), mainController.getFilterItems()))
-                );
-                sessions.setSessions(sessionsList);
-                filesOperations.saveSessionsData(sessions);
+                Session session = new Session(sName,
+                        main.getServerUrl(),
+                        main.isFiltered(),
+                        main.isFilterVisible(),
+                        main.isAutoScroll(),
+                        main.isStatusBarShow());
+                int id = getData().setSession(session);
+                getData().setFilters(main.getFilterList(), id);
+                getData().setHeaders(main.getHeadersList(), id);
+                getData().setTxMessages(main.getSendMsgItems(), id);
+                getData().setRxMessages(main.getOutputMessageList(), id);
+                session.setId(id);
+                sessionsList.add(session);
                 sessionName.clear();
-                readSessions();
             } else {
                 Dialogs.getWarningDialog("This session name is exist in list");
+            }
+            main.setProgressVisible(false);
+        }
+    }
+
+    /**
+     * Delete session from sessions list
+     *
+     * @param cell ListCell<Session>
+     */
+    public void deleteSession(ListCell<Session> cell) {
+        Session session = cell.getItem();
+        getData().deleteSession(session.getId());
+        for (Session s : sessionsList) {
+            if (s.getId() == session.getId()) {
+                sessionsList.remove(cell.getIndex());
+                return;
             }
         }
     }
@@ -127,25 +133,6 @@ public class SessionsController {
             }
         }
         return false;
-    }
-
-    /**
-     * Read sessions from file add collect sessions list
-     *
-     * @return Sessions
-     */
-    public Sessions readSessions() {
-        Sessions sessions = filesOperations.readSessionsData();
-        if (sessions != null) {
-            List<Session> sessionList = sessions.getSessions();
-            sessionsList.clear();
-            if (sessionList != null && sessionList.size() > 0) {
-                sessions.getSessions().stream().forEach(session -> sessionsList.add(session));
-            }
-        } else {
-            sessions = new Sessions();
-        }
-        return sessions;
     }
 
     /**

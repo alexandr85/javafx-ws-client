@@ -38,7 +38,7 @@ public class GitHubTest {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
-                LOGGER.error(e.getMessage());
+                LOGGER.error("Thread interrupted exception: {}", e.getMessage());
             }
         }
         Double version = properties.getVersion();

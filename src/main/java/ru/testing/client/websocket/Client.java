@@ -3,7 +3,7 @@ package ru.testing.client.websocket;
 import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.headers.Header;
+import ru.testing.client.common.db.objects.Header;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class Client extends Endpoint {
                                 }
                             }
                         } catch (Exception e) {
-                            LOGGER.error("Add headers:", e);
+                            LOGGER.error("Error add headers: {}", e);
                         }
                     }
                 })

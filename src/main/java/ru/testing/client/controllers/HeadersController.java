@@ -10,20 +10,22 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.headers.HeadersCellFactory;
+
+import java.util.List;
 
 /**
  * Http settings controller
  */
 public class HeadersController {
 
-    private MainController mainController;
+    private MainController main;
     private ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
 
-    public HeadersController(MainController mainController) {
-        this.mainController = mainController;
+    public HeadersController(MainController main) {
+        this.main = main;
     }
 
     /**
@@ -55,7 +57,7 @@ public class HeadersController {
         headerList.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
-                mainController.setHeadersCount(size);
+                main.getHeadersCount().setText(String.valueOf(size));
                 if (size > 0) {
                     setHeaderVisible(true);
                 } else {
@@ -110,6 +112,19 @@ public class HeadersController {
      */
     public ObservableList<Header> getHeaderObservableList() {
         return headerObservableList;
+    }
+
+    /**
+     * Set headers data
+     *
+     * @param headers List<Header>
+     */
+    public void setHeaders(List<Header> headers) {
+        Platform.runLater(() -> {
+            headerObservableList.clear();
+            headers.stream().forEach(header -> headerObservableList.add(new Header(header.getName(), header.getValue())));
+            //main.getHeadersCount().setText(String.valueOf(headers.size()));
+        });
     }
 
     /**

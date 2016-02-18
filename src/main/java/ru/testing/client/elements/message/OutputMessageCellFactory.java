@@ -1,7 +1,9 @@
 package ru.testing.client.elements.message;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
 
 import static ru.testing.client.elements.message.OutputMessageType.SEND;
@@ -13,26 +15,30 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
     private ObservableList<OutputMessage> list;
+    private MainController main;
 
-    public OutputMessageCellFactory(ObservableList<OutputMessage> list) {
+    public OutputMessageCellFactory(ObservableList<OutputMessage> list, MainController mainController) {
         this.list = list;
+        main = mainController;
     }
 
     @Override
     protected void updateItem(OutputMessage item, boolean empty) {
         super.updateItem(item, empty);
-        if (item != null) {
-            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
-            if (item.getMessageType() == SEND) {
-                getStyleClass().add(SEND_MESSAGE_CSS);
+        Platform.runLater(() -> {
+            if (item != null) {
+                setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
+                if (item.getMessageType() == SEND) {
+                    getStyleClass().add(SEND_MESSAGE_CSS);
+                } else {
+                    getStyleClass().removeAll(SEND_MESSAGE_CSS);
+                }
             } else {
+                setText(null);
+                setGraphic(null);
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
             }
-        } else {
-            setText(null);
-            setGraphic(null);
-            getStyleClass().removeAll(SEND_MESSAGE_CSS);
-        }
+        });
     }
 
     @Override
@@ -60,7 +66,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
                 m.copyCellMessage(cell),
                 m.copyCellTime(cell),
                 m.copyCellAll(cell),
-                m.saveMessageToFile(cell),
+                m.saveMessageToFile(cell, main),
                 new SeparatorMenuItem(),
                 m.clearListView(list)
         );
@@ -77,9 +83,9 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
                 m.copySelected(selectedList),
-                m.saveSelectedToFile(selectedList),
-                m.saveSelectedSendToFile(selectedList),
-                m.saveSelectedRecentToFile(selectedList),
+                m.saveSelectedToFile(selectedList, main),
+                m.saveSelectedSendToFile(selectedList, main),
+                m.saveSelectedRecentToFile(selectedList, main),
                 new SeparatorMenuItem(),
                 m.clearListView(list)
         );

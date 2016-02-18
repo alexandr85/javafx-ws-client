@@ -6,7 +6,7 @@ import org.controlsfx.control.PopOver;
 import ru.testing.client.controllers.MainController;
 
 /**
- * Filter list pop over
+ * Filters list pop over
  */
 public class FilterListPopOver extends PopOver {
 

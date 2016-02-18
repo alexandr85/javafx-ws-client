@@ -7,8 +7,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -26,9 +26,11 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.common.AppProperties;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
+import ru.testing.client.common.db.objects.Header;
+import ru.testing.client.common.db.objects.RxMessage;
+import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
-import ru.testing.client.elements.headers.Header;
 import ru.testing.client.elements.headers.HeadersPopOver;
 import ru.testing.client.elements.history.SendHistoryPopOver;
 import ru.testing.client.elements.message.OutputMessage;
@@ -36,19 +38,19 @@ import ru.testing.client.elements.message.OutputMessageCellFactory;
 import ru.testing.client.elements.message.OutputMessageFormat;
 import ru.testing.client.elements.message.OutputMessageType;
 import ru.testing.client.elements.sessions.SessionsPopOver;
-import ru.testing.client.elements.sessions.session.ItemElement;
-import ru.testing.client.elements.sessions.session.Session;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
+import static ru.testing.client.common.db.Data.getData;
 
 /**
  * FXML controller for main page
@@ -63,7 +65,7 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties;
     private Client client;
-    private boolean connectionStatus, autoScrollStatus = true, filterStatus;
+    private boolean connectionStatus, autoScroll, filtered;
     private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
@@ -154,6 +156,8 @@ public class MainController {
     private FlowPane findBar;
     @FXML
     private Circle connectStatus;
+    @FXML
+    private ProgressBar progress;
 
     /**
      * Main controller default contractor
@@ -191,7 +195,7 @@ public class MainController {
         // Update output message list view
         outputTextView.setItems(outputMessageList);
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList));
+        outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
         outputTextView.getItems().addListener(this::outputMessageListener);
         outputTextView.focusedProperty().addListener(observable -> {
             if (!outputTextView.isFocused()) {
@@ -225,26 +229,31 @@ public class MainController {
             }
         });
 
-        // Filter
-        filterList.addListener((ListChangeListener<String>) c -> {
-            if (c.next()) {
-                int size = filterList.size();
-                if (size > 0 && filterOnOffBtn.isSelected()) {
-                    filterListBtn.setDisable(false);
-                    filterCount.setText(String.valueOf(size));
-                } else {
-                    filterListBtn.setDisable(true);
-                    filterListBtn.setSelected(false);
-                    getFilterPopOver().hide();
-                    filterCount.setText("");
-                }
-            }
-        });
+        // Filters
+        filterList.addListener((ListChangeListener<String>) c ->
+                Platform.runLater(() -> {
+                    if (c.next()) {
+                        int size = filterList.size();
+                        if (size > 0 && filterOnOffBtn.isSelected()) {
+                            filterListBtn.setDisable(false);
+                            filterCount.setText(String.valueOf(size));
+                        } else {
+                            filterListBtn.setDisable(true);
+                            filterListBtn.setSelected(false);
+                            getFilterPopOver().hide();
+                            filterCount.setText("");
+                        }
+                    }
+                })
+        );
         filterTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
             }
         });
+
+        // Load default session
+        setDataFromSession(1);
     }
 
     /**
@@ -266,12 +275,7 @@ public class MainController {
     @FXML
     private void connectDisconnectAction() {
         if (connectionStatus) {
-            try {
-                client.closeConnection();
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                Dialogs.getExceptionDialog(e);
-            }
+            client.closeConnection();
         } else {
             if (!serverUrl.getText().isEmpty()) {
                 Task task = new Task() {
@@ -318,26 +322,28 @@ public class MainController {
 
     @FXML
     private void changeFilterStatus() {
-        if (filterStatus) {
-            filterOnOffBtn.setSelected(false);
-            filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
-            filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
-            filterAddBtn.setDisable(true);
-            filterTextField.setDisable(true);
-            filterListBtn.setDisable(true);
-            filterStatus = false;
-        } else {
-            filterOnOffBtn.setSelected(true);
-            filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
-            filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
-            filterAddBtn.setDisable(false);
-            filterTextField.setDisable(false);
-            filterTextField.requestFocus();
-            if (filterList.size() > 0) {
-                filterListBtn.setDisable(false);
+        Platform.runLater(() -> {
+            if (filtered) {
+                filterOnOffBtn.setSelected(false);
+                filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
+                filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
+                filterAddBtn.setDisable(true);
+                filterTextField.setDisable(true);
+                filterListBtn.setDisable(true);
+                filtered = false;
+            } else {
+                filterOnOffBtn.setSelected(true);
+                filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
+                filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
+                filterAddBtn.setDisable(false);
+                filterTextField.setDisable(false);
+                filterTextField.requestFocus();
+                if (filterList.size() > 0) {
+                    filterListBtn.setDisable(false);
+                }
+                filtered = true;
             }
-            filterStatus = true;
-        }
+        });
     }
 
     /**
@@ -359,15 +365,17 @@ public class MainController {
      */
     @FXML
     private void changeAutoScrollStatus() {
-        if (autoScrollStatus) {
-            autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
-            autoScrollMenuItem.setSelected(false);
-            autoScrollStatus = false;
-        } else {
-            autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
-            autoScrollMenuItem.setSelected(true);
-            autoScrollStatus = true;
-        }
+        Platform.runLater(() -> {
+            if (autoScroll) {
+                autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
+                autoScrollMenuItem.setSelected(false);
+                autoScroll = false;
+            } else {
+                autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
+                autoScrollMenuItem.setSelected(true);
+                autoScroll = true;
+            }
+        });
     }
 
     /**
@@ -380,7 +388,7 @@ public class MainController {
             builder.append(String.format(OutputMessageFormat.DEFAULT.getFormat().concat("\n"),
                     message.getFormattedTime(), message.getMessage()));
         }
-        new FilesOperations().saveTextToFile(builder.toString());
+        new FilesOperations().saveTextToFile(builder.toString(), this);
     }
 
     /**
@@ -584,40 +592,47 @@ public class MainController {
     /**
      * Set data from selected session
      *
-     * @param session Session
+     * @param sessionId int
      */
-    public void setDataFromSession(Session session) {
-        if (session != null) {
+    public void setDataFromSession(int sessionId) {
+        setProgressVisible(true);
+        Session s = getData().getSession(sessionId);
+        if (s != null) {
+            LOGGER.debug("Load session name: {}", s.getName());
 
-            // Set connection data
-            serverUrl.setText(session.getConnect().getUrl());
-            List<Header> headers = getHeadersList();
-            headers.clear();
-            List<ItemElement> items = session.getConnect().getHeaders();
-            if (items != null) {
-                items.stream().forEach(item -> headers.add(new Header(item.getName(), item.getValue())));
-                setHeadersCount(items.size());
-            }
+            // set websocket server url
+            serverUrl.setText(s.getUrl());
 
-            // Set filter data
-            filterStatus = session.getFilterData().isFilterOn();
-            filterList.clear();
-            items = session.getFilterData().getItems();
-            if (items != null) {
-                items.stream().forEach(item -> filterList.add(item.getValue()));
-                if (items.size() > 0) {
-                    filterCount.setText(String.valueOf(items.size()));
-                }
-            }
+            // set filter properties
+            showFilter.setSelected(s.getFilterShow());
+            changeFilterVisible();
+            filtered = !s.getFilterOn();
             changeFilterStatus();
+            filterList.clear();
+            s.getFilters().stream().forEach(filter -> filterList.add(filter.getValue()));
 
-            // Set send message data
+            // set auto scroll properties
+            autoScroll = !s.getAutoScroll();
+            changeAutoScrollStatus();
+
+            // set status bar properties
+            showStatusBar.setSelected(s.getBarShow());
+            changesStatusBarVisible();
+
+            // set headers data
+            getHeadersPopOver().getHeadersController().setHeaders(s.getHeaders());
+
+            // set send messages
             sendMsgList.clear();
-            List<ItemElement> sendMsgItems = session.getSendHistoryData().getItem();
-            if (sendMsgItems != null) {
-                sendMsgItems.stream().forEach(item -> sendMsgList.add(item.getValue()));
-            }
+            s.getTxMessages().stream().forEach(m -> sendMsgList.add(m.getValue()));
+
+            // set output messages
+            outputMessageList.clear();
+            s.getRxMessages().stream().forEach(m ->
+                    outputMessageList.add(new OutputMessage(m.getTime(), m.getValue())));
+
         }
+        setProgressVisible(false);
     }
 
     /**
@@ -625,19 +640,21 @@ public class MainController {
      *
      * @return List<ItemElement>
      */
-    public List<ItemElement> getSendMsgItems() {
-        List<ItemElement> items = new ArrayList<>();
-        sendMsgList.stream().forEach(s -> items.add(new ItemElement(s)));
+    public List<String> getSendMsgItems() {
+        List<String> items = new ArrayList<>();
+        sendMsgList.stream().forEach(items::add);
         return items;
     }
 
     /**
-     * Get on off filter status
+     * Get received message list
      *
-     * @return boolean
+     * @return List<RxMessage>
      */
-    public boolean getFilterStatus() {
-        return filterStatus;
+    public List<RxMessage> getOutputMessageList() {
+        List<RxMessage> rxMessages = new ArrayList<>();
+        outputMessageList.stream().forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
+        return rxMessages;
     }
 
     /**
@@ -650,14 +667,85 @@ public class MainController {
     }
 
     /**
-     * Get filter items list
+     * Get headers list
      *
-     * @return List<ItemElement>
+     * @return ObservableList<Header>
      */
-    public List<ItemElement> getFilterItems() {
-        List<ItemElement> items = new ArrayList<>();
-        filterList.stream().forEach(s -> items.add(new ItemElement(s)));
-        return items;
+    public List<Header> getHeadersList() {
+        return getHeadersPopOver().getHeadersController().getHeaderObservableList();
+    }
+
+    /**
+     * Add websocket response message to output text area
+     *
+     * @param type    Message type
+     * @param message String message
+     */
+    public void addMessageToOutput(OutputMessageType type, String message) {
+        Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
+    }
+
+    /**
+     * Get headers count label
+     *
+     * @return Label
+     */
+    public Label getHeadersCount() {
+        return headersCount;
+    }
+
+    /**
+     * Get main parent node
+     *
+     * @return Parent
+     */
+    public Parent getMainParent() {
+        return mainStage.getScene().getRoot();
+    }
+
+    /**
+     * Set visible progress bar
+     *
+     * @param isVisible boolean
+     */
+    public void setProgressVisible(boolean isVisible) {
+        Platform.runLater(() -> progress.setVisible(isVisible));
+    }
+
+    /**
+     * Get on off filter status
+     *
+     * @return boolean
+     */
+    public boolean isFiltered() {
+        return filtered;
+    }
+
+    /**
+     * Get visible filter pane status
+     *
+     * @return boolean
+     */
+    public boolean isFilterVisible() {
+        return showFilter.isSelected();
+    }
+
+    /**
+     * Get auto scroll status
+     *
+     * @return boolean
+     */
+    public boolean isAutoScroll() {
+        return autoScroll;
+    }
+
+    /**
+     * Get status bar visible status
+     *
+     * @return boolean
+     */
+    public boolean isStatusBarShow() {
+        return statusBar.isVisible();
     }
 
     /**
@@ -665,6 +753,7 @@ public class MainController {
      */
     private void startClient() {
         try {
+            setProgressVisible(true);
             client = new Client();
             client.setEndpointURI(new URI(serverUrl.getText()));
             client.setHeaders(getHeadersList());
@@ -672,9 +761,10 @@ public class MainController {
             client.setMessageHandler(new MessageHandler(this));
             connectionStatus = true;
         } catch (Exception e) {
-            LOGGER.error(e.getLocalizedMessage());
+            LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
             Platform.runLater(() -> Dialogs.getExceptionDialog(e));
         } finally {
+            setProgressVisible(false);
             checkConnectionStatus();
         }
     }
@@ -697,7 +787,7 @@ public class MainController {
                         Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
                     } while (connectionStatus);
                 } catch (InterruptedException e) {
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error("Thread interrupted exception{}", e.getMessage());
                 }
                 return null;
             }
@@ -739,27 +829,19 @@ public class MainController {
     }
 
     /**
-     * Add websocket response message to output text area
-     *
-     * @param type    Message type
-     * @param message String message
-     */
-    public void addMessageToOutput(OutputMessageType type, String message) {
-        Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
-    }
-
-    /**
      * Scroll to last list message after new message added
      *
      * @param change ListChangeListener.Change<? extends OutputMessage>
      */
     private void outputMessageListener(ListChangeListener.Change<? extends OutputMessage> change) {
         if (change.next()) {
-            showAllMsgAndSelectedMsgCount();
-            final int size = outputMessageList.size();
-            if (size > 0 && autoScrollStatus) {
-                outputTextView.scrollTo(size - 1);
-            }
+            Platform.runLater(() -> {
+                showAllMsgAndSelectedMsgCount();
+                final int size = outputMessageList.size();
+                if (size > 0 && autoScroll) {
+                    outputTextView.scrollTo(size - 1);
+                }
+            });
         }
     }
 
@@ -806,36 +888,6 @@ public class MainController {
     }
 
     /**
-     * Get headers list
-     *
-     * @return List<ItemElement>
-     */
-    public List<ItemElement> getHeadersItems() {
-        List<ItemElement> items = new ArrayList<>();
-        List<Header> headers = getHeadersList();
-        headers.stream().forEach(header -> items.add(new ItemElement(header.getName(), header.getValue())));
-        return items;
-    }
-
-    /**
-     * Get headers list
-     *
-     * @return ObservableList<Header>
-     */
-    private List<Header> getHeadersList() {
-        return getHeadersPopOver().getHeadersController().getHeaderObservableList();
-    }
-
-    /**
-     * Set custom header count
-     *
-     * @param i int
-     */
-    public void setHeadersCount(int i) {
-        headersCount.setText(String.valueOf(i));
-    }
-
-    /**
      * Set hot key for menu element
      *
      * @param item    MenuItem
@@ -850,15 +902,6 @@ public class MainController {
     }
 
     /**
-     * Get main parent node
-     *
-     * @return Parent
-     */
-    public Parent getMainParent() {
-        return mainStage.getScene().getRoot();
-    }
-
-    /**
      * Go to desktop browser page action
      *
      * @param url String
@@ -868,8 +911,8 @@ public class MainController {
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
                 desktop.browse(new URL(url).toURI());
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage());
+            } catch (IOException | URISyntaxException e) {
+                LOGGER.error("Error go to web page: {}", e.getMessage());
             }
         }
     }

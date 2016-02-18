@@ -1,11 +1,14 @@
 package ru.testing.client.common;
 
+import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Class described utilities methods
  */
 public class Utils {
+
+    private static final String TIME_FORMAT = "HH:mm:ss.SSS";
 
     /**
      * Format diff time from milliseconds
@@ -29,5 +32,14 @@ public class Utils {
         } else {
             return String.format("%dms", ms);
         }
+    }
+
+    /**
+     * Get simple date formatter
+     *
+     * @return SimpleDateFormat
+     */
+    public static SimpleDateFormat getDateFormat() {
+        return new SimpleDateFormat(TIME_FORMAT);
     }
 }

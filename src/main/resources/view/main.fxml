@@ -45,10 +45,10 @@
             </MenuItem>
         </Menu>
         <Menu text="Settings">
-            <CheckMenuItem fx:id="showStatusBar" text="Status bar" selected="true" onAction="#changesStatusBarVisible"/>
+            <CheckMenuItem fx:id="showStatusBar" text="Show bar" selected="true" onAction="#changesStatusBarVisible"/>
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
-            <CheckMenuItem fx:id="showFilter" text="Filter" selected="false" onAction="#changeFilterVisible"/>
+            <CheckMenuItem fx:id="showFilter" text="Show filter" selected="false" onAction="#changeFilterVisible"/>
         </Menu>
         <Menu text="Help">
             <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
@@ -307,6 +307,12 @@
             </Label>
         </leftItems>
         <rightItems>
+            <TilePane alignment="CENTER" prefWidth="120">
+                <ProgressBar fx:id="progress" visible="false" prefWidth="100"/>
+                <padding>
+                    <Insets left="20" right="20"/>
+                </padding>
+            </TilePane>
             <Separator orientation="VERTICAL"/>
             <Label fx:id="outputMsgCount" mnemonicParsing="false" maxWidth="-Infinity" text="0/0">
                 <tooltip>

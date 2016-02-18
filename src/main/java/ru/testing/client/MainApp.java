@@ -59,7 +59,7 @@ public class MainApp extends Application {
             // select application type
             if (config.getType() == ApplicationType.CONSOLE) {
                 if (config.getServerUrl().isEmpty()) {
-                    LOGGER.error("WebSocket server url required");
+                    LOGGER.error("WebSocket server url is required");
                     parser.usage();
                     System.exit(1);
                 }
@@ -97,7 +97,7 @@ public class MainApp extends Application {
             primaryStage.show();
             new GitHub(properties);
         } catch (IOException e) {
-            LOGGER.error("Error load fxml view!");
+            LOGGER.error("Error load fxml view");
             e.printStackTrace();
             System.exit(1);
         }

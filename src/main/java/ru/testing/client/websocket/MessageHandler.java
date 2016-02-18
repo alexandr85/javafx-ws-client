@@ -35,7 +35,7 @@ public class MessageHandler implements javax.websocket.MessageHandler.Whole<Stri
     public void onMessage(String message) {
         if (mainController != null) {
             ObservableList<String> filterList = mainController.getFilterList();
-            if (mainController.getFilterStatus() && filterList.size() > 0) {
+            if (mainController.isFiltered() && filterList.size() > 0) {
                 for (String filterItem : filterList) {
                     if (message.contains(filterItem)) {
                         mainController.addMessageToOutput(RECEIVED, message);
@@ -46,7 +46,7 @@ public class MessageHandler implements javax.websocket.MessageHandler.Whole<Stri
                 mainController.addMessageToOutput(RECEIVED, message);
             }
         } else {
-            LOGGER.info("Response: {}", message);
+            LOGGER.info("Response: {}\n", message);
         }
     }
 }

@@ -3,6 +3,7 @@ package ru.testing.client.elements.headers;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
+import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**

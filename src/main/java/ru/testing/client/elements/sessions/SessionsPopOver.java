@@ -19,7 +19,7 @@ public class SessionsPopOver extends PopOver {
     private static final double WIDTH = 320.0;
     private static final double HEIGHT = 190.0;
 
-    public SessionsPopOver(MainController mainController) {
+    public SessionsPopOver(MainController main) {
 
         // Pop over settings
         this.setTitle("Sessions");
@@ -31,18 +31,17 @@ public class SessionsPopOver extends PopOver {
         this.setArrowSize(0);
         this.setWidth(WIDTH);
         this.setHeight(HEIGHT);
-        this.setOnHidden(event -> mainController.getMainParent().setDisable(false));
+        this.setOnHidden(event -> main.getMainParent().setDisable(false));
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/sessions.fxml"));
-            loader.setController(new SessionsController(mainController));
+            loader.setController(new SessionsController(main));
             Parent root = loader.load();
             this.setContentNode(root);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error load sessions pop over: {}", e.getMessage());
         }
     }
-
 
     public double getPopOverWidth() {
         return WIDTH;

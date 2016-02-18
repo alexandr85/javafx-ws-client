@@ -6,7 +6,7 @@ import javafx.scene.control.ListCell;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**
- * Filter cell factory
+ * Filters cell factory
  */
 public class FilterCellFactory extends ListCell<String> {
 

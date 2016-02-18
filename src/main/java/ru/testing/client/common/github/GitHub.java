@@ -48,7 +48,7 @@ public class GitHub extends Thread {
                 Platform.runLater(() -> Dialogs.getWarningDialog("New version is available! Please, download last client.\n" +
                         "Link can be found in 'Help' menu"));
             }
-            LOGGER.debug("Last version on git hub: {}", getLastVersion());
+            LOGGER.debug("Last release version on git hub: {}", getLastVersion());
         } catch (IOException | NumberFormatException e) {
             LOGGER.error(e.getMessage());
             setLastVersion(1.0);

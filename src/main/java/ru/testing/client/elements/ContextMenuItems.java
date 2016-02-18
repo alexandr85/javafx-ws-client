@@ -6,14 +6,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import ru.testing.client.common.FilesOperations;
+import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SessionsController;
 import ru.testing.client.elements.message.OutputMessage;
 import ru.testing.client.elements.message.OutputMessageType;
-import ru.testing.client.elements.sessions.Sessions;
-import ru.testing.client.elements.sessions.session.Session;
-
-import java.util.Iterator;
 
 import static ru.testing.client.elements.message.OutputMessageType.RECEIVED;
 import static ru.testing.client.elements.message.OutputMessageType.SEND;
@@ -136,11 +133,12 @@ public class ContextMenuItems {
      * Save message from cell to file
      *
      * @param cell ListCell<OutputMessage>
+     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveMessageToFile(ListCell<OutputMessage> cell) {
+    public MenuItem saveMessageToFile(ListCell<OutputMessage> cell, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save cell data");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(cell.getText()));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(cell.getText(), main));
         return saveFileItem;
     }
 
@@ -148,11 +146,12 @@ public class ContextMenuItems {
      * Save all selected messages to file
      *
      * @param list ObservableList<OutputMessage>
+     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveSelectedToFile(ObservableList<OutputMessage> list) {
+    public MenuItem saveSelectedToFile(ObservableList<OutputMessage> list, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save selected");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getAllMessages(list)));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getAllMessages(list), main));
         return saveFileItem;
     }
 
@@ -160,11 +159,12 @@ public class ContextMenuItems {
      * Save send selected messages to file
      *
      * @param list ObservableList<OutputMessage>
+     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveSelectedSendToFile(ObservableList<OutputMessage> list) {
+    public MenuItem saveSelectedSendToFile(ObservableList<OutputMessage> list, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save only send");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getMessagesByType(list, SEND)));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getMessagesByType(list, SEND), main));
         return saveFileItem;
     }
 
@@ -172,50 +172,37 @@ public class ContextMenuItems {
      * Save send selected messages to file
      *
      * @param list ObservableList<OutputMessage>
+     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveSelectedRecentToFile(ObservableList<OutputMessage> list) {
+    public MenuItem saveSelectedRecentToFile(ObservableList<OutputMessage> list, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save only received");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getMessagesByType(list, RECEIVED)));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(getMessagesByType(list, RECEIVED), main));
         return saveFileItem;
     }
 
     /**
      * Delete selected session
      *
-     * @param cell ListCell<Session>
      * @return MenuItem
      */
-    public MenuItem deleteSession(ListCell<Session> cell, SessionsController sessionsController) {
-        MenuItem deleteSession = new MenuItem("Delete");
-        deleteSession.setOnAction(event -> {
-            FilesOperations filesOperations = new FilesOperations();
-            Sessions sessions = filesOperations.readSessionsData();
-            Iterator<Session> iterator = sessions.getSessions().iterator();
-            while (iterator.hasNext()) {
-                Session session = iterator.next();
-                if (session.getName().equals(cell.getItem().getName())) {
-                    iterator.remove();
-                }
-            }
-            filesOperations.saveSessionsData(sessions);
-            sessionsController.readSessions();
-        });
-        return deleteSession;
+    public MenuItem deleteSessionMenu(ListCell<Session> cell, SessionsController sessionsController) {
+        MenuItem deleteMenu = new MenuItem("Delete");
+        deleteMenu.setOnAction(event -> sessionsController.deleteSession(cell));
+        return deleteMenu;
     }
 
     /**
      * Set session data from selected session
      *
-     * @param cell           ListCell<Session> cell
-     * @param mainController MainController
+     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem loadSession(ListCell<Session> cell, MainController mainController) {
+    public MenuItem loadSession(ListCell<Session> cell, MainController main) {
         MenuItem loadSession = new MenuItem("Load");
         loadSession.setOnAction(event -> {
-            mainController.setDataFromSession(cell.getItem());
-            mainController.getSessionsPopOver().hide();
+            main.setDataFromSession(cell.getItem().getId());
+            main.getSessionsPopOver().hide();
         });
         return loadSession;
     }

@@ -38,7 +38,7 @@ public class HeadersPopOver extends PopOver {
             Parent root = loader.load();
             setContentNode(root);
         } catch (IOException e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Error load headers pop over: {}", e.getMessage());
         }
     }
 

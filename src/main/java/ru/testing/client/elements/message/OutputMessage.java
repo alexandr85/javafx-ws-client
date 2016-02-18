@@ -1,24 +1,40 @@
 package ru.testing.client.elements.message;
 
-import java.text.SimpleDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+
+import static ru.testing.client.common.Utils.getDateFormat;
 
 /**
  * Class described output message object
  */
 public class OutputMessage {
 
-    private static final String TIME_FORMAT = "HH:mm:ss.SSS";
+    private static final Logger LOGGER = LoggerFactory.getLogger(OutputMessage.class);
+
     private Date time;
     private String message;
     private OutputMessageType type;
 
     public OutputMessage(OutputMessageType type, String message) {
-        Calendar calendar = Calendar.getInstance();
         this.type = type;
-        this.time = calendar.getTime();
+        this.time = Calendar.getInstance().getTime();
         this.message = message;
+    }
+
+    public OutputMessage(String time, String message) {
+        this.type = OutputMessageType.RECEIVED;
+        this.message = message;
+        try {
+            this.time = getDateFormat().parse(time);
+        } catch (ParseException e) {
+            LOGGER.error("Error parse time from string: {}", e.getMessage());
+            this.time = Calendar.getInstance().getTime();
+        }
     }
 
     /**
@@ -45,8 +61,7 @@ public class OutputMessage {
      * @return String
      */
     public String getFormattedTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat(TIME_FORMAT);
-        return sdf.format(time);
+        return getDateFormat().format(time);
     }
 
     /**

@@ -79,7 +79,7 @@ public abstract class Dialogs {
                 alert.showAndWait();
             });
         } catch (IllegalStateException se) {
-            LOGGER.error(se.getLocalizedMessage());
+            LOGGER.error("Error show exception dialog message: {}", se.getLocalizedMessage());
         }
     }
 
