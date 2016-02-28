@@ -1,4 +1,4 @@
-## ![](application.ico?raw=true =32x32) *JavaFX websocket client*
+## <img src="application.ico" width="32" height="32"> *JavaFX websocket client*
 
 ###### Features:
 * Connect to ws:// and wss:// websocket server
