@@ -12,6 +12,9 @@ public interface AppProperties {
     @Property("version")
     Double getVersion();
 
+    @Property("db.version")
+    Double getDBVersion();
+
     @Property("tags.url")
     String getTagsUrl();
 

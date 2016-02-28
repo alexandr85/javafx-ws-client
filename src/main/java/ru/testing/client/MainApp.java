@@ -43,7 +43,6 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         Configuration config = new Configuration();
-        properties = PropertyLoader.newInstance().populate(AppProperties.class);
         JCommander parser = new JCommander();
         parser.setProgramName("java -jar ws.client-${version}.jar");
         parser.addObject(config);
@@ -82,25 +81,37 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
-        MainController controller = new MainController(primaryStage, properties);
+        MainController controller = new MainController(primaryStage, getProperties());
         loader.setController(controller);
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, controller);
-            primaryStage.setTitle(String.format("WebSocket Client v%s", properties.getVersion()));
+            primaryStage.setTitle(String.format("WebSocket Client v%s", getProperties().getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            new GitHub(properties);
+            new GitHub(getProperties());
         } catch (IOException e) {
             LOGGER.error("Error load fxml view");
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    /**
+     * Get application properties
+     *
+     * @return AppProperties
+     */
+    public static AppProperties getProperties() {
+        if (properties == null) {
+            properties = PropertyLoader.newInstance().populate(AppProperties.class);
+        }
+        return properties;
     }
 
     /**

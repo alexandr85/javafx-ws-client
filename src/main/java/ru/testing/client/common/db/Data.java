@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.testing.client.MainApp.getProperties;
+
 /**
  *
  */
@@ -299,6 +301,7 @@ public class Data {
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
             LOGGER.debug("Creating default tables ... ");
+            dbSettings(statement);
             statement.executeUpdate("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "name TEXT, url TEXT, filter_on TEXT, filter_show TEXT, auto_scroll TEXT, bar_show TEXT)");
             statement.executeUpdate("CREATE TABLE headers (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, name TEXT, value TEXT)");
@@ -311,5 +314,17 @@ public class Data {
         } catch (SQLException e) {
             LOGGER.error("Error create default tables: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Set database settings
+     *
+     * @param statement Statement
+     * @throws SQLException
+     */
+    private void dbSettings(Statement statement) throws SQLException {
+        statement.executeUpdate("CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT)");
+        statement.executeUpdate("INSERT INTO settings (name, value) " +
+                String.format("values('db.version','%s')", getProperties().getDBVersion()));
     }
 }
