@@ -79,65 +79,125 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <!-- Plugin compile -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.3</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
+        <plugins>
+            <!-- Plugin compile -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
 
-                <!-- Create jar package application -->
-                <plugin>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <configuration>
-                        <finalName>${project.name}</finalName>
-                        <archive>
-                            <manifest>
+            <!-- Create jar package application -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>${project.name}</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>ru.testing.client.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create mac os application bundle -->
+            <plugin>
+                <groupId>sh.tak.appbundler</groupId>
+                <artifactId>appbundle-maven-plugin</artifactId>
+                <version>1.0.4</version>
+                <configuration>
+                    <bundleName>${project.name}</bundleName>
+                    <buildDirectory>target/</buildDirectory>
+                    <mainClass>ru.testing.client.MainApp</mainClass>
+                    <iconFile>images/icon-512.icns</iconFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Create windows os application bundle -->
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.8</version>
+                <executions>
+                    <execution>
+                        <id>l4j-clui</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/${project.name}.exe</outfile>
+                            <jar>target/${project.name}.jar</jar>
+                            <errTitle>Error</errTitle>
+                            <downloadUrl>http://java.com/download</downloadUrl>
+                            <icon>application.ico</icon>
+                            <classPath>
                                 <mainClass>ru.testing.client.MainApp</mainClass>
-                            </manifest>
-                        </archive>
-                        <descriptorRefs>
-                            <descriptorRef>jar-with-dependencies</descriptorRef>
-                        </descriptorRefs>
-                        <appendAssemblyId>false</appendAssemblyId>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- Create mac os application bundle -->
-                <plugin>
-                    <groupId>sh.tak.appbundler</groupId>
-                    <artifactId>appbundle-maven-plugin</artifactId>
-                    <version>1.0.4</version>
-                    <configuration>
-                        <bundleName>${project.name}</bundleName>
-                        <mainClass>ru.testing.client.MainApp</mainClass>
-                        <iconFile>images/icon-512.icns</iconFile>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>bundle</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+                                <addDependencies>true</addDependencies>
+                                <preCp>anything</preCp>
+                            </classPath>
+                            <jre>
+                                <minVersion>${java.version}.0</minVersion>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>1.7.0.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>WebSocket client on javafx</fileDescription>
+                                <copyright>Copyright © 2016</copyright>
+                                <productVersion>1.7.0.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <companyName>aleks</companyName>
+                                <productName>${project.name}</productName>
+                                <internalName>${project.name}</internalName>
+                                <originalFilename>${project.name}.exe</originalFilename>
+                            </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
+
+    <!-- Repository for launch4j-maven-plugin -->
+    <repositories>
+        <repository>
+            <id>akathist-repository</id>
+            <name>Akathist Repository</name>
+            <url>http://www.9stmaryrd.com/maven</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>akathist-repository</id>
+            <name>Akathist Repository</name>
+            <url>http://www.9stmaryrd.com/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
