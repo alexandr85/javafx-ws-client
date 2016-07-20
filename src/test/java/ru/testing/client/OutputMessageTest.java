@@ -19,7 +19,7 @@ public class OutputMessageTest {
     private String message;
 
     @Before
-    public void testsEntryPoint() {
+    public void testsSetup() {
         message = "test message";
         outputMessage = new OutputMessage(OutputMessageType.SEND, message);
     }

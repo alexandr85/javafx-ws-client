@@ -19,7 +19,7 @@ public class GitHubTest {
     private static AppProperties properties;
 
     @BeforeClass
-    public static void entryPointBeforeTests() {
+    public static void testClassSetup() {
         properties = new AppProperties();
     }
 
