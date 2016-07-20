@@ -71,7 +71,7 @@ public class SessionsController {
                 addSession();
             }
         });
-        getData().getSessions().stream().forEach(session -> sessionsList.add(session));
+        getData().getSessions().forEach(session -> sessionsList.add(session));
     }
 
     /**

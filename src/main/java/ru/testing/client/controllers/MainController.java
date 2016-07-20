@@ -467,7 +467,7 @@ public class MainController {
      */
     @FXML
     private void getLastTagVersionFromWeb() {
-        goToWebPage(properties.getLastTagUrl());
+        goToWebPage(properties.getLastReleaseUrl());
     }
 
     /**
@@ -483,7 +483,7 @@ public class MainController {
      *
      * @return HeadersPopOver
      */
-    public HeadersPopOver getHeadersPopOver() {
+    private HeadersPopOver getHeadersPopOver() {
         if (headersPopOver == null) {
             headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
         }
@@ -495,7 +495,7 @@ public class MainController {
      *
      * @return SendHistoryPopOver
      */
-    public SendHistoryPopOver getHistoryPopOver() {
+    private SendHistoryPopOver getHistoryPopOver() {
         if (historyPopOver == null) {
             historyPopOver = new SendHistoryPopOver(this);
         }
@@ -519,7 +519,7 @@ public class MainController {
      *
      * @return FilterListPopOver
      */
-    public FilterListPopOver getFilterPopOver() {
+    private FilterListPopOver getFilterPopOver() {
         if (filterPopOver == null) {
             filterPopOver = new FilterListPopOver(this);
         }
@@ -609,7 +609,7 @@ public class MainController {
             filtered = !s.getFilterOn();
             changeFilterStatus();
             filterList.clear();
-            s.getFilters().stream().forEach(filter -> filterList.add(filter.getValue()));
+            s.getFilters().forEach(filter -> filterList.add(filter.getValue()));
 
             // set auto scroll properties
             autoScroll = !s.getAutoScroll();
@@ -624,11 +624,11 @@ public class MainController {
 
             // set send messages
             sendMsgList.clear();
-            s.getTxMessages().stream().forEach(m -> sendMsgList.add(m.getValue()));
+            s.getTxMessages().forEach(m -> sendMsgList.add(m.getValue()));
 
             // set output messages
             outputMessageList.clear();
-            s.getRxMessages().stream().forEach(m ->
+            s.getRxMessages().forEach(m ->
                     outputMessageList.add(new OutputMessage(m.getTime(), m.getValue())));
 
         }
@@ -642,7 +642,7 @@ public class MainController {
      */
     public List<String> getSendMsgItems() {
         List<String> items = new ArrayList<>();
-        sendMsgList.stream().forEach(items::add);
+        sendMsgList.forEach(items::add);
         return items;
     }
 
@@ -653,7 +653,7 @@ public class MainController {
      */
     public List<RxMessage> getOutputMessageList() {
         List<RxMessage> rxMessages = new ArrayList<>();
-        outputMessageList.stream().forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
+        outputMessageList.forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
         return rxMessages;
     }
 

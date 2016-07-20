@@ -4,7 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.qatools.properties.PropertyLoader;
 import ru.testing.client.common.AppProperties;
 import ru.testing.client.common.github.GitHub;
 
@@ -21,7 +20,7 @@ public class GitHubTest {
 
     @BeforeClass
     public static void entryPointBeforeTests() {
-        properties = PropertyLoader.newInstance().populate(AppProperties.class);
+        properties = new AppProperties();
     }
 
     @Test

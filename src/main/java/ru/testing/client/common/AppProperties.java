@@ -1,26 +1,75 @@
 package ru.testing.client.common;
 
-import ru.qatools.properties.Property;
-import ru.qatools.properties.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Properties;
 
 /**
- * Load application properties
+ * Class read application properties
  */
-@Resource.Classpath("app.properties")
-public interface AppProperties {
+public class AppProperties {
 
-    @Property("version")
-    Double getVersion();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppProperties.class);
+    private static final String PROP_FILE = "app.properties";
+    private Double version;
+    private Double dbVersion;
+    private String tagsUrl;
+    private String lastReleaseUrl;
+    private String aboutUrl;
 
-    @Property("db.version")
-    Double getDBVersion();
+    public AppProperties() {
+        Properties properties = new Properties();
+        try {
+            properties.load(AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
+            setVersion(Double.parseDouble(properties.getProperty("version")));
+            setDbVersion(Double.parseDouble(properties.getProperty("db.version")));
+            setTagsUrl(properties.getProperty("tags.url"));
+            setLastReleaseUrl(properties.getProperty("last.release.url"));
+            setAboutUrl(properties.getProperty("about.url"));
+        } catch (IOException e) {
+            LOGGER.error("Error load properties: {}", e.getMessage());
+        }
+    }
 
-    @Property("tags.url")
-    String getTagsUrl();
+    public Double getVersion() {
+        return version;
+    }
 
-    @Property("last.release.url")
-    String getLastTagUrl();
+    public void setVersion(Double version) {
+        this.version = version;
+    }
 
-    @Property("about.url")
-    String getAboutUrl();
+    public Double getDbVersion() {
+        return dbVersion;
+    }
+
+    private void setDbVersion(Double dbVersion) {
+        this.dbVersion = dbVersion;
+    }
+
+    public String getTagsUrl() {
+        return tagsUrl;
+    }
+
+    private void setTagsUrl(String tagsUrl) {
+        this.tagsUrl = tagsUrl;
+    }
+
+    public String getLastReleaseUrl() {
+        return lastReleaseUrl;
+    }
+
+    private void setLastReleaseUrl(String lastReleaseUrl) {
+        this.lastReleaseUrl = lastReleaseUrl;
+    }
+
+    public String getAboutUrl() {
+        return aboutUrl;
+    }
+
+    private void setAboutUrl(String aboutUrl) {
+        this.aboutUrl = aboutUrl;
+    }
 }

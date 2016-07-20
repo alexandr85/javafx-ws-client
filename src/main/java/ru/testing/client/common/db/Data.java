@@ -285,7 +285,7 @@ public class Data {
      * Create database connection
      *
      * @return Connection
-     * @throws SQLException
+     * @throws SQLException DriverManager get connection
      */
     private Connection createConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
@@ -320,11 +320,11 @@ public class Data {
      * Set database settings
      *
      * @param statement Statement
-     * @throws SQLException
+     * @throws SQLException Execute update
      */
     private void dbSettings(Statement statement) throws SQLException {
         statement.executeUpdate("CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT)");
         statement.executeUpdate("INSERT INTO settings (name, value) " +
-                String.format("values('db.version','%s')", getProperties().getDBVersion()));
+                String.format("values('db.version','%s')", getProperties().getDbVersion()));
     }
 }

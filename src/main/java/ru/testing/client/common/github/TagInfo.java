@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Git hub tag info
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TagInfo {
+class TagInfo {
 
     @JsonProperty("name")
     private String name;

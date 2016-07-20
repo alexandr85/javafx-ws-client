@@ -1,6 +1,5 @@
 package ru.testing.client;
 
-import com.beust.jcommander.JCommander;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,19 +9,12 @@ import javafx.stage.Stage;
 import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.qatools.properties.PropertyLoader;
 import ru.testing.client.common.AppProperties;
-import ru.testing.client.common.ApplicationType;
-import ru.testing.client.common.Configuration;
 import ru.testing.client.common.github.GitHub;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.websocket.MessageHandler;
-import ru.testing.client.websocket.Client;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.net.URI;
-import java.util.Scanner;
 
 import static org.controlsfx.tools.Platform.OSX;
 
@@ -42,33 +34,10 @@ public class MainApp extends Application {
      * @param args String[]
      */
     public static void main(String[] args) {
-        Configuration config = new Configuration();
-        JCommander parser = new JCommander();
-        parser.setProgramName("java -jar ws.client-${version}.jar");
-        parser.addObject(config);
         try {
-            parser.parse(args);
-
-            // show help application option
-            if (config.isHelp()) {
-                parser.usage();
-                System.exit(0);
-            }
-
-            // select application type
-            if (config.getType() == ApplicationType.CONSOLE) {
-                if (config.getServerUrl().isEmpty()) {
-                    LOGGER.error("WebSocket server url is required");
-                    parser.usage();
-                    System.exit(1);
-                }
-                startConsoleClient(config.getServerUrl());
-            } else {
-                launch(args);
-            }
+            launch(args);
         } catch (Exception e) {
             LOGGER.error("Running exception: {}", e.getMessage());
-            parser.usage();
             System.exit(1);
         }
     }
@@ -109,40 +78,9 @@ public class MainApp extends Application {
      */
     public static AppProperties getProperties() {
         if (properties == null) {
-            properties = PropertyLoader.newInstance().populate(AppProperties.class);
+            properties = new AppProperties();
         }
         return properties;
-    }
-
-    /**
-     * Start console websocket client
-     *
-     * @param url String
-     */
-    private static void startConsoleClient(String url) {
-        try {
-            final Client client = new Client();
-            client.setEndpointURI(new URI(url));
-            client.openConnection();
-            if (client.isOpenConnection()) {
-                String sendMessage;
-                client.setMessageHandler(new MessageHandler());
-                LOGGER.info("For disconnect from server type 'exit'");
-                while (true) {
-                    Scanner scanner = new Scanner(System.in);
-                    System.out.print("Send message: ");
-                    sendMessage = scanner.nextLine();
-                    if (sendMessage.equals("exit")) {
-                        client.closeConnection();
-                        break;
-                    }
-                    client.sendMessage(sendMessage);
-                    Thread.sleep(2000);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**

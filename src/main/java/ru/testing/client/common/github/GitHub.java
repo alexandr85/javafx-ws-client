@@ -73,7 +73,7 @@ public class GitHub extends Thread {
      * Create request
      *
      * @return List<TagInfo>
-     * @throws IOException
+     * @throws IOException mapping TagInfo
      */
     private List<TagInfo> createRequest() throws IOException {
         WebResource resource = getClient().resource(properties.getTagsUrl());
