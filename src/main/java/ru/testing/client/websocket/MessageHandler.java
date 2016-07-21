@@ -1,6 +1,5 @@
 package ru.testing.client.websocket;
 
-import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.MainController;
@@ -16,13 +15,6 @@ public class MessageHandler implements javax.websocket.MessageHandler.Whole<Stri
     private MainController mainController;
 
     /**
-     * Console message handler
-     */
-    public MessageHandler() {
-        this.mainController = null;
-    }
-
-    /**
      * JavaFx message handler
      *
      * @param mainController MainController
@@ -34,17 +26,7 @@ public class MessageHandler implements javax.websocket.MessageHandler.Whole<Stri
     @Override
     public void onMessage(String message) {
         if (mainController != null) {
-            ObservableList<String> filterList = mainController.getFilterList();
-            if (mainController.isFiltered() && filterList.size() > 0) {
-                for (String filterItem : filterList) {
-                    if (message.contains(filterItem)) {
-                        mainController.addMessageToOutput(RECEIVED, message);
-                        break;
-                    }
-                }
-            } else {
-                mainController.addMessageToOutput(RECEIVED, message);
-            }
+            mainController.addMessageToOutput(RECEIVED, message);
         } else {
             LOGGER.info("Response: {}\n", message);
         }

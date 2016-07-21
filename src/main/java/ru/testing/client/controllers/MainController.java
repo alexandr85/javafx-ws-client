@@ -51,6 +51,7 @@ import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
 import static ru.testing.client.common.db.Data.getData;
+import static ru.testing.client.elements.message.OutputMessageType.RECEIVED;
 
 /**
  * FXML controller for main page
@@ -61,6 +62,7 @@ public class MainController {
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private final ObservableList<String> sendMsgList = FXCollections.observableArrayList();
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
+    private final ObservableList<OutputMessage> outputFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties;
@@ -331,6 +333,8 @@ public class MainController {
                 filterTextField.setDisable(true);
                 filterListBtn.setDisable(true);
                 filtered = false;
+                outputTextView.setItems(outputMessageList);
+                outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
             } else {
                 filterOnOffBtn.setSelected(true);
                 filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
@@ -342,6 +346,8 @@ public class MainController {
                     filterListBtn.setDisable(false);
                 }
                 filtered = true;
+                outputTextView.setItems(outputFilteredMessageList);
+                outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
             }
         });
     }
@@ -682,7 +688,19 @@ public class MainController {
      * @param message String message
      */
     public void addMessageToOutput(OutputMessageType type, String message) {
-        Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
+        if (isFiltered() && filterList.size() > 0) {
+            for (String filterItem : filterList) {
+                if (message.contains(filterItem)) {
+                    Platform.runLater(() -> {
+                        outputMessageList.add(new OutputMessage(type, message));
+                        outputFilteredMessageList.add(new OutputMessage(type, message));
+                    });
+                    break;
+                }
+            }
+        } else {
+            Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
+        }
     }
 
     /**
