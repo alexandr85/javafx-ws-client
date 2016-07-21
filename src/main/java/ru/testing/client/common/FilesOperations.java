@@ -26,6 +26,7 @@ public class FilesOperations {
         main.setProgressVisible(true);
         if (text == null || text.isEmpty()) {
             Platform.runLater(() -> Dialogs.getWarningDialog("Nothing for save"));
+            main.setProgressVisible(false);
             return;
         }
         Writer writer = null;

@@ -21,6 +21,7 @@
     </rowConstraints>
     <MenuBar fx:id="menuBar" GridPane.rowIndex="0">
         <Menu text="File">
+            <MenuItem fx:id="showAutoMessages" text="Auto messages" onAction="#showAutoMessages"/>
             <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
                 <graphic>
                     <ImageView>
@@ -48,7 +49,7 @@
             <CheckMenuItem fx:id="showStatusBar" text="Show bar" selected="true" onAction="#changesStatusBarVisible"/>
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
-            <CheckMenuItem fx:id="showFilter" text="Show filter" selected="false" onAction="#changeFilterVisible"/>
+            <CheckMenuItem fx:id="showFilter" text="Show filter" onAction="#changeFilterVisible"/>
         </Menu>
         <Menu text="Help">
             <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
@@ -85,16 +86,17 @@
                     <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="25.0" maxWidth="25.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="505.0" maxWidth="505.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="477.0" maxWidth="477.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="10.0" maxWidth="23.0"/>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" maxWidth="100.0"/>
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                           prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0" alignment="CENTER_LEFT"
+                           prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0"
                            styleClass="label_field"/>
-                    <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0" text=""
+                    <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0"
                                   minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER"
                                   onAction="#showHeadersPopOver">
                         <tooltip>
@@ -110,15 +112,30 @@
                         </cursor>
                     </ToggleButton>
                     <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" prefHeight="25.0" prefWidth="500.0" promptText="ws://host.name/path"
+                               minWidth="-Infinity" prefHeight="25.0" prefWidth="477.0" promptText="ws://host.name/path"
                                GridPane.columnIndex="2">
                         <padding>
                             <Insets left="5.0"/>
                         </padding>
                     </TextField>
+                    <ToggleButton fx:id="sendAfterConnect" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                  minWidth="-Infinity" mnemonicParsing="false" prefHeight="22.0" prefWidth="22.0"
+                                  GridPane.columnIndex="3" onAction="#changeAutoMessageStatus">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                        <tooltip>
+                            <Tooltip text="Send message after connect"/>
+                        </tooltip>
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/auto-send.png"/>
+                            </ImageView>
+                        </graphic>
+                    </ToggleButton>
                     <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                             minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                            text="Connect" GridPane.columnIndex="3" onAction="#connectDisconnectAction">
+                            text="Connect" GridPane.columnIndex="4" onAction="#connectDisconnectAction">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
@@ -141,8 +158,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                           prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0" alignment="CENTER_LEFT"
-                           styleClass="label_field"/>
+                           prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0" styleClass="label_field"/>
                     <TextField fx:id="sendMsgTextField" disable="true" maxWidth="Infinity" minHeight="-Infinity"
                                minWidth="-Infinity" prefHeight="25.0" prefWidth="420.0" promptText="some text message"
                                GridPane.columnIndex="1">
@@ -150,9 +166,9 @@
                             <Insets left="5.0"/>
                         </padding>
                     </TextField>
-                    <ToggleButton fx:id="sendMsgHistoryBtn" alignment="CENTER" disable="true" maxHeight="-Infinity"
-                                  maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                  prefHeight="22.0" prefWidth="22.0" GridPane.columnIndex="2" onAction="#showSendHistoryPopOver">
+                    <ToggleButton fx:id="sendMsgHistoryBtn" disable="true" maxHeight="-Infinity" maxWidth="-Infinity"
+                                  minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="22.0"
+                                  prefWidth="22.0" GridPane.columnIndex="2" onAction="#showSendHistoryPopOver">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
@@ -207,8 +223,7 @@
                 </cursor>
             </Button>
         </FlowPane>
-        <ListView fx:id="outputTextView" GridPane.rowIndex="1" editable="false" prefHeight="100.0" prefWidth="200.0"
-                  styleClass="output_text"/>
+        <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0" styleClass="output_text"/>
         <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER" hgap="15.0"
                   maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
                   prefWidth="480.0" styleClass="filter_block">
@@ -261,8 +276,8 @@
             <Insets bottom="3" top="4" left="15" right="15"/>
         </padding>
         <leftItems>
-            <Label fx:id="autoScrollLabel" mnemonicParsing="false" maxWidth="-Infinity" text="auto scroll"
-                   contentDisplay="RIGHT" onMouseClicked="#changeAutoScrollStatus">
+            <Label fx:id="autoScrollLabel" maxWidth="-Infinity" text="auto scroll" contentDisplay="RIGHT"
+                   onMouseClicked="#changeAutoScrollStatus">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/turn-on.png"/>
@@ -279,7 +294,7 @@
                 </cursor>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="filterStatusLabel" mnemonicParsing="false" maxWidth="-Infinity" text="filter"
+            <Label fx:id="filterStatusLabel" maxWidth="-Infinity" text="filter"
                    contentDisplay="RIGHT" onMouseClicked="#changeFilterStatus">
                 <graphic>
                     <ImageView>
@@ -297,7 +312,25 @@
                 </cursor>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="timeDiffLabel" mnemonicParsing="false" maxWidth="-Infinity">
+            <Label fx:id="autoSendStatusLabel" maxWidth="-Infinity" text="auto msg"
+                   contentDisplay="RIGHT" onMouseClicked="#changeAutoMessageStatus">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/turn-off.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Auto messages status"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="timeDiffLabel" maxWidth="-Infinity">
                 <tooltip>
                     <Tooltip text="Time difference"/>
                 </tooltip>
@@ -314,7 +347,7 @@
                 </padding>
             </TilePane>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="outputMsgCount" mnemonicParsing="false" maxWidth="-Infinity" text="0/0">
+            <Label fx:id="outputMsgCount" maxWidth="-Infinity" text="0/0">
                 <tooltip>
                     <Tooltip text="All / Selected messages"/>
                 </tooltip>
@@ -323,7 +356,7 @@
                 </padding>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="headersCount" mnemonicParsing="false" maxWidth="-Infinity" text="0">
+            <Label fx:id="headersCount" maxWidth="-Infinity" text="0">
                 <tooltip>
                     <Tooltip text="Custom headers count"/>
                 </tooltip>

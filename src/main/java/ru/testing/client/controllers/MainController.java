@@ -30,6 +30,7 @@ import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.common.db.objects.RxMessage;
 import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.elements.Dialogs;
+import ru.testing.client.elements.autosend.AutoSendPopOver;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
 import ru.testing.client.elements.history.SendHistoryPopOver;
@@ -51,7 +52,6 @@ import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
 import static ru.testing.client.common.db.Data.getData;
-import static ru.testing.client.elements.message.OutputMessageType.RECEIVED;
 
 /**
  * FXML controller for main page
@@ -67,10 +67,11 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties;
     private Client client;
-    private boolean connectionStatus, autoScroll, filtered;
+    private boolean connectionStatus, autoScroll, filtered, autoMsg;
     private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
+    private AutoSendPopOver autoSendPopOver;
     private SessionsPopOver sessionsPopOver;
     private SendHistoryPopOver historyPopOver;
     private FilterListPopOver filterPopOver;
@@ -86,6 +87,8 @@ public class MainController {
     private MenuItem sessionsMenu;
     @FXML
     private MenuItem exitAppMenu;
+    @FXML
+    private MenuItem showAutoMessages;
     @FXML
     private CheckMenuItem showStatusBar;
     @FXML
@@ -110,6 +113,8 @@ public class MainController {
      */
     @FXML
     private ToggleButton httpSettings;
+    @FXML
+    private ToggleButton sendAfterConnect;
     @FXML
     private Button connectBtn;
     @FXML
@@ -136,6 +141,8 @@ public class MainController {
      */
     @FXML
     private Label filterStatusLabel;
+    @FXML
+    private Label autoSendStatusLabel;
     @FXML
     private Label timeDiffLabel;
     @FXML
@@ -184,6 +191,7 @@ public class MainController {
         setHotKey(exitAppMenu, KeyCode.X);
         setHotKey(saveOutputMenu, KeyCode.S);
         setHotKey(sessionsMenu, KeyCode.D);
+        setHotKey(showAutoMessages, KeyCode.M);
         setHotKey(showStatusBar, KeyCode.B);
         setHotKey(autoScrollMenuItem, KeyCode.L);
         setHotKey(showFilter, KeyCode.J);
@@ -352,6 +360,24 @@ public class MainController {
         });
     }
 
+    @FXML
+    private void changeAutoMessageStatus() {
+        if (!connectionStatus) {
+            Platform.runLater(() -> {
+                if (autoMsg) {
+                    sendAfterConnect.setSelected(false);
+                    autoSendStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
+                    autoMsg = false;
+                } else {
+                    sendAfterConnect.setSelected(true);
+                    autoSendStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
+                    autoMsg = true;
+                }
+                connectBtn.requestFocus();
+            });
+        }
+    }
+
     /**
      * Apply text filter for new response
      */
@@ -415,6 +441,21 @@ public class MainController {
         boolean status = showFilter.isSelected();
         filterBar.setVisible(status);
         filterBar.setManaged(status);
+    }
+
+    /**
+     * Show auto messages pop over
+     */
+    @FXML
+    private void showAutoMessages() {
+        if (!getAutoSendPopOver().isShowing()) {
+            getMainParent().setDisable(true);
+            getAutoSendPopOver().show(
+                    mainStage,
+                    mainStage.getX() + mainStage.getWidth() / 2 - getAutoSendPopOver().getPopOverWidth() / 2,
+                    mainStage.getY() + mainStage.getHeight() / 2 - getAutoSendPopOver().getPopOverHeight() / 2
+            );
+        }
     }
 
     /**
@@ -506,6 +547,18 @@ public class MainController {
             historyPopOver = new SendHistoryPopOver(this);
         }
         return historyPopOver;
+    }
+
+    /**
+     * Get auto messages pop over
+     *
+     * @return AutoSendPopOver
+     */
+    public AutoSendPopOver getAutoSendPopOver() {
+        if (autoSendPopOver == null) {
+            autoSendPopOver = new AutoSendPopOver(this);
+        }
+        return autoSendPopOver;
     }
 
     /**
@@ -830,6 +883,8 @@ public class MainController {
                 messageSendBtn.setDisable(false);
                 httpSettings.setDisable(true);
                 sessionsMenu.setDisable(true);
+                showAutoMessages.setDisable(true);
+                sendAfterConnect.setDisable(true);
             } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
@@ -842,6 +897,8 @@ public class MainController {
                 connectionStatus = false;
                 httpSettings.setDisable(false);
                 sessionsMenu.setDisable(false);
+                showAutoMessages.setDisable(false);
+                sendAfterConnect.setDisable(false);
             }
         });
     }
