@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.AutoSendController;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.controllers.SessionsController;
 
 import java.io.IOException;
 
@@ -19,6 +18,7 @@ public class AutoSendPopOver extends PopOver {
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoSendPopOver.class);
     private static final double WIDTH = 420.0;
     private static final double HEIGHT = 190.0;
+    private AutoSendController controller;
 
     public AutoSendPopOver(MainController main) {
 
@@ -32,11 +32,15 @@ public class AutoSendPopOver extends PopOver {
         this.setArrowSize(0);
         this.setWidth(WIDTH);
         this.setHeight(HEIGHT);
-        this.setOnHidden(event -> main.getMainParent().setDisable(false));
+        this.setOnHidden(event -> {
+            main.getMainParent().setDisable(false);
+            main.getHeadersCount().requestFocus();
+        });
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/auto-send.fxml"));
-            loader.setController(new AutoSendController(main));
+            controller = new AutoSendController(main);
+            loader.setController(controller);
             Parent root = loader.load();
             this.setContentNode(root);
         } catch (IOException e) {
@@ -44,11 +48,27 @@ public class AutoSendPopOver extends PopOver {
         }
     }
 
+    /**
+     * Get pop over width
+     * @return double
+     */
     public double getPopOverWidth() {
         return WIDTH;
     }
 
+    /**
+     * Get pop over height
+     * @return double
+     */
     public double getPopOverHeight() {
         return HEIGHT;
+    }
+
+    /**
+     * Get auto send controller
+     * @return AutoSendController
+     */
+    public AutoSendController getController() {
+        return controller;
     }
 }

@@ -39,7 +39,7 @@ public class SessionsController {
      * Text fields
      */
     @FXML
-    private TextField sessionName;
+    private TextField sessionNameField;
 
     public SessionsController(MainController mainController) {
         main = mainController;
@@ -50,7 +50,6 @@ public class SessionsController {
      */
     @FXML
     private void initialize() {
-        Platform.runLater(() -> noSessionsLabel.requestFocus());
         sessionsListView.setItems(sessionsList);
         sessionsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, main));
@@ -66,11 +65,23 @@ public class SessionsController {
             }
         });
 
-        sessionName.setOnKeyPressed(key -> {
+        sessionsListView.setOnKeyPressed(key -> {
+            if (key.getCode() == KeyCode.ESCAPE) {
+                main.getSessionsPopOver().hide();
+            }
+        });
+
+        sessionNameField.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ENTER) {
                 addSession();
             }
+            if (key.getCode() == KeyCode.ESCAPE) {
+                main.getSessionsPopOver().hide();
+            }
         });
+
+        sessionNameField.requestFocus();
+
         getData().getSessions().forEach(session -> sessionsList.add(session));
     }
 
@@ -79,7 +90,7 @@ public class SessionsController {
      */
     @FXML
     private void addSession() {
-        String sName = sessionName.getText();
+        String sName = sessionNameField.getText();
         if (!sName.isEmpty()) {
             main.setProgressVisible(true);
             if (!existSessionName(sessionsList, sName)) {
@@ -91,12 +102,13 @@ public class SessionsController {
                         main.isStatusBarShow());
                 int id = getData().setSession(session);
                 getData().setFilters(main.getFilterList(), id);
+                getData().setAutoMessages(main.getAutoSendPopOver().getController().getAutoMsgList(), id);
                 getData().setHeaders(main.getHeadersList(), id);
                 getData().setTxMessages(main.getSendMsgItems(), id);
                 getData().setRxMessages(main.getOutputMessageList(), id);
                 session.setId(id);
                 sessionsList.add(session);
-                sessionName.clear();
+                sessionNameField.clear();
             } else {
                 Dialogs.getWarningDialog("This session name is exist in list");
             }

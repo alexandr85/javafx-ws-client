@@ -10,13 +10,13 @@ import ru.testing.client.controllers.MainController;
  */
 public class FilterListPopOver extends PopOver {
 
-    private MainController mainController;
+    private MainController main;
 
     public FilterListPopOver(MainController mainController) {
-        this.mainController = mainController;
+        this.main = mainController;
         setDetachable(false);
         setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
-        setOnHidden((event -> mainController.getFilterListBtn().setSelected(false)));
+        setOnHidden((event -> main.getFilterListBtn().setSelected(false)));
         setContentNode(getList());
     }
 
@@ -34,8 +34,8 @@ public class FilterListPopOver extends PopOver {
                 "-fx-faint-focus-color: transparent;" +
                 "-fx-border-radius: 2px; " +
                 "-fx-padding: 7px 1px");
-        list.setItems(mainController.getFilterList());
-        list.setCellFactory(listView -> new FilterCellFactory(mainController.getFilterList()));
+        list.setItems(main.getFilterList());
+        list.setCellFactory(listView -> new FilterCellFactory(main.getFilterList()));
         return list;
     }
 }

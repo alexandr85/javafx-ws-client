@@ -27,12 +27,6 @@ public class PropertiesTest {
     }
 
     @Test
-    public void testDataBaseVersionValue() {
-        assertThat("Data base version type", properties.getDbVersion(), instanceOf(Double.class));
-        assertThat("Data base version value", properties.getDbVersion(), greaterThan(0.0));
-    }
-
-    @Test
     public void testTagsUrlValue() {
         assertThat("Tags url type", properties.getTagsUrl(), instanceOf(String.class));
         assertThat("Tags url value", properties.getTagsUrl(), startsWith("https://api.github.com/"));

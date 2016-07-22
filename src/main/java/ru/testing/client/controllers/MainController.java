@@ -102,7 +102,7 @@ public class MainController {
     @FXML
     private TextField serverUrl;
     @FXML
-    protected TextField sendMsgTextField;
+    private TextField sendMsgTextField;
     @FXML
     private TextField filterTextField;
     @FXML
@@ -120,7 +120,7 @@ public class MainController {
     @FXML
     private Button messageSendBtn;
     @FXML
-    protected ToggleButton sendMsgHistoryBtn;
+    private ToggleButton sendMsgHistoryBtn;
     @FXML
     private Button filterAddBtn;
     @FXML
@@ -240,22 +240,28 @@ public class MainController {
         });
 
         // Filters
-        filterList.addListener((ListChangeListener<String>) c ->
-                Platform.runLater(() -> {
-                    if (c.next()) {
-                        int size = filterList.size();
-                        if (size > 0 && filterOnOffBtn.isSelected()) {
-                            filterListBtn.setDisable(false);
-                            filterCount.setText(String.valueOf(size));
-                        } else {
-                            filterListBtn.setDisable(true);
-                            filterListBtn.setSelected(false);
-                            getFilterPopOver().hide();
-                            filterCount.setText("");
-                        }
-                    }
-                })
-        );
+        filterList.addListener((ListChangeListener<String>) c -> {
+            if (c.next()) {
+                int size = filterList.size();
+                if (size > 0 && filterOnOffBtn.isSelected()) {
+                    filterListBtn.setDisable(false);
+                    filterCount.setText(String.valueOf(size));
+                    outputFilteredMessageList.clear();
+                    outputMessageList.forEach(message ->
+                            filterList.forEach(filter -> {
+                                if (message.getMessage().contains(filter)) {
+                                    outputFilteredMessageList.add(message);
+                                }
+                            }));
+                } else {
+                    filterListBtn.setDisable(true);
+                    filterListBtn.setSelected(false);
+                    getFilterPopOver().hide();
+                    filterCount.setText("");
+                    outputFilteredMessageList.clear();
+                }
+            }
+        });
         filterTextField.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 addToFilterList();
@@ -323,17 +329,14 @@ public class MainController {
                 }
             }
             sendMsgTextField.clear();
-            sendMsgTextField.requestFocus();
         }
-        if (sendMsgList.size() > 0) {
-            sendMsgHistoryBtn.setDisable(false);
-        }
+        sendMsgTextField.requestFocus();
     }
 
     @FXML
     private void changeFilterStatus() {
         Platform.runLater(() -> {
-            if (filtered) {
+            if (isFiltered()) {
                 filterOnOffBtn.setSelected(false);
                 filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
                 filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
@@ -343,6 +346,7 @@ public class MainController {
                 filtered = false;
                 outputTextView.setItems(outputMessageList);
                 outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
+                headersCount.requestFocus();
             } else {
                 filterOnOffBtn.setSelected(true);
                 filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
@@ -373,7 +377,7 @@ public class MainController {
                     autoSendStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
                     autoMsg = true;
                 }
-                connectBtn.requestFocus();
+                headersCount.requestFocus();
             });
         }
     }
@@ -386,10 +390,8 @@ public class MainController {
         if (!filterTextField.getText().isEmpty()) {
             filterList.add(filterTextField.getText());
             filterTextField.clear();
-            filterTextField.requestFocus();
-        } else {
-            filterTextField.requestFocus();
         }
+        filterTextField.requestFocus();
     }
 
     /**
@@ -483,6 +485,7 @@ public class MainController {
         } else {
             getHeadersPopOver().hide();
         }
+        headersCount.requestFocus();
     }
 
     /**
@@ -492,6 +495,7 @@ public class MainController {
     private void showSendHistoryPopOver() {
         if (sendMsgHistoryBtn.isSelected()) {
             getHistoryPopOver().show(sendMsgHistoryBtn, -7);
+
         } else {
             getHistoryPopOver().hide();
         }
@@ -532,7 +536,7 @@ public class MainController {
      */
     private HeadersPopOver getHeadersPopOver() {
         if (headersPopOver == null) {
-            headersPopOver = new HeadersPopOver(httpSettings, serverUrl, this);
+            headersPopOver = new HeadersPopOver(this);
         }
         return headersPopOver;
     }
@@ -668,7 +672,14 @@ public class MainController {
             filtered = !s.getFilterOn();
             changeFilterStatus();
             filterList.clear();
-            s.getFilters().forEach(filter -> filterList.add(filter.getValue()));
+            s.getFilters().forEach(filterList::add);
+            filterCount.setText(String.valueOf(filterList.size()));
+
+            // set auto messages list
+            ObservableList<String> autoMsgList = getAutoSendPopOver().getController().getAutoMsgList();
+            autoMsgList.clear();
+            s.getAutoMessages().forEach(autoMsgList::add);
+
 
             // set auto scroll properties
             autoScroll = !s.getAutoScroll();
@@ -820,6 +831,15 @@ public class MainController {
     }
 
     /**
+     * Get http settings button
+     *
+     * @return ToggleButton
+     */
+    public ToggleButton getHttpSettings() {
+        return httpSettings;
+    }
+
+    /**
      * Start websocket client
      */
     private void startClient() {
@@ -831,6 +851,18 @@ public class MainController {
             client.openConnection();
             client.setMessageHandler(new MessageHandler(this));
             connectionStatus = true;
+            ObservableList<String> autoMsgList = getAutoSendPopOver().getController().getAutoMsgList();
+            if (client != null && autoMsg && autoMsgList.size() > 0) {
+                autoMsgList.forEach(message -> {
+                    try {
+                        sendMsgList.add(message);
+                        addMessageToOutput(OutputMessageType.SEND, message);
+                        client.sendMessage(message);
+                    } catch (IOException e) {
+                        Dialogs.getExceptionDialog(e);
+                    }
+                });
+            }
         } catch (Exception e) {
             LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
             Platform.runLater(() -> Dialogs.getExceptionDialog(e));

@@ -15,25 +15,25 @@ import ru.testing.client.elements.autosend.AutoSendCellFactory;
 public class AutoSendController {
 
     private MainController main;
-    private ObservableList<String> autoSendMessagesList = FXCollections.observableArrayList();
+    private ObservableList<String> autoMsgList = FXCollections.observableArrayList();
 
     /**
      * Labels
      */
     @FXML
-    private Label noAutoMessageLabel;
+    private Label nonMessagesLabel;
 
     /**
      * List view
      */
     @FXML
-    private ListView<String> autoSendMessagesListView;
+    private ListView<String> autoMsgListView;
 
     /**
      * Text fields
      */
     @FXML
-    private TextField autoSendMessage;
+    private TextField messageField;
 
     public AutoSendController(MainController mainController) {
         main = mainController;
@@ -44,27 +44,45 @@ public class AutoSendController {
      */
     @FXML
     private void initialize() {
-        Platform.runLater(() -> noAutoMessageLabel.requestFocus());
-        autoSendMessagesListView.setItems(autoSendMessagesList);
-        autoSendMessagesListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        autoSendMessagesListView.setCellFactory(listView -> new AutoSendCellFactory(main));
-        autoSendMessagesListView.getItems().addListener((ListChangeListener<String>) change -> {
+        autoMsgListView.setItems(autoMsgList);
+        autoMsgListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        autoMsgListView.setCellFactory(listView -> new AutoSendCellFactory(main));
+        autoMsgListView.getItems().addListener((ListChangeListener<String>) change -> {
             if (change.next()) {
-                int size = autoSendMessagesList.size();
+                int size = autoMsgList.size();
                 if (size > 0) {
                     setSessionsListVisible(true);
                 } else {
                     setSessionsListVisible(false);
-                    Platform.runLater(() -> noAutoMessageLabel.requestFocus());
+                    Platform.runLater(() -> nonMessagesLabel.requestFocus());
                 }
             }
         });
 
-        autoSendMessage.setOnKeyPressed(key -> {
+        autoMsgListView.setOnKeyPressed(key -> {
+            if (key.getCode() == KeyCode.ESCAPE) {
+                main.getAutoSendPopOver().hide();
+            }
+        });
+
+        messageField.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ENTER) {
                 addAutoMessage();
             }
+            if (key.getCode() == KeyCode.ESCAPE) {
+                main.getAutoSendPopOver().hide();
+            }
         });
+
+        Platform.runLater(() -> messageField.requestFocus());
+    }
+
+    /**
+     * Get auto send message list
+     * @return ObservableList<String>
+     */
+    public ObservableList<String> getAutoMsgList() {
+        return autoMsgList;
     }
 
     /**
@@ -72,10 +90,10 @@ public class AutoSendController {
      */
     @FXML
     private void addAutoMessage() {
-        String message = autoSendMessage.getText();
+        String message = this.messageField.getText();
         if (message != null && !message.isEmpty()) {
-            autoSendMessagesList.add(message);
-            autoSendMessage.clear();
+            autoMsgList.add(message);
+            this.messageField.clear();
         }
     }
 
@@ -85,9 +103,9 @@ public class AutoSendController {
      * @param visible boolean visible status
      */
     private void setSessionsListVisible(boolean visible) {
-        autoSendMessagesListView.setVisible(visible);
-        autoSendMessagesListView.setManaged(visible);
-        noAutoMessageLabel.setVisible(!visible);
-        noAutoMessageLabel.setManaged(!visible);
+        autoMsgListView.setVisible(visible);
+        autoMsgListView.setManaged(visible);
+        nonMessagesLabel.setVisible(!visible);
+        nonMessagesLabel.setManaged(!visible);
     }
 }

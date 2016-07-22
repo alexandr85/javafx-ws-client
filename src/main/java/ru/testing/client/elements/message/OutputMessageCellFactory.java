@@ -25,20 +25,18 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
     @Override
     protected void updateItem(OutputMessage item, boolean empty) {
         super.updateItem(item, empty);
-        Platform.runLater(() -> {
-            if (item != null) {
-                setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
-                if (item.getMessageType() == SEND) {
-                    getStyleClass().add(SEND_MESSAGE_CSS);
-                } else {
-                    getStyleClass().removeAll(SEND_MESSAGE_CSS);
-                }
+        if (item != null) {
+            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
+            if (item.getMessageType() == SEND) {
+                getStyleClass().add(SEND_MESSAGE_CSS);
             } else {
-                setText(null);
-                setGraphic(null);
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
             }
-        });
+        } else {
+            setText(null);
+            setGraphic(null);
+            getStyleClass().removeAll(SEND_MESSAGE_CSS);
+        }
     }
 
     @Override

@@ -31,7 +31,10 @@ public class SessionsPopOver extends PopOver {
         this.setArrowSize(0);
         this.setWidth(WIDTH);
         this.setHeight(HEIGHT);
-        this.setOnHidden(event -> main.getMainParent().setDisable(false));
+        this.setOnHidden(event -> {
+            main.getMainParent().setDisable(false);
+            main.getHeadersCount().requestFocus();
+        });
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/sessions.fxml"));

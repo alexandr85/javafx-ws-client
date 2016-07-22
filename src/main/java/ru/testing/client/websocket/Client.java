@@ -79,7 +79,7 @@ public class Client extends Endpoint {
     /**
      * Open websocket connection
      *
-     * @throws Exception
+     * @throws Exception connect to server
      */
     public void openConnection() throws Exception {
         if (session != null && session.isOpen()) {
@@ -121,7 +121,7 @@ public class Client extends Endpoint {
      * Send string message to websocket session
      *
      * @param message String
-     * @throws IOException
+     * @throws IOException send message
      */
     public void sendMessage(String message) throws IOException {
         if (session != null) {

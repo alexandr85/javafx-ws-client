@@ -21,7 +21,7 @@
             <Insets top="7" bottom="10"/>
         </padding>
         <Label text="Current session name:"/>
-        <TextField fx:id="sessionName" prefWidth="130.0" prefHeight="25.0" promptText="session name"/>
+        <TextField fx:id="sessionNameField" prefWidth="130.0" prefHeight="25.0" promptText="session name"/>
         <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="25.0" onAction="#addSession">
             <graphic>
@@ -36,10 +36,10 @@
     </FlowPane>
     <GridPane GridPane.columnIndex="0" GridPane.rowIndex="1">
         <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS" fillWidth="true"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS" fillHeight="true"/>
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS"/>
         </rowConstraints>
         <GridPane.margin>
             <Insets bottom="2.0" left="7.0" right="7.0"/>

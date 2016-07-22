@@ -14,7 +14,8 @@ public class Session {
     private boolean filterShow;
     private boolean autoScroll;
     private boolean barShow;
-    private List<Filter> filters;
+    private List<String> filters;
+    private List<String> autoMessages;
     private List<Header> headers;
     private List<RxMessage> rxMessages;
     private List<TxMessage> txMessages;
@@ -65,12 +66,20 @@ public class Session {
         return barShow;
     }
 
-    public List<Filter> getFilters() {
+    public List<String> getFilters() {
         return filters;
     }
 
-    public void setFilters(List<Filter> filters) {
+    public void setFilters(List<String> filters) {
         this.filters = filters;
+    }
+
+    public List<String> getAutoMessages() {
+        return autoMessages;
+    }
+
+    public void setAutoMessages(List<String> autoMessages) {
+        this.autoMessages = autoMessages;
     }
 
     public List<Header> getHeaders() {

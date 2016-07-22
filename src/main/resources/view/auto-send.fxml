@@ -20,8 +20,7 @@
         <padding>
             <Insets top="7" bottom="10"/>
         </padding>
-        <Label text="Auto message:"/>
-        <TextField fx:id="autoSendMessage" prefWidth="250.0" prefHeight="25.0" promptText="message"/>
+        <TextField fx:id="messageField" prefWidth="350.0" prefHeight="25.0" promptText="message"/>
         <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="25.0" onAction="#addAutoMessage">
             <graphic>
@@ -44,7 +43,7 @@
         <GridPane.margin>
             <Insets bottom="2.0" left="7.0" right="7.0"/>
         </GridPane.margin>
-        <Label fx:id="noAutoMessageLabel" text="Empty messages list" alignment="CENTER" prefHeight="130.0" prefWidth="400.0"/>
-        <ListView fx:id="autoSendMessagesListView" visible="false" managed="false" prefHeight="136.0"/>
+        <Label fx:id="nonMessagesLabel" text="Empty messages list" alignment="CENTER" prefHeight="130.0" prefWidth="400.0"/>
+        <ListView fx:id="autoMsgListView" visible="false" managed="false" prefHeight="136.0"/>
     </GridPane>
 </GridPane>

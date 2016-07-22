@@ -12,17 +12,17 @@ public class SendHistoryPopOver extends PopOver {
 
     private static final double WIDTH = 430.0;
     private static final double HEIGHT = 120.0;
-    private MainController mainController;
+    private MainController main;
 
-    public SendHistoryPopOver(MainController mainController) {
-        this.mainController = mainController;
+    public SendHistoryPopOver(MainController main) {
+        this.main = main;
         setDetachable(false);
         setArrowLocation(ArrowLocation.TOP_RIGHT);
         setHeaderAlwaysVisible(false);
         setTitle("Send message history");
         setOnHidden(event -> {
-            mainController.getSendMsgHistoryBtn().setSelected(false);
-            mainController.getMainParent().requestFocus();
+            main.getSendMsgHistoryBtn().setSelected(false);
+            main.getSendMsgTextField().requestFocus();
         });
         setContentNode(getList());
     }
@@ -41,8 +41,8 @@ public class SendHistoryPopOver extends PopOver {
                 "-fx-faint-focus-color: transparent;" +
                 "-fx-border-radius: 2px; " +
                 "-fx-padding: 7px 1px");
-        list.setItems(mainController.getSendMsgList());
-        list.setCellFactory(listView -> new SendHistoryCellFactory(mainController, this));
+        list.setItems(main.getSendMsgList());
+        list.setCellFactory(listView -> new SendHistoryCellFactory(main, this));
         return list;
     }
 }

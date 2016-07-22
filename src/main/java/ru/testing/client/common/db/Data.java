@@ -9,8 +9,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.testing.client.MainApp.getProperties;
-
 /**
  *
  */
@@ -106,6 +104,7 @@ public class Data {
                     r.getBoolean("auto_scroll"),
                     r.getBoolean("bar_show"));
             session.setFilters(getFilters(id));
+            session.setAutoMessages(getAutoMessages(id));
             session.setHeaders(getHeaders(id));
             session.setRxMessages(getRxMessages(id));
             session.setTxMessages(getTxMessages(id));
@@ -132,7 +131,7 @@ public class Data {
     /**
      * Set filters list in database
      *
-     * @param filters   List<Filter>
+     * @param filters   List<String>
      * @param sessionId int
      */
     public void setFilters(List<String> filters, int sessionId) {
@@ -144,6 +143,29 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error set filters list in database: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Set auto messages list in database
+     *
+     * @param autoMessages   List<String>
+     * @param sessionId int
+     */
+    public void setAutoMessages(List<String> autoMessages, int sessionId) {
+        try (Connection connection = createConnection()) {
+            Statement statement = connection.createStatement();
+
+            if (!isTableExist(statement, "auto_messages")) {
+                statement.executeUpdate("CREATE TABLE auto_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
+            }
+
+            for (String value : autoMessages) {
+                statement.executeUpdate("INSERT INTO auto_messages (session_id, value) " +
+                        String.format("values(%s,'%s')", sessionId, value));
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error set auto messages list in database: {}", e.getMessage());
         }
     }
 
@@ -205,18 +227,38 @@ public class Data {
      * Get filters from database by session id
      *
      * @param sessionId int
-     * @return List<Filter>
+     * @return List<String>
      */
-    private List<Filter> getFilters(int sessionId) {
-        List<Filter> filters = new ArrayList<>();
+    private List<String> getFilters(int sessionId) {
+        List<String> filters = new ArrayList<>();
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT value FROM filters WHERE session_id = " + sessionId + " ORDER BY id");
             while (result.next()) {
-                filters.add(new Filter(sessionId, result.getString("value")));
+                filters.add(result.getString("value"));
             }
         } catch (SQLException e) {
             LOGGER.error("Error get filters from database: error cod {}", e.getErrorCode());
+        }
+        return filters;
+    }
+
+    /**
+     * Get auto messages from database by session id
+     *
+     * @param sessionId int
+     * @return List<String>
+     */
+    private List<String> getAutoMessages(int sessionId) {
+        List<String> filters = new ArrayList<>();
+        try (Connection connection = createConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("SELECT value FROM auto_messages WHERE session_id = " + sessionId + " ORDER BY id");
+            while (result.next()) {
+                filters.add(result.getString("value"));
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error get auto messages from database: error cod {}", e.getErrorCode());
         }
         return filters;
     }
@@ -301,30 +343,30 @@ public class Data {
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
             LOGGER.debug("Creating default tables ... ");
-            dbSettings(statement);
             statement.executeUpdate("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "name TEXT, url TEXT, filter_on TEXT, filter_show TEXT, auto_scroll TEXT, bar_show TEXT)");
             statement.executeUpdate("CREATE TABLE headers (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, name TEXT, value TEXT)");
             statement.executeUpdate("CREATE TABLE filters (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
             statement.executeUpdate("CREATE TABLE tx_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
             statement.executeUpdate("CREATE TABLE rx_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, time TEXT, value TEXT)");
+            statement.executeUpdate("CREATE TABLE auto_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
             LOGGER.debug("Default tables created successful");
             LOGGER.debug("Insert default session");
-            setSession(new Session("default", "wss://echo.websocket.org", false, true, true, true));
+            setSession(new Session("default", "wss://echo.websocket.org", false, false, true, true));
         } catch (SQLException e) {
             LOGGER.error("Error create default tables: {}", e.getMessage());
         }
     }
 
-    /**
-     * Set database settings
-     *
-     * @param statement Statement
-     * @throws SQLException Execute update
-     */
-    private void dbSettings(Statement statement) throws SQLException {
-        statement.executeUpdate("CREATE TABLE settings (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, value TEXT)");
-        statement.executeUpdate("INSERT INTO settings (name, value) " +
-                String.format("values('db.version','%s')", getProperties().getDbVersion()));
+    private boolean isTableExist(Statement statement, String table) throws SQLException {
+        boolean isExist = false;
+        ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table + "'");
+        while (result.next()) {
+            if (result.getString("name").equals(table)) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
     }
 }
