@@ -62,3 +62,8 @@
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
 }
+
+.context-menu {
+    -fx-pref-width: 140;
+    -fx-font-style: italic;
+}

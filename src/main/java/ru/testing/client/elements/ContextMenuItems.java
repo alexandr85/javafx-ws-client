@@ -4,6 +4,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.controllers.MainController;
@@ -19,6 +21,8 @@ import static ru.testing.client.elements.message.OutputMessageType.SEND;
  * Class collected other menu items
  */
 public class ContextMenuItems {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContextMenuItems.class.getName());
 
     /**
      * Menu item for clear all cell in list view
@@ -47,15 +51,15 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param cell ListCell<OutputMessage>
+     * @param item OutputMessage
      * @return MenuItem
      */
-    public MenuItem copyCellAll(ListCell<OutputMessage> cell) {
+    public MenuItem copyCellAll(OutputMessage item) {
         MenuItem copyItem = new MenuItem("Copy cell data");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getText());
+            content.putString(item.toString());
             clipboard.setContent(content);
         });
         return copyItem;
@@ -64,15 +68,15 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param cell ListCell<OutputMessage>
+     * @param item OutputMessage
      * @return MenuItem
      */
-    public MenuItem copyCellMessage(ListCell<OutputMessage> cell) {
+    public MenuItem copyCellMessage(OutputMessage item) {
         MenuItem copyItem = new MenuItem("Copy message");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getItem().getMessage());
+            content.putString(item.getMessage());
             clipboard.setContent(content);
         });
         return copyItem;
@@ -98,15 +102,15 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param cell ListCell<OutputMessage>
+     * @param item OutputMessage
      * @return MenuItem
      */
-    public MenuItem copyCellTime(ListCell<OutputMessage> cell) {
+    public MenuItem copyCellTime(OutputMessage item) {
         MenuItem copyItem = new MenuItem("Copy time");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
             final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getItem().getFormattedTime());
+            content.putString(item.getFormattedTime());
             clipboard.setContent(content);
         });
         return copyItem;
@@ -132,13 +136,13 @@ public class ContextMenuItems {
     /**
      * Save message from cell to file
      *
-     * @param cell ListCell<OutputMessage>
+     * @param item OutputMessage
      * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveMessageToFile(ListCell<OutputMessage> cell, MainController main) {
+    public MenuItem saveMessageToFile(OutputMessage item, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save cell data");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(cell.getText(), main));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString(), main));
         return saveFileItem;
     }
 
@@ -188,7 +192,7 @@ public class ContextMenuItems {
      * @param main MainController
      * @return MenuItem
      */
-    public MenuItem showMessage(OutputMessage item, MainController main) {
+    public MenuItem showMessage(final OutputMessage item, MainController main) {
         MenuItem show = new MenuItem("Show message");
         show.setOnAction(event -> new DetailTab(item, main));
         return show;

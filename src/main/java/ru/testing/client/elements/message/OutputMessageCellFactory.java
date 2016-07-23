@@ -48,31 +48,36 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
 
     @Override
     protected boolean isItemChanged(OutputMessage oldItem, OutputMessage newItem) {
-        ListView<OutputMessage> listView = getListView();
-        MultipleSelectionModel<OutputMessage> selectionModel = listView.getSelectionModel();
+        MultipleSelectionModel<OutputMessage> selectionModel = main.getOutputTextView().getSelectionModel();
         if (selectionModel.getSelectedItems().size() > 1) {
-            setContextMenu(getMultiContextMenu(selectionModel.getSelectedItems()));
+            final ObservableList<OutputMessage> list = selectionModel.getSelectedItems();
+            if (list != null) {
+                setContextMenu(getMultiContextMenu(list));
+            }
         } else {
-            setContextMenu(getSingleContextMenu(this));
+            setContextMenu(getSingleContextMenu(getItem()));
         }
         return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
     }
 
+
+
     /**
      * Context menu for output message view
      *
-     * @param cell ListCell string
+     * @param item OutputMessage
      * @return ContextMenu
      */
-    private ContextMenu getSingleContextMenu(ListCell<OutputMessage> cell) {
+    private ContextMenu getSingleContextMenu(final OutputMessage item) {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.copyCellMessage(cell),
-                m.copyCellTime(cell),
-                m.copyCellAll(cell),
-                m.saveMessageToFile(cell, main),
-                m.showMessage(cell.getItem(), main),
+                m.copyCellMessage(item),
+                m.copyCellTime(item),
+                m.copyCellAll(item),
+                new SeparatorMenuItem(),
+                m.saveMessageToFile(item, main),
+                m.showMessage(item, main),
                 new SeparatorMenuItem(),
                 m.clearListView(list)
         );
@@ -84,7 +89,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
      *
      * @return ContextMenu
      */
-    private ContextMenu getMultiContextMenu(ObservableList<OutputMessage> selectedList) {
+    private ContextMenu getMultiContextMenu(final ObservableList<OutputMessage> selectedList) {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(

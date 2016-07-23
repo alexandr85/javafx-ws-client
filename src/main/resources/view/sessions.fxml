@@ -20,8 +20,8 @@
         <padding>
             <Insets top="7" bottom="10"/>
         </padding>
-        <Label text="Current session name:"/>
-        <TextField fx:id="sessionNameField" prefWidth="130.0" prefHeight="25.0" promptText="session name"/>
+        <Label text="Session name:"/>
+        <TextField fx:id="sessionNameField" prefWidth="170.0" prefHeight="25.0" promptText="session name"/>
         <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="25.0" onAction="#addSession">
             <graphic>

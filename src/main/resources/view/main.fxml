@@ -50,6 +50,7 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Show filter" onAction="#changeFilterVisible"/>
+            <CheckMenuItem fx:id="jsonPretty" text="Json pretty"/>
         </Menu>
         <Menu text="Help">
             <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
@@ -197,7 +198,7 @@
         <padding>
             <Insets left="4" right="4" bottom="4"/>
         </padding>
-        <Tab fx:id="messagesTab" closable="false" text="Messages">
+        <Tab closable="false" text="Messages">
             <GridPane styleClass="output_grid">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>

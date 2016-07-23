@@ -17,6 +17,7 @@ public class AppProperties {
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
+    private String jsonPrettyReplaceRegex;
 
     public AppProperties() {
         Properties properties = new Properties();
@@ -26,6 +27,7 @@ public class AppProperties {
             setTagsUrl(properties.getProperty("tags.url"));
             setLastReleaseUrl(properties.getProperty("last.release.url"));
             setAboutUrl(properties.getProperty("about.url"));
+            setJsonPrettyReplaceRegex(properties.getProperty("json.pretty.replace.regex"));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -61,5 +63,13 @@ public class AppProperties {
 
     private void setAboutUrl(String aboutUrl) {
         this.aboutUrl = aboutUrl;
+    }
+
+    public String getJsonPrettyReplaceRegex() {
+        return jsonPrettyReplaceRegex;
+    }
+
+    private void setJsonPrettyReplaceRegex(String jsonPrettyReplaceRegex) {
+        this.jsonPrettyReplaceRegex = jsonPrettyReplaceRegex;
     }
 }

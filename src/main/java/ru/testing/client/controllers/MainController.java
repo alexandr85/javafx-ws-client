@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -82,13 +81,7 @@ public class MainController {
      * Tabs
      */
     @FXML
-    public TabPane tabPane;
-    @FXML
-    public Tab messagesTab;
-    @FXML
-    public Tab detailTab;
-    @FXML
-    public TextArea detailText;
+    private TabPane tabPane;
 
     /**
      * Menu buttons
@@ -109,6 +102,8 @@ public class MainController {
     private CheckMenuItem autoScrollMenuItem;
     @FXML
     private CheckMenuItem showFilter;
+    @FXML
+    private CheckMenuItem jsonPretty;
 
     /**
      * Text fields
@@ -614,6 +609,33 @@ public class MainController {
     }
 
     /**
+     * Get tab pane element
+     *
+     * @return TabPane
+     */
+    public TabPane getTabPane() {
+        return tabPane;
+    }
+
+    /**
+     * Get json pretty check menu
+     *
+     * @return CheckMenuItem
+     */
+    public CheckMenuItem getJsonPretty() {
+        return jsonPretty;
+    }
+
+    /**
+     * Get application properties
+     *
+     * @return AppProperties
+     */
+    public AppProperties getProperties() {
+        return properties;
+    }
+
+    /**
      * Send message history toggle button
      *
      * @return ToggleButton
@@ -749,6 +771,15 @@ public class MainController {
         List<RxMessage> rxMessages = new ArrayList<>();
         outputMessageList.forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
         return rxMessages;
+    }
+
+    /**
+     * Get output message list view
+     *
+     * @return ListView<OutputMessage>
+     */
+    public ListView<OutputMessage> getOutputTextView() {
+        return outputTextView;
     }
 
     /**

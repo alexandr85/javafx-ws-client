@@ -72,4 +72,13 @@ public class OutputMessage {
     public OutputMessageType getMessageType() {
         return type;
     }
+
+    /**
+     * Get OutputMessage as string
+     *
+     * @return String
+     */
+    public String toString() {
+        return String.format("%s %s %s", getMessageType(), getFormattedTime(), getMessage());
+    }
 }
