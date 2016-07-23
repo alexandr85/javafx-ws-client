@@ -1,14 +1,14 @@
 package ru.testing.client.elements;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SessionsController;
+import ru.testing.client.elements.message.DetailTab;
 import ru.testing.client.elements.message.OutputMessage;
 import ru.testing.client.elements.message.OutputMessageType;
 
@@ -182,6 +182,19 @@ public class ContextMenuItems {
     }
 
     /**
+     * Save send selected messages to file
+     *
+     * @param item OutputMessage
+     * @param main MainController
+     * @return MenuItem
+     */
+    public MenuItem showMessage(OutputMessage item, MainController main) {
+        MenuItem show = new MenuItem("Show message");
+        show.setOnAction(event -> new DetailTab(item, main));
+        return show;
+    }
+
+    /**
      * Delete selected session
      *
      * @return MenuItem
@@ -215,7 +228,7 @@ public class ContextMenuItems {
      */
     private String getAllMessages(ObservableList<OutputMessage> list) {
         StringBuilder stringBuilder = new StringBuilder();
-        list.stream().forEach(m -> stringBuilder.append(String.format("%-8s %s %s\n",
+        list.forEach(m -> stringBuilder.append(String.format("%-8s %s %s\n",
                 m.getMessageType(), m.getFormattedTime(), m.getMessage())));
         return stringBuilder.toString();
     }

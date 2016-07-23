@@ -1,3 +1,29 @@
+/* ========== Tabs style ============ */
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+    -fx-effect: null;
+}
+
+.tab-header-area {
+    -fx-pref-height: 0;
+}
+
+.tab {
+    -fx-focus-color: transparent;
+    -fx-background-radius: 1;
+}
+
+.tab .tab-label {
+    -fx-font-size: 12px;
+}
+
+.tab:selected .tab-label {
+    -fx-font-weight: bold;
+}
+
+/* ========== Basic elements style ============ */
+
 .button,
 .toggle-button,
 .text-field,
@@ -45,7 +71,7 @@
     -fx-fill: #D9534F;
 }
 
-.list-cell {
+.list-cell, .text-area {
     -fx-font-family: "Courier New";
 }
 
@@ -67,7 +93,8 @@
     -fx-padding: 2px 0;
 }
 
-/* Scroll bar style for all list view */
+/* ========== List view style ============ */
+
 .list-view .scroll-bar:horizontal .track,
 .list-view .scroll-bar:vertical .track {
     -fx-background-color: transparent;
@@ -102,6 +129,8 @@
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
 }
+
+/* ========== Progress bar style ============ */
 
 .progress-bar > .bar {
     -fx-background-insets: 1 1 2 1;

@@ -125,7 +125,7 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                         <tooltip>
-                            <Tooltip text="Send message after connect"/>
+                            <Tooltip text="Auto messages"/>
                         </tooltip>
                         <graphic>
                             <ImageView>
@@ -193,84 +193,97 @@
             </VBox>
         </GridPane>
     </TilePane>
-    <GridPane prefHeight="400.0" styleClass="output_grid" GridPane.rowIndex="2">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints vgrow="NEVER"/>
-            <RowConstraints vgrow="SOMETIMES"/>
-            <RowConstraints vgrow="NEVER"/>
-        </rowConstraints>
-        <GridPane.margin>
-            <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
-        </GridPane.margin>
-        <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false"
-                  alignment="CENTER" hgap="15.0"
-                  maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
-                  prefWidth="480.0" styleClass="filter_block">
-            <TextField fx:id="findTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                       minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"/>
-            <Button fx:id="findTextBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                    prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/find.png" requestedWidth="16" requestedHeight="16"/>
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </Button>
-        </FlowPane>
-        <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0" styleClass="output_text"/>
-        <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER" hgap="15.0"
-                  maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0"
-                  prefWidth="480.0" styleClass="filter_block">
-            <padding>
-                <Insets bottom="2" left="100"/>
-            </padding>
-            <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                          prefHeight="25.0" prefWidth="25.0" textAlignment="CENTER"
-                          onAction="#changeFilterStatus">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/filter-off.png"/>
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </ToggleButton>
-            <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
-                       maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                       prefHeight="25.0" prefWidth="200.0"/>
-            <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity" minWidth="-Infinity"
-                    mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </Button>
-            <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
-                          minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                          prefWidth="25.0" onAction="#showFilterListPopOver">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </ToggleButton>
-            <Label fx:id="filterCount" minWidth="100" maxWidth="100"/>
-        </FlowPane>
-    </GridPane>
+    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2">
+        <padding>
+            <Insets left="4" right="4" bottom="4"/>
+        </padding>
+        <Tab fx:id="messagesTab" closable="false" text="Messages">
+            <GridPane styleClass="output_grid">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="NEVER"/>
+                    <RowConstraints vgrow="SOMETIMES"/>
+                    <RowConstraints vgrow="NEVER"/>
+                </rowConstraints>
+                <GridPane.margin>
+                    <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
+                </GridPane.margin>
+                <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false"
+                          alignment="CENTER" hgap="15.0"
+                          maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          prefHeight="32.0"
+                          prefWidth="480.0" styleClass="filter_block">
+                    <TextField fx:id="findTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                               minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"/>
+                    <Button fx:id="findTextBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                            prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/find.png" requestedWidth="16" requestedHeight="16"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                </FlowPane>
+                <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0"
+                          styleClass="output_text"/>
+                <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER"
+                          hgap="15.0"
+                          maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                          prefHeight="32.0"
+                          prefWidth="480.0" styleClass="filter_block">
+                    <padding>
+                        <Insets bottom="2" left="100"/>
+                    </padding>
+                    <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity"
+                                  mnemonicParsing="false"
+                                  prefHeight="25.0" prefWidth="25.0" textAlignment="CENTER"
+                                  onAction="#changeFilterStatus">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/filter-off.png"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </ToggleButton>
+                    <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
+                               maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                               prefHeight="25.0" prefWidth="200.0"/>
+                    <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity" minWidth="-Infinity"
+                            mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0"
+                            onMouseClicked="#addToFilterList">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                    <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
+                                  minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                                  prefWidth="25.0" onAction="#showFilterListPopOver">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </ToggleButton>
+                    <Label fx:id="filterCount" minWidth="100" maxWidth="100"/>
+                </FlowPane>
+            </GridPane>
+        </Tab>
+    </TabPane>
     <StatusBar maxHeight="25" GridPane.rowIndex="3" fx:id="statusBar" text="">
         <padding>
             <Insets bottom="3" top="4" left="15" right="15"/>
@@ -303,24 +316,6 @@
                 </graphic>
                 <tooltip>
                     <Tooltip text="Filter status"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </Label>
-            <Separator orientation="VERTICAL"/>
-            <Label fx:id="autoSendStatusLabel" maxWidth="-Infinity" text="auto msg"
-                   contentDisplay="RIGHT" onMouseClicked="#changeAutoMessageStatus">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/turn-off.png"/>
-                    </ImageView>
-                </graphic>
-                <tooltip>
-                    <Tooltip text="Auto messages status"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>

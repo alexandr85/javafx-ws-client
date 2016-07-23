@@ -1,8 +1,8 @@
 package ru.testing.client.elements.message;
 
-import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
 
@@ -37,6 +37,13 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
             setGraphic(null);
             getStyleClass().removeAll(SEND_MESSAGE_CSS);
         }
+        setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount() >= 2) {
+                    new DetailTab(item, main);
+                }
+            }
+        });
     }
 
     @Override
@@ -65,6 +72,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
                 m.copyCellTime(cell),
                 m.copyCellAll(cell),
                 m.saveMessageToFile(cell, main),
+                m.showMessage(cell.getItem(), main),
                 new SeparatorMenuItem(),
                 m.clearListView(list)
         );

@@ -12,12 +12,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
@@ -75,6 +77,18 @@ public class MainController {
     private SessionsPopOver sessionsPopOver;
     private SendHistoryPopOver historyPopOver;
     private FilterListPopOver filterPopOver;
+
+    /**
+     * Tabs
+     */
+    @FXML
+    public TabPane tabPane;
+    @FXML
+    public Tab messagesTab;
+    @FXML
+    public Tab detailTab;
+    @FXML
+    public TextArea detailText;
 
     /**
      * Menu buttons
@@ -142,8 +156,6 @@ public class MainController {
     @FXML
     private Label filterStatusLabel;
     @FXML
-    private Label autoSendStatusLabel;
-    @FXML
     private Label timeDiffLabel;
     @FXML
     private Label autoScrollLabel;
@@ -183,6 +195,20 @@ public class MainController {
      */
     @FXML
     private void initialize() {
+
+        // Tabs change listener
+        tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
+            if (c.next()) {
+                final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
+                if(header != null) {
+                    if(tabPane.getTabs().size() == 1) {
+                        header.setStyle("-fx-pref-height: 0");
+                    } else {
+                        header.setStyle("-fx-pref-height: 30");
+                    }
+                }
+            }
+        });
 
         // Default focus request
         Platform.runLater(() -> outputTextView.requestFocus());
@@ -370,11 +396,9 @@ public class MainController {
             Platform.runLater(() -> {
                 if (autoMsg) {
                     sendAfterConnect.setSelected(false);
-                    autoSendStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
                     autoMsg = false;
                 } else {
                     sendAfterConnect.setSelected(true);
-                    autoSendStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
                     autoMsg = true;
                 }
                 headersCount.requestFocus();
