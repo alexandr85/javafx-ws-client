@@ -1,20 +1,19 @@
 package ru.testing.client.elements.autosend;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
-import ru.testing.client.common.db.objects.Session;
-import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**
- * Sessions cell factory
+ * Auto send messages cell factory
  */
 public class AutoSendCellFactory extends ListCell<String> {
 
-    private MainController mainController;
+    private ObservableList<String> list;
 
-    public AutoSendCellFactory(MainController mainController) {
-        this.mainController = mainController;
+    public AutoSendCellFactory(ObservableList<String> list) {
+        this.list = list;
     }
 
     @Override
@@ -30,7 +29,7 @@ public class AutoSendCellFactory extends ListCell<String> {
     }
 
     /**
-     * Context menu for sessions
+     * Context menu for auto messages
      * @param cell ListCell string
      * @return ContextMenu
      */
@@ -38,20 +37,8 @@ public class AutoSendCellFactory extends ListCell<String> {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-
-        );
-        return contextMenu;
-    }
-
-    /**
-     * Context menu for default session
-     * @param cell ListCell string
-     * @return ContextMenu
-     */
-    private ContextMenu getDefaultContextMenu(ListCell<Session> cell) {
-        ContextMenu contextMenu = new ContextMenu();
-        contextMenu.getItems().addAll(
-                new ContextMenuItems().loadSession(cell, mainController)
+                m.clearPopOverCell(cell),
+                m.clearListView(list)
         );
         return contextMenu;
     }

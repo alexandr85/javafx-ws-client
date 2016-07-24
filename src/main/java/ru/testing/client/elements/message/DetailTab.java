@@ -2,6 +2,7 @@ package ru.testing.client.elements.message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.collections.ObservableList;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
@@ -34,13 +35,15 @@ public class DetailTab extends Tab {
             area.setWrapText(true);
 
             // Setup tab
-            this.setText(String.format("Message #%s", tabsList.size()));
+            MultipleSelectionModel<OutputMessage> selectionModel = main.getOutputTextView().getSelectionModel();
+            int selectIndex = selectionModel.getSelectedIndex();
+            this.setText(String.format("Message #%s", selectIndex + 1));
             this.setContent(area);
 
             // Setup new tab with content in tabPane
-            SingleSelectionModel<Tab> selectionModel = main.getTabPane().getSelectionModel();
+            SingleSelectionModel<Tab> selectTabModel = main.getTabPane().getSelectionModel();
             tabsList.add(this);
-            selectionModel.select(this);
+            selectTabModel.select(this);
         }
     }
 

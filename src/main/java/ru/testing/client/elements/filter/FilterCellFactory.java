@@ -8,11 +8,11 @@ import ru.testing.client.elements.ContextMenuItems;
 /**
  * Filters cell factory
  */
-public class FilterCellFactory extends ListCell<String> {
+class FilterCellFactory extends ListCell<String> {
 
     private ObservableList<String> list;
 
-    public FilterCellFactory(ObservableList<String> list) {
+    FilterCellFactory(ObservableList<String> list) {
         this.list = list;
     }
 

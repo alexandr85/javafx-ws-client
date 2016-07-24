@@ -226,11 +226,6 @@ public class MainController {
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputSetList(false);
         outputTextView.getItems().addListener(this::outputMessageListener);
-        outputTextView.focusedProperty().addListener(observable -> {
-            if (!outputTextView.isFocused()) {
-                outputTextView.getSelectionModel().clearSelection();
-            }
-        });
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
 
         // Connect or disconnect with websocket server
@@ -512,7 +507,6 @@ public class MainController {
     private void showSendHistoryPopOver() {
         if (sendMsgHistoryBtn.isSelected()) {
             getHistoryPopOver().show(sendMsgHistoryBtn, -7);
-
         } else {
             getHistoryPopOver().hide();
         }
@@ -589,7 +583,7 @@ public class MainController {
      *
      * @return AutoSendPopOver
      */
-    public AutoSendPopOver getAutoSendPopOver() {
+    AutoSendPopOver getAutoSendPopOver() {
         if (autoSendPopOver == null) {
             autoSendPopOver = new AutoSendPopOver(this);
         }
@@ -706,7 +700,7 @@ public class MainController {
      *
      * @return String
      */
-    public String getServerUrl() {
+    String getServerUrl() {
         return serverUrl.getText();
     }
 
@@ -768,7 +762,7 @@ public class MainController {
      *
      * @return List<ItemElement>
      */
-    public List<String> getSendMsgItems() {
+    List<String> getSendMsgItems() {
         List<String> items = new ArrayList<>();
         sendMsgList.forEach(items::add);
         return items;
@@ -779,7 +773,7 @@ public class MainController {
      *
      * @return List<RxMessage>
      */
-    public List<RxMessage> getOutputMessageList() {
+    List<RxMessage> getOutputMessageList() {
         List<RxMessage> rxMessages = new ArrayList<>();
         outputMessageList.forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
         return rxMessages;
@@ -808,7 +802,7 @@ public class MainController {
      *
      * @return ObservableList<Header>
      */
-    public List<Header> getHeadersList() {
+    List<Header> getHeadersList() {
         return getHeadersPopOver().getHeadersController().getHeaderObservableList();
     }
 
@@ -866,7 +860,7 @@ public class MainController {
      *
      * @return boolean
      */
-    public boolean isFiltered() {
+    boolean isFiltered() {
         return filtered;
     }
 
@@ -875,7 +869,7 @@ public class MainController {
      *
      * @return boolean
      */
-    public boolean isFilterVisible() {
+    boolean isFilterVisible() {
         return showFilter.isSelected();
     }
 
@@ -884,7 +878,7 @@ public class MainController {
      *
      * @return boolean
      */
-    public boolean isAutoScroll() {
+    boolean isAutoScroll() {
         return autoScroll;
     }
 
@@ -893,7 +887,7 @@ public class MainController {
      *
      * @return boolean
      */
-    public boolean isStatusBarShow() {
+    boolean isStatusBarShow() {
         return statusBar.isVisible();
     }
 

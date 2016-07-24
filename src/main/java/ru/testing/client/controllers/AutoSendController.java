@@ -46,7 +46,7 @@ public class AutoSendController {
     private void initialize() {
         autoMsgListView.setItems(autoMsgList);
         autoMsgListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        autoMsgListView.setCellFactory(listView -> new AutoSendCellFactory(main));
+        autoMsgListView.setCellFactory(listView -> new AutoSendCellFactory(autoMsgList));
         autoMsgListView.getItems().addListener((ListChangeListener<String>) change -> {
             if (change.next()) {
                 int size = autoMsgList.size();
@@ -81,7 +81,7 @@ public class AutoSendController {
      * Get auto send message list
      * @return ObservableList<String>
      */
-    public ObservableList<String> getAutoMsgList() {
+    ObservableList<String> getAutoMsgList() {
         return autoMsgList;
     }
 

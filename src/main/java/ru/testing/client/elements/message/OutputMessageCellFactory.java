@@ -74,6 +74,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
                 m.saveMessageToFile(item, main),
                 m.showMessage(item, main),
                 new SeparatorMenuItem(),
+                m.deselectCell(main.getOutputTextView()),
                 m.clearListView(list)
         );
         return contextMenu;

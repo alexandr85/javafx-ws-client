@@ -11,13 +11,13 @@ import ru.testing.client.elements.ContextMenuItems;
 /**
  * History send message cell factory
  */
-public class SendHistoryCellFactory extends ListCell<String> {
+class SendHistoryCellFactory extends ListCell<String> {
 
     private ObservableList<String> list;
     private TextField sendMsgTextField;
     private PopOver historyPopOver;
 
-    public SendHistoryCellFactory(MainController mainController, PopOver historyPopOver) {
+    SendHistoryCellFactory(MainController mainController, PopOver historyPopOver) {
         this.list = mainController.getSendMsgList();
         this.sendMsgTextField = mainController.getSendMsgTextField();
         this.historyPopOver = historyPopOver;
@@ -54,7 +54,7 @@ public class SendHistoryCellFactory extends ListCell<String> {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.copyCellText(cell),
+                m.copyHistoryText(cell),
                 m.clearPopOverCell(cell),
                 m.clearListView(list)
         );
