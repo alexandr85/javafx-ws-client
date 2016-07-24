@@ -55,7 +55,10 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
                 setContextMenu(getMultiContextMenu(list));
             }
         } else {
-            setContextMenu(getSingleContextMenu(getItem()));
+            final OutputMessage item = selectionModel.getSelectedItem();
+            if (item != null) {
+                setContextMenu(getSingleContextMenu(item));
+            }
         }
         return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
     }
@@ -69,7 +72,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
      * @return ContextMenu
      */
     private ContextMenu getSingleContextMenu(final OutputMessage item) {
-        ContextMenu contextMenu = new ContextMenu();
+        final ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
                 m.copyCellMessage(item),
@@ -90,7 +93,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
      * @return ContextMenu
      */
     private ContextMenu getMultiContextMenu(final ObservableList<OutputMessage> selectedList) {
-        ContextMenu contextMenu = new ContextMenu();
+        final ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
                 m.copySelected(selectedList),
