@@ -215,7 +215,8 @@ public class MainController {
         setHotKey(showAutoMessages, KeyCode.M);
         setHotKey(showStatusBar, KeyCode.B);
         setHotKey(autoScrollMenuItem, KeyCode.L);
-        setHotKey(showFilter, KeyCode.J);
+        setHotKey(showFilter, KeyCode.F);
+        setHotKey(jsonPretty, KeyCode.J);
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -264,7 +265,7 @@ public class MainController {
         filterList.addListener((ListChangeListener<String>) c -> {
             if (c.next()) {
                 int size = filterList.size();
-                if (size > 0 && filterOnOffBtn.isSelected()) {
+                if (size > 0) {
                     filterListBtn.setDisable(false);
                     filterCount.setText(String.valueOf(size));
                     outputFilteredMessageList.clear();
@@ -274,12 +275,14 @@ public class MainController {
                                     outputFilteredMessageList.add(message);
                                 }
                             }));
+                    outputTextView.setItems(outputFilteredMessageList);
                 } else {
                     filterListBtn.setDisable(true);
                     filterListBtn.setSelected(false);
                     getFilterPopOver().hide();
                     filterCount.setText("");
                     outputFilteredMessageList.clear();
+                    outputTextView.setItems(outputMessageList);
                 }
             }
         });
@@ -377,10 +380,10 @@ public class MainController {
                 filterTextField.requestFocus();
                 if (filterList.size() > 0) {
                     filterListBtn.setDisable(false);
+                    outputTextView.setItems(outputFilteredMessageList);
+                    outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
                 }
                 filtered = true;
-                outputTextView.setItems(outputFilteredMessageList);
-                outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
             }
         });
     }

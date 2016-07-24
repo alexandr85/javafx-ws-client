@@ -50,7 +50,7 @@
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>
             <CheckMenuItem fx:id="showFilter" text="Show filter" onAction="#changeFilterVisible"/>
-            <CheckMenuItem fx:id="jsonPretty" text="Json pretty"/>
+            <CheckMenuItem fx:id="jsonPretty" selected="true" text="Json pretty"/>
         </Menu>
         <Menu text="Help">
             <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
@@ -204,35 +204,15 @@
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints vgrow="NEVER"/>
                     <RowConstraints vgrow="SOMETIMES"/>
                     <RowConstraints vgrow="NEVER"/>
                 </rowConstraints>
                 <GridPane.margin>
                     <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
                 </GridPane.margin>
-                <FlowPane fx:id="findBar" disable="true" GridPane.rowIndex="0" visible="false" managed="false"
-                          alignment="CENTER" hgap="15.0"
-                          maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          prefHeight="32.0"
-                          prefWidth="480.0" styleClass="filter_block">
-                    <TextField fx:id="findTextField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" prefHeight="25.0" prefWidth="200.0"/>
-                    <Button fx:id="findTextBtn" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                            prefHeight="25.0" prefWidth="25.0" onMouseClicked="#addToFilterList">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/images/find.png" requestedWidth="16" requestedHeight="16"/>
-                            </ImageView>
-                        </graphic>
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                </FlowPane>
-                <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0"
+                <ListView fx:id="outputTextView" GridPane.rowIndex="0" prefHeight="100.0" prefWidth="200.0"
                           styleClass="output_text"/>
-                <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER"
+                <FlowPane fx:id="filterBar" GridPane.rowIndex="1" visible="false" managed="false" alignment="CENTER"
                           hgap="15.0"
                           maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                           prefHeight="32.0"

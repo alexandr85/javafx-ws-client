@@ -93,7 +93,7 @@
     -fx-padding: 2px 0;
 }
 
-/* ========== List view style ============ */
+/* ========== List view scroll bar style ============ */
 
 .list-view .scroll-bar:horizontal .track,
 .list-view .scroll-bar:vertical .track {
@@ -129,6 +129,8 @@
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
 }
+
+/* ========== Context menu style ============ */
 
 .context-menu {
     -fx-pref-width: 140;
