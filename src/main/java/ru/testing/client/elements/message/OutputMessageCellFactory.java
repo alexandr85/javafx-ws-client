@@ -32,38 +32,30 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
             }
+            setContextMenu(getContextMenu(item));
         } else {
             setText(null);
             setGraphic(null);
             getStyleClass().removeAll(SEND_MESSAGE_CSS);
         }
-        setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() >= 2) {
-                    new DetailTab(item, main);
-                }
-            }
-        });
     }
 
     @Override
     protected boolean isItemChanged(OutputMessage oldItem, OutputMessage newItem) {
         MultipleSelectionModel<OutputMessage> selectionModel = main.getOutputTextView().getSelectionModel();
-        if (selectionModel.getSelectedItems().size() > 1) {
-            final ObservableList<OutputMessage> list = selectionModel.getSelectedItems();
-            if (list != null) {
-                setContextMenu(getMultiContextMenu(list));
+        setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.SECONDARY)) {
+                selectionModel.clearSelection();
+                selectionModel.select(getItem());
             }
-        } else {
-            final OutputMessage item = selectionModel.getSelectedItem();
-            if (item != null) {
-                setContextMenu(getSingleContextMenu(item));
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount() >= 2) {
+                    new DetailTab(getItem(), main);
+                }
             }
-        }
+        });
         return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
     }
-
-
 
     /**
      * Context menu for output message view
@@ -71,7 +63,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
      * @param item OutputMessage
      * @return ContextMenu
      */
-    private ContextMenu getSingleContextMenu(final OutputMessage item) {
+    private ContextMenu getContextMenu(final OutputMessage item) {
         final ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
@@ -81,25 +73,6 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
                 new SeparatorMenuItem(),
                 m.saveMessageToFile(item, main),
                 m.showMessage(item, main),
-                new SeparatorMenuItem(),
-                m.clearListView(list)
-        );
-        return contextMenu;
-    }
-
-    /**
-     * Context menu for output message view
-     *
-     * @return ContextMenu
-     */
-    private ContextMenu getMultiContextMenu(final ObservableList<OutputMessage> selectedList) {
-        final ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
-        contextMenu.getItems().addAll(
-                m.copySelected(selectedList),
-                m.saveSelectedToFile(selectedList, main),
-                m.saveSelectedSendToFile(selectedList, main),
-                m.saveSelectedRecentToFile(selectedList, main),
                 new SeparatorMenuItem(),
                 m.clearListView(list)
         );

@@ -117,23 +117,6 @@ public class ContextMenuItems {
     }
 
     /**
-     * Menu item 'copy' for copy string to clipboard
-     *
-     * @param list ObservableList<OutputMessage>
-     * @return MenuItem
-     */
-    public MenuItem copySelected(ObservableList<OutputMessage> list) {
-        MenuItem copyItem = new MenuItem("Copy selected");
-        copyItem.setOnAction(event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(getAllMessages(list));
-            clipboard.setContent(content);
-        });
-        return copyItem;
-    }
-
-    /**
      * Save message from cell to file
      *
      * @param item OutputMessage

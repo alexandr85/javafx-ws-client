@@ -14,9 +14,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -225,9 +223,8 @@ public class MainController {
         mainStage.setOnCloseRequest((event -> exitApplication()));
 
         // Update output message list view
-        outputTextView.setItems(outputMessageList);
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
+        outputSetList(false);
         outputTextView.getItems().addListener(this::outputMessageListener);
         outputTextView.focusedProperty().addListener(observable -> {
             if (!outputTextView.isFocused()) {
@@ -275,14 +272,14 @@ public class MainController {
                                     outputFilteredMessageList.add(message);
                                 }
                             }));
-                    outputTextView.setItems(outputFilteredMessageList);
+                    outputSetList(true);
                 } else {
                     filterListBtn.setDisable(true);
                     filterListBtn.setSelected(false);
                     getFilterPopOver().hide();
                     filterCount.setText("");
                     outputFilteredMessageList.clear();
-                    outputTextView.setItems(outputMessageList);
+                    outputSetList(false);
                 }
             }
         });
@@ -368,8 +365,7 @@ public class MainController {
                 filterTextField.setDisable(true);
                 filterListBtn.setDisable(true);
                 filtered = false;
-                outputTextView.setItems(outputMessageList);
-                outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
+                outputSetList(false);
                 headersCount.requestFocus();
             } else {
                 filterOnOffBtn.setSelected(true);
@@ -380,8 +376,7 @@ public class MainController {
                 filterTextField.requestFocus();
                 if (filterList.size() > 0) {
                     filterListBtn.setDisable(false);
-                    outputTextView.setItems(outputFilteredMessageList);
-                    outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
+                    outputSetList(true);
                 }
                 filtered = true;
             }
@@ -549,6 +544,20 @@ public class MainController {
     @FXML
     private void getAboutFromWeb() {
         goToWebPage(properties.getAboutUrl());
+    }
+
+    /**
+     * Set output text list
+     * @param isFiltered boolean
+     */
+    private void outputSetList(boolean isFiltered) {
+        if (isFiltered) {
+            outputTextView.setItems(outputFilteredMessageList);
+            outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
+        } else {
+            outputTextView.setItems(outputMessageList);
+            outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
+        }
     }
 
     /**
