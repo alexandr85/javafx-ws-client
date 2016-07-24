@@ -8,11 +8,14 @@
 * Save output messages to text file
 * Save sessions for load them after
 * Show current session info in status bar
+* Show socket message new tab
+* Pretty json socket message in new tab
+* Send messages list after connection
 
 ---
 
 ###### Dependencies:
-* java 1.8.0_40 or later
+* java 1.8 or later
 
 ---
  
