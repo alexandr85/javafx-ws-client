@@ -36,6 +36,9 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
+            <MenuItem mnemonicParsing="false" text="Settings" onAction="#showSettings">
+
+            </MenuItem>
             <SeparatorMenuItem/>
             <MenuItem fx:id="exitAppMenu" mnemonicParsing="false" text="Exit" onAction="#exitApplication">
                 <graphic>
@@ -45,7 +48,7 @@
                 </graphic>
             </MenuItem>
         </Menu>
-        <Menu text="Settings">
+        <Menu text="View">
             <CheckMenuItem fx:id="showStatusBar" text="Show bar" selected="true" onAction="#changesStatusBarVisible"/>
             <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
                            onAction="#changeAutoScrollStatus"/>

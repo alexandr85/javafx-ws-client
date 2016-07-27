@@ -38,6 +38,7 @@ import ru.testing.client.elements.message.OutputMessageCellFactory;
 import ru.testing.client.elements.message.OutputMessageFormat;
 import ru.testing.client.elements.message.OutputMessageType;
 import ru.testing.client.elements.sessions.SessionsPopOver;
+import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
 
@@ -74,6 +75,7 @@ public class MainController {
     private SessionsPopOver sessionsPopOver;
     private SendHistoryPopOver historyPopOver;
     private FilterListPopOver filterPopOver;
+    private SettingsTab settingsTab;
 
     /**
      * Tabs
@@ -455,6 +457,17 @@ public class MainController {
         boolean status = showFilter.isSelected();
         filterBar.setVisible(status);
         filterBar.setManaged(status);
+    }
+
+    /**
+     * Show settings tab
+     */
+    @FXML
+    private void showSettings() {
+        if (settingsTab == null) {
+            settingsTab = new SettingsTab(this);
+        }
+        settingsTab.showTab();
     }
 
     /**
