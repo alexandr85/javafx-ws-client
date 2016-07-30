@@ -6,6 +6,7 @@ import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.MainController;
@@ -38,6 +39,7 @@ public class DetailTab extends Tab {
             MultipleSelectionModel<OutputMessage> selectionModel = main.getOutputTextView().getSelectionModel();
             int selectIndex = selectionModel.getSelectedIndex();
             this.setText(String.format("Message #%s", selectIndex + 1));
+            this.setGraphic(new ImageView("/images/message.png"));
             this.setContent(area);
 
             // Setup new tab with content in tabPane

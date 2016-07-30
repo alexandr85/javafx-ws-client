@@ -38,7 +38,7 @@ public class SettingsTab extends Tab {
         // Create new tab
         Tab settingsTab = new Tab("Settings");
         settingsTab.setTooltip(new Tooltip("Application settings"));
-        settingsTab.setGraphic( new ImageView("/images/data-load.png"));
+        settingsTab.setGraphic( new ImageView("/images/settings.png"));
 
         // Load settings view form
         try {
@@ -55,7 +55,9 @@ public class SettingsTab extends Tab {
     public void showTab() {
         ObservableList<Tab> tabsList =tabPane.getTabs();
         SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
-        tabsList.add(settingsTab);
+        if (!tabsList.contains(settingsTab)) {
+            tabsList.add(settingsTab);
+        }
         selectTabModel.select(settingsTab);
     }
 }

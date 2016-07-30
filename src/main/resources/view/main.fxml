@@ -19,6 +19,8 @@
         <RowConstraints vgrow="ALWAYS"/>
         <RowConstraints vgrow="NEVER"/>
     </rowConstraints>
+
+    <!-- Application menu bar -->
     <MenuBar fx:id="menuBar" GridPane.rowIndex="0">
         <Menu text="File">
             <MenuItem fx:id="showAutoMessages" text="Auto messages" onAction="#showAutoMessages"/>
@@ -37,7 +39,11 @@
                 </graphic>
             </MenuItem>
             <MenuItem mnemonicParsing="false" text="Settings" onAction="#showSettings">
-
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/settings.png"/>
+                    </ImageView>
+                </graphic>
             </MenuItem>
             <SeparatorMenuItem/>
             <MenuItem fx:id="exitAppMenu" mnemonicParsing="false" text="Exit" onAction="#exitApplication">
@@ -72,6 +78,8 @@
             </MenuItem>
         </Menu>
     </MenuBar>
+
+    <!-- Pane with url and send message inputs -->
     <TilePane GridPane.rowIndex="1" alignment="CENTER">
         <GridPane>
             <columnConstraints>
@@ -108,7 +116,7 @@
                         </tooltip>
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/http-setting.png"/>
+                                <Image url="@/images/settings.png"/>
                             </ImageView>
                         </graphic>
                         <cursor>
@@ -197,11 +205,20 @@
             </VBox>
         </GridPane>
     </TilePane>
-    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2">
+
+    <!-- Tab pane with tabs -->
+    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2" tabMinWidth="120">
         <padding>
             <Insets left="4" right="4" bottom="4"/>
         </padding>
+
+        <!-- Output socket messages tab with filter pane -->
         <Tab closable="false" text="Messages">
+            <graphic>
+                <ImageView>
+                    <Image url="@/images/messages.png"/>
+                </ImageView>
+            </graphic>
             <GridPane styleClass="output_grid">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -268,6 +285,8 @@
             </GridPane>
         </Tab>
     </TabPane>
+
+    <!-- Status bar -->
     <StatusBar maxHeight="25" GridPane.rowIndex="3" fx:id="statusBar" text="">
         <padding>
             <Insets bottom="3" top="4" left="15" right="15"/>
