@@ -93,6 +93,8 @@ public class MainController {
     @FXML
     private MenuItem sessionsMenu;
     @FXML
+    private MenuItem settingsMenu;
+    @FXML
     private MenuItem exitAppMenu;
     @FXML
     private MenuItem showAutoMessages;
@@ -212,6 +214,7 @@ public class MainController {
         setHotKey(exitAppMenu, KeyCode.X);
         setHotKey(saveOutputMenu, KeyCode.S);
         setHotKey(sessionsMenu, KeyCode.D);
+        setHotKey(settingsMenu, KeyCode.COMMA);
         setHotKey(showAutoMessages, KeyCode.M);
         setHotKey(showStatusBar, KeyCode.B);
         setHotKey(autoScrollMenuItem, KeyCode.L);

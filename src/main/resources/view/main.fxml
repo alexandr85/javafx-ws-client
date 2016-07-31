@@ -38,7 +38,7 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem mnemonicParsing="false" text="Settings" onAction="#showSettings">
+            <MenuItem fx:id="settingsMenu" mnemonicParsing="false" text="Settings" onAction="#showSettings">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/settings.png"/>
