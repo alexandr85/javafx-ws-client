@@ -26,7 +26,7 @@ public class HeadersPopOver extends PopOver {
         setOnHidden(event -> main.getHttpSettings().setSelected(false));
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/http.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/headers.fxml"));
             headersController = new HeadersController(main);
             loader.setController(headersController);
             Parent root = loader.load();

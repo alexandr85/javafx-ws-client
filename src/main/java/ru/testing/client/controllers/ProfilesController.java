@@ -9,7 +9,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.sessions.SessionsCellFactory;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ import static ru.testing.client.common.db.Data.getData;
 /**
  * Sessions controller
  */
-public class SessionsController {
+public class ProfilesController {
 
     private MainController main;
     private ObservableList<Session> sessionsList = FXCollections.observableArrayList();
@@ -41,7 +40,7 @@ public class SessionsController {
     @FXML
     private TextField sessionNameField;
 
-    public SessionsController(MainController mainController) {
+    public ProfilesController(MainController mainController) {
         main = mainController;
     }
 
@@ -52,7 +51,7 @@ public class SessionsController {
     private void initialize() {
         sessionsListView.setItems(sessionsList);
         sessionsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, main));
+        //sessionsListView.setCellFactory(listView -> new SessionsCellFactory(this, main));
         sessionsListView.getItems().addListener((ListChangeListener<Session>) change -> {
             if (change.next()) {
                 int size = sessionsList.size();
@@ -67,7 +66,7 @@ public class SessionsController {
 
         sessionsListView.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ESCAPE) {
-                main.getSessionsPopOver().hide();
+                //main.getSessionsPopOver().hide();
             }
         });
 
@@ -76,7 +75,7 @@ public class SessionsController {
                 addSession();
             }
             if (key.getCode() == KeyCode.ESCAPE) {
-                main.getSessionsPopOver().hide();
+                //main.getSessionsPopOver().hide();
             }
         });
 
@@ -102,7 +101,7 @@ public class SessionsController {
                         main.isStatusBarShow());
                 int id = getData().setSession(session);
                 getData().setFilters(main.getFilterList(), id);
-                getData().setAutoMessages(main.getAutoSendPopOver().getController().getAutoMsgList(), id);
+                //getData().setAutoMessages(main.getAutoSendPopOver().getController().getAutoMsgList(), id);
                 getData().setHeaders(main.getHeadersList(), id);
                 getData().setTxMessages(main.getSendMsgItems(), id);
                 getData().setRxMessages(main.getOutputMessageList(), id);

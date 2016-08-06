@@ -61,6 +61,7 @@
 .output_text {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+    -fx-font-size: 13px;
 }
 
 .connected {
@@ -95,6 +96,8 @@
 
 /* ========== List view scroll bar style ============ */
 
+.text-area .scroll-bar:horizontal .track,
+.text-area .scroll-bar:vertical .track,
 .list-view .scroll-bar:horizontal .track,
 .list-view .scroll-bar:vertical .track {
     -fx-background-color: transparent;
@@ -103,6 +106,8 @@
     -fx-border-radius: 0;
 }
 
+.text-area .scroll-bar:horizontal .increment-button ,
+.text-area .scroll-bar:horizontal .decrement-button,
 .list-view .scroll-bar:horizontal .increment-button ,
 .list-view .scroll-bar:horizontal .decrement-button {
     -fx-background-color: transparent;
@@ -110,6 +115,8 @@
     -fx-padding: 10 0 0 0;
 }
 
+.text-area .scroll-bar:vertical .increment-button ,
+.text-area .scroll-bar:vertical .decrement-button,
 .list-view .scroll-bar:vertical .increment-button ,
 .list-view .scroll-bar:vertical .decrement-button {
     -fx-background-color: transparent;
@@ -117,12 +124,16 @@
     -fx-padding: 0 10 0 0;
 }
 
+.text-area .scroll-bar .increment-arrow,
+.text-area .scroll-bar .decrement-arrow,
 .list-view .scroll-bar .increment-arrow,
 .list-view .scroll-bar .decrement-arrow {
     -fx-shape: " ";
     -fx-padding: 0;
 }
 
+.text-area .scroll-bar:horizontal .thumb,
+.text-area .scroll-bar:vertical .thumb
 .list-view .scroll-bar:horizontal .thumb,
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: derive(black,90%);

@@ -104,7 +104,6 @@ public class Data {
                     r.getBoolean("auto_scroll"),
                     r.getBoolean("bar_show"));
             session.setFilters(getFilters(id));
-            session.setAutoMessages(getAutoMessages(id));
             session.setHeaders(getHeaders(id));
             session.setRxMessages(getRxMessages(id));
             session.setTxMessages(getTxMessages(id));
@@ -143,29 +142,6 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error set filters list in database: {}", e.getMessage());
-        }
-    }
-
-    /**
-     * Set auto messages list in database
-     *
-     * @param autoMessages   List<String>
-     * @param sessionId int
-     */
-    public void setAutoMessages(List<String> autoMessages, int sessionId) {
-        try (Connection connection = createConnection()) {
-            Statement statement = connection.createStatement();
-
-            if (!isTableExist(statement, "auto_messages")) {
-                statement.executeUpdate("CREATE TABLE auto_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
-            }
-
-            for (String value : autoMessages) {
-                statement.executeUpdate("INSERT INTO auto_messages (session_id, value) " +
-                        String.format("values(%s,'%s')", sessionId, value));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error set auto messages list in database: {}", e.getMessage());
         }
     }
 
@@ -239,26 +215,6 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error get filters from database: error cod {}", e.getErrorCode());
-        }
-        return filters;
-    }
-
-    /**
-     * Get auto messages from database by session id
-     *
-     * @param sessionId int
-     * @return List<String>
-     */
-    private List<String> getAutoMessages(int sessionId) {
-        List<String> filters = new ArrayList<>();
-        try (Connection connection = createConnection()) {
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT value FROM auto_messages WHERE session_id = " + sessionId + " ORDER BY id");
-            while (result.next()) {
-                filters.add(result.getString("value"));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error get auto messages from database: error cod {}", e.getErrorCode());
         }
         return filters;
     }
@@ -356,17 +312,5 @@ public class Data {
         } catch (SQLException e) {
             LOGGER.error("Error create default tables: {}", e.getMessage());
         }
-    }
-
-    private boolean isTableExist(Statement statement, String table) throws SQLException {
-        boolean isExist = false;
-        ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='" + table + "'");
-        while (result.next()) {
-            if (result.getString("name").equals(table)) {
-                isExist = true;
-                break;
-            }
-        }
-        return isExist;
     }
 }

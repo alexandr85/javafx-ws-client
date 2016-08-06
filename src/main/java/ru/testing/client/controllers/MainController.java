@@ -29,7 +29,6 @@ import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.common.db.objects.RxMessage;
 import ru.testing.client.common.db.objects.Session;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.autosend.AutoSendPopOver;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
 import ru.testing.client.elements.history.SendHistoryPopOver;
@@ -37,7 +36,6 @@ import ru.testing.client.elements.message.OutputMessage;
 import ru.testing.client.elements.message.OutputMessageCellFactory;
 import ru.testing.client.elements.message.OutputMessageFormat;
 import ru.testing.client.elements.message.OutputMessageType;
-import ru.testing.client.elements.sessions.SessionsPopOver;
 import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
@@ -67,12 +65,10 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties;
     private Client client;
-    private boolean connectionStatus, autoScroll, filtered, autoMsg;
+    private boolean connectionStatus, autoScroll, filtered;
     private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
-    private AutoSendPopOver autoSendPopOver;
-    private SessionsPopOver sessionsPopOver;
     private SendHistoryPopOver historyPopOver;
     private FilterListPopOver filterPopOver;
     private SettingsTab settingsTab;
@@ -91,21 +87,15 @@ public class MainController {
     @FXML
     private MenuItem saveOutputMenu;
     @FXML
-    private MenuItem sessionsMenu;
-    @FXML
     private MenuItem settingsMenu;
     @FXML
     private MenuItem exitAppMenu;
-    @FXML
-    private MenuItem showAutoMessages;
     @FXML
     private CheckMenuItem showStatusBar;
     @FXML
     private CheckMenuItem autoScrollMenuItem;
     @FXML
     private CheckMenuItem showFilter;
-    @FXML
-    private CheckMenuItem jsonPretty;
 
     /**
      * Text fields
@@ -213,13 +203,10 @@ public class MainController {
         // Set hot keys
         setHotKey(exitAppMenu, KeyCode.X);
         setHotKey(saveOutputMenu, KeyCode.S);
-        setHotKey(sessionsMenu, KeyCode.D);
         setHotKey(settingsMenu, KeyCode.COMMA);
-        setHotKey(showAutoMessages, KeyCode.M);
         setHotKey(showStatusBar, KeyCode.B);
         setHotKey(autoScrollMenuItem, KeyCode.L);
         setHotKey(showFilter, KeyCode.F);
-        setHotKey(jsonPretty, KeyCode.J);
 
         // Set circle tooltip status
         setCircleTooltip("Disconnected");
@@ -383,22 +370,6 @@ public class MainController {
         });
     }
 
-    @FXML
-    private void changeAutoMessageStatus() {
-        if (!connectionStatus) {
-            Platform.runLater(() -> {
-                if (autoMsg) {
-                    sendAfterConnect.setSelected(false);
-                    autoMsg = false;
-                } else {
-                    sendAfterConnect.setSelected(true);
-                    autoMsg = true;
-                }
-                headersCount.requestFocus();
-            });
-        }
-    }
-
     /**
      * Apply text filter for new response
      */
@@ -471,36 +442,6 @@ public class MainController {
             settingsTab = new SettingsTab(this);
         }
         settingsTab.showTab();
-    }
-
-    /**
-     * Show auto messages pop over
-     */
-    @FXML
-    private void showAutoMessages() {
-        if (!getAutoSendPopOver().isShowing()) {
-            getMainParent().setDisable(true);
-            getAutoSendPopOver().show(
-                    mainStage,
-                    mainStage.getX() + mainStage.getWidth() / 2 - getAutoSendPopOver().getPopOverWidth() / 2,
-                    mainStage.getY() + mainStage.getHeight() / 2 - getAutoSendPopOver().getPopOverHeight() / 2
-            );
-        }
-    }
-
-    /**
-     * Show sessions pop over
-     */
-    @FXML
-    private void showSessions() {
-        if (!getSessionsPopOver().isShowing()) {
-            getMainParent().setDisable(true);
-            getSessionsPopOver().show(
-                    mainStage,
-                    mainStage.getX() + mainStage.getWidth() / 2 - getSessionsPopOver().getPopOverWidth() / 2,
-                    mainStage.getY() + mainStage.getHeight() / 2 - getSessionsPopOver().getPopOverHeight() / 2
-            );
-        }
     }
 
     /**
@@ -595,30 +536,6 @@ public class MainController {
     }
 
     /**
-     * Get auto messages pop over
-     *
-     * @return AutoSendPopOver
-     */
-    AutoSendPopOver getAutoSendPopOver() {
-        if (autoSendPopOver == null) {
-            autoSendPopOver = new AutoSendPopOver(this);
-        }
-        return autoSendPopOver;
-    }
-
-    /**
-     * Get sessions pop over
-     *
-     * @return SessionsPopOver
-     */
-    public SessionsPopOver getSessionsPopOver() {
-        if (sessionsPopOver == null) {
-            sessionsPopOver = new SessionsPopOver(this);
-        }
-        return sessionsPopOver;
-    }
-
-    /**
      * Get filter list pop over
      *
      * @return FilterListPopOver
@@ -637,15 +554,6 @@ public class MainController {
      */
     public TabPane getTabPane() {
         return tabPane;
-    }
-
-    /**
-     * Get json pretty check menu
-     *
-     * @return CheckMenuItem
-     */
-    public CheckMenuItem getJsonPretty() {
-        return jsonPretty;
     }
 
     /**
@@ -742,12 +650,6 @@ public class MainController {
             filterList.clear();
             s.getFilters().forEach(filterList::add);
             filterCount.setText(String.valueOf(filterList.size()));
-
-            // set auto messages list
-            ObservableList<String> autoMsgList = getAutoSendPopOver().getController().getAutoMsgList();
-            autoMsgList.clear();
-            s.getAutoMessages().forEach(autoMsgList::add);
-
 
             // set auto scroll properties
             autoScroll = !s.getAutoScroll();
@@ -928,18 +830,6 @@ public class MainController {
             client.openConnection();
             client.setMessageHandler(new MessageHandler(this));
             connectionStatus = true;
-            ObservableList<String> autoMsgList = getAutoSendPopOver().getController().getAutoMsgList();
-            if (client != null && autoMsg && autoMsgList.size() > 0) {
-                autoMsgList.forEach(message -> {
-                    try {
-                        sendMsgList.add(message);
-                        addMessageToOutput(OutputMessageType.SEND, message);
-                        client.sendMessage(message);
-                    } catch (IOException e) {
-                        Dialogs.getExceptionDialog(e);
-                    }
-                });
-            }
         } catch (Exception e) {
             LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
             Platform.runLater(() -> Dialogs.getExceptionDialog(e));
@@ -991,9 +881,6 @@ public class MainController {
                 sendMsgTextField.setDisable(false);
                 messageSendBtn.setDisable(false);
                 httpSettings.setDisable(true);
-                sessionsMenu.setDisable(true);
-                showAutoMessages.setDisable(true);
-                sendAfterConnect.setDisable(true);
             } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
@@ -1005,9 +892,6 @@ public class MainController {
                 messageSendBtn.setDisable(true);
                 connectionStatus = false;
                 httpSettings.setDisable(false);
-                sessionsMenu.setDisable(false);
-                showAutoMessages.setDisable(false);
-                sendAfterConnect.setDisable(false);
             }
         });
     }
