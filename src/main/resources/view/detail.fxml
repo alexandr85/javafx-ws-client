@@ -10,12 +10,16 @@
     </columnConstraints>
     <rowConstraints>
         <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
-        <RowConstraints/>
+        <RowConstraints maxHeight="30.0" vgrow="SOMETIMES"/>
     </rowConstraints>
+
+    <!-- Message text area -->
     <TextArea fx:id="msgTextArea" editable="false" styleClass="output_text" GridPane.rowIndex="0"/>
+
+    <!-- View settings and info block -->
     <VBox alignment="CENTER" GridPane.rowIndex="1">
         <GridPane.margin>
-            <Insets left="15.0" right="15.0"/>
+            <Insets left="15.0" right="15.0" top="4.0"/>
         </GridPane.margin>
         <GridPane>
             <columnConstraints>
@@ -35,15 +39,9 @@
                 </rowConstraints>
                 <ToggleButton fx:id="wrapTButton" mnemonicParsing="false" prefWidth="90" text="Wrap text"
                               GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <padding>
-                        <Insets bottom="4.0" top="4.0"/>
-                    </padding>
                 </ToggleButton>
                 <ToggleButton fx:id="jsonPrettyButton" mnemonicParsing="false" prefWidth="90"
                               text="Json pretty" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                    <padding>
-                        <Insets bottom="4.0" top="4.0"/>
-                    </padding>
                 </ToggleButton>
             </GridPane>
             <GridPane maxWidth="260.0" GridPane.columnIndex="1">

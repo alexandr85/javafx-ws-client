@@ -133,7 +133,7 @@
 }
 
 .text-area .scroll-bar:horizontal .thumb,
-.text-area .scroll-bar:vertical .thumb
+.text-area .scroll-bar:vertical .thumb,
 .list-view .scroll-bar:horizontal .thumb,
 .list-view .scroll-bar:vertical .thumb {
     -fx-background-color: derive(black,90%);
