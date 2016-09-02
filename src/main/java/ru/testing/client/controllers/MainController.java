@@ -22,12 +22,12 @@ import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.AppProperties;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.common.db.objects.RxMessage;
-import ru.testing.client.common.db.objects.Session;
+import ru.testing.client.common.db.objects.Profile;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
@@ -172,8 +172,8 @@ public class MainController {
      *
      * @param mainStage Stage
      */
-    public MainController(Stage mainStage, AppProperties properties) {
-        this.properties = properties;
+    public MainController(Stage mainStage) {
+        this.properties = AppProperties.getAppProperties();
         this.mainStage = mainStage;
     }
 
@@ -635,7 +635,7 @@ public class MainController {
      */
     public void setDataFromSession(int sessionId) {
         setProgressVisible(true);
-        Session s = getData().getSession(sessionId);
+        Profile s = getData().getProfile(sessionId);
         if (s != null) {
             LOGGER.debug("Load session name: {}", s.getName());
 

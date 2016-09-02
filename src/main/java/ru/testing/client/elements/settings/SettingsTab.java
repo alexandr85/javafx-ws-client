@@ -11,7 +11,7 @@ import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.controllers.SettingsController;
+import ru.testing.client.controllers.TabSettingsController;
 
 import java.io.IOException;
 
@@ -42,8 +42,8 @@ public class SettingsTab extends Tab {
 
         // Load settings view form
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/settings.fxml"));
-            loader.setController(new SettingsController(main));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.settings.fxml"));
+            loader.setController(new TabSettingsController(main));
             Parent root = loader.load();
             settingsTab.setContent(root);
         } catch (IOException e) {

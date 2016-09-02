@@ -19,7 +19,7 @@
         </rowConstraints>
 
         <!-- Profiles block -->
-        <HBox maxHeight="200.0" GridPane.valignment="TOP">
+        <HBox maxHeight="260.0" GridPane.valignment="TOP">
             <padding>
                 <Insets bottom="20.0" left="25.0" right="25.0" top="20.0"/>
             </padding>
@@ -32,6 +32,7 @@
                     <RowConstraints maxHeight="30.0" minHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0"/>
+                    <RowConstraints minHeight="10.0" prefHeight="60.0"/>
                 </rowConstraints>
                 <Label alignment="CENTER" maxHeight="Infinity"
                        maxWidth="Infinity" style="-fx-font-size: 16px;" text="Profiles"
@@ -58,9 +59,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     </rowConstraints>
-                    <GridPane.margin>
-                        <Insets/>
-                    </GridPane.margin>
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
@@ -69,6 +67,9 @@
                     <Button mnemonicParsing="false" prefWidth="80.0" text="Load" GridPane.columnIndex="1"
                             GridPane.rowIndex="1"/>
                 </GridPane>
+                <Label GridPane.rowIndex="3" wrapText="true" maxWidth="260" textAlignment="JUSTIFY"
+                       GridPane.columnSpan="2" style="-fx-font-size: 11px; -fx-font-family: 'Helvetica', Arial, sans-serif;"
+                       text="Profile save data: url, headers, auto scroll status, show filter status, show bottom bar status"/>
             </GridPane>
         </HBox>
 
@@ -108,17 +109,27 @@
                     </rowConstraints>
                     <CheckBox mnemonicParsing="false" text="Text wrap by default" GridPane.columnSpan="2"
                               GridPane.rowIndex="0"/>
-                    <CheckBox mnemonicParsing="false" text="Json pretty by default" GridPane.columnSpan="2"
-                              GridPane.rowIndex="1"/>
-                    <Button maxHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                            prefWidth="70.0" text="Save" GridPane.columnSpan="2"
-                            GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
-                    <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" GridPane.rowIndex="3"
-                            fx:id="fontValueSlider"/>
                     <Label alignment="CENTER" text="Font size: 13px" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
                            fx:id="fontValueLabel" GridPane.rowIndex="3"/>
+                    <CheckBox mnemonicParsing="false" text="Json pretty by default" GridPane.columnSpan="2"
+                              GridPane.rowIndex="1"/>
                     <TextField promptText="regex for json pretty message" GridPane.columnSpan="2"
                                GridPane.rowIndex="2"/>
+                    <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" GridPane.rowIndex="3"
+                            fx:id="fontValueSlider"/>
+                    <GridPane hgap="15.0" vgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        </rowConstraints>
+                        <Button mnemonicParsing="false" prefWidth="80.0" text="Default" GridPane.rowIndex="1"/>
+                        <Button mnemonicParsing="false" prefWidth="80.0" text="Save" GridPane.columnIndex="1"
+                                GridPane.rowIndex="1"/>
+                    </GridPane>
                 </GridPane>
             </GridPane>
         </HBox>

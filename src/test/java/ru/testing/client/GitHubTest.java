@@ -4,7 +4,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.AppProperties;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.github.GitHub;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,7 +20,7 @@ public class GitHubTest {
 
     @BeforeClass
     public static void testClassSetup() {
-        properties = new AppProperties();
+        properties = AppProperties.getAppProperties();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GitHubTest {
 
     @Test(timeout = 30000)
     public void testTagVersion() {
-        GitHub git = new GitHub(properties);
+        GitHub git = new GitHub();
         while (git.isAlive()) {
             try {
                 Thread.sleep(200);

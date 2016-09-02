@@ -3,9 +3,9 @@ package ru.testing.client.common.db.objects;
 import java.util.List;
 
 /**
- * Session object for save in database
+ * Profile object for save in database
  */
-public class Session {
+public class Profile {
 
     private int id;
     private String name;
@@ -15,17 +15,16 @@ public class Session {
     private boolean autoScroll;
     private boolean barShow;
     private List<String> filters;
-    private List<String> autoMessages;
     private List<Header> headers;
     private List<RxMessage> rxMessages;
     private List<TxMessage> txMessages;
 
-    public Session(int id, String name) {
+    public Profile(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Session(String name, String url, boolean filterOn, boolean filterShow, boolean autoScroll, boolean barShow) {
+    public Profile(String name, String url, boolean filterOn, boolean filterShow, boolean autoScroll, boolean barShow) {
         this.name = name;
         this.url = url;
         this.filterOn = filterOn;
@@ -72,14 +71,6 @@ public class Session {
 
     public void setFilters(List<String> filters) {
         this.filters = filters;
-    }
-
-    public List<String> getAutoMessages() {
-        return autoMessages;
-    }
-
-    public void setAutoMessages(List<String> autoMessages) {
-        this.autoMessages = autoMessages;
     }
 
     public List<Header> getHeaders() {

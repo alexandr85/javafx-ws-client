@@ -1,4 +1,4 @@
-package ru.testing.client.common;
+package ru.testing.client.common.properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,13 +13,14 @@ public class AppProperties {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppProperties.class);
     private static final String PROP_FILE = "app.properties";
+    private static AppProperties properties;
     private Double version;
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
     private String jsonPrettyReplaceRegex;
 
-    public AppProperties() {
+    private AppProperties() {
         Properties properties = new Properties();
         try {
             properties.load(AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
@@ -33,11 +34,22 @@ public class AppProperties {
         }
     }
 
+    /**
+     * Get application properties
+     * @return AppProperties
+     */
+    public static AppProperties getAppProperties() {
+        if (properties == null) {
+            properties = new AppProperties();
+        }
+        return properties;
+    }
+
     public Double getVersion() {
         return version;
     }
 
-    public void setVersion(Double version) {
+    private void setVersion(Double version) {
         this.version = version;
     }
 

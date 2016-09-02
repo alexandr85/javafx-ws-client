@@ -25,10 +25,14 @@ public class Data {
     static {
         try {
             Class.forName("org.sqlite.JDBC");
+
+            // Setup paths
             String settingDirPath = String.format("%s/%s/", System.getProperty("user.home"), APP_FOLDER);
+            dbPath = String.format("%s/%s", settingDirPath, DB_NAME);
+
+            // Check app folder exist
             File path = new File(settingDirPath);
             boolean settingPathExists = path.exists() || path.mkdirs();
-            dbPath = String.format("%s/%s", settingDirPath, DB_NAME);
             if (settingPathExists && !new File(dbPath).exists()) {
                 getData().createDefaultTables();
             }
@@ -47,13 +51,13 @@ public class Data {
     /**
      * Set new session info in database
      *
-     * @param s Session
+     * @param s Profile
      * @return int last ros id
      */
-    public int setSession(Session s) {
+    public int setProfile(Profile s) {
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("INSERT INTO sessions (name, url, filter_on, filter_show, auto_scroll, bar_show) " +
+            statement.executeUpdate("INSERT INTO profiles (name, url, filter_on, filter_show, auto_scroll, bar_show) " +
                     String.format("values('%s','%s', %s, %s, %s, %s)",
                             s.getName(),
                             s.getUrl(),
@@ -62,29 +66,31 @@ public class Data {
                             s.getAutoScroll() ? 1 : 0,
                             s.getBarShow() ? 1 : 0)
             );
-            ResultSet insert = statement.executeQuery("SELECT max(id) FROM sessions");
+            ResultSet insert = statement.executeQuery("SELECT max(id) FROM profiles");
             return insert.getInt(1);
         } catch (SQLException e) {
             LOGGER.error("Error set new session in database: {}", e.getMessage());
+            deleteOldDb();
             return 0;
         }
     }
 
     /**
-     * Get all sessions id and name from session database
+     * Get all profiles id and name from session database
      */
-    public List<Session> getSessions() {
-        List<Session> sessions = new ArrayList<>();
+    public List<Profile> getProfiles() {
+        List<Profile> profiles = new ArrayList<>();
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery("SELECT id, name FROM sessions ORDER BY id");
+            ResultSet result = statement.executeQuery("SELECT id, name FROM profiles ORDER BY id");
             while (result.next()) {
-                sessions.add(new Session(result.getInt("id"), result.getString("name")));
+                profiles.add(new Profile(result.getInt("id"), result.getString("name")));
             }
         } catch (SQLException e) {
-            LOGGER.error("Error get sessions from database: error cod {}", e.getErrorCode());
+            LOGGER.error("Error get profiles from database: error cod {}", e.getErrorCode());
+            deleteOldDb();
         }
-        return sessions;
+        return profiles;
     }
 
     /**
@@ -92,25 +98,27 @@ public class Data {
      *
      * @param id Integer
      */
-    public Session getSession(int id) {
-        Session session = null;
+    public Profile getProfile(int id) {
+        Profile profile = null;
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
-            ResultSet r = statement.executeQuery("SELECT * FROM sessions WHERE id = " + id);
-            session = new Session(r.getString("name"),
+            ResultSet r = statement.executeQuery("SELECT * FROM profiles WHERE id = " + id);
+            profile = new Profile(r.getString("name"),
                     r.getString("url"),
                     r.getBoolean("filter_on"),
                     r.getBoolean("filter_show"),
                     r.getBoolean("auto_scroll"),
                     r.getBoolean("bar_show"));
-            session.setFilters(getFilters(id));
-            session.setHeaders(getHeaders(id));
-            session.setRxMessages(getRxMessages(id));
-            session.setTxMessages(getTxMessages(id));
+            profile.setFilters(getFilters(id));
+            profile.setHeaders(getHeaders(id));
+            profile.setRxMessages(getRxMessages(id));
+            profile.setTxMessages(getTxMessages(id));
         } catch (SQLException e) {
-            LOGGER.error("Error get session by id {} from database: error cod {}", id, e.getErrorCode());
+            LOGGER.error("Error get profile by id {} from database: error cod {}", id, e.getErrorCode());
+            deleteOldDb();
+
         }
-        return session;
+        return profile;
     }
 
     /**
@@ -118,12 +126,13 @@ public class Data {
      *
      * @param id int
      */
-    public void deleteSession(int id) {
+    public void removeProfile(int id) {
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM sessions WHERE id = " + id);
+            statement.executeUpdate("DELETE FROM profiles WHERE id = " + id);
         } catch (SQLException e) {
             LOGGER.error("Error delete session by id {} from database: error cod {}", id, e.getErrorCode());
+            deleteOldDb();
         }
     }
 
@@ -142,6 +151,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error set filters list in database: {}", e.getMessage());
+            deleteOldDb();
         }
     }
 
@@ -178,6 +188,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error set txMessages list in database: {}", e.getMessage());
+            deleteOldDb();
         }
     }
 
@@ -196,6 +207,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error set rxMessages list in database: {}", e.getMessage());
+            deleteOldDb();
         }
     }
 
@@ -215,6 +227,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error get filters from database: error cod {}", e.getErrorCode());
+            deleteOldDb();
         }
         return filters;
     }
@@ -235,6 +248,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error get headers from database: error cod {}", e.getErrorCode());
+            deleteOldDb();
         }
         return headers;
     }
@@ -255,6 +269,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error get received messages from database: error cod {}", e.getErrorCode());
+            deleteOldDb();
         }
         return rxMessages;
     }
@@ -275,6 +290,7 @@ public class Data {
             }
         } catch (SQLException e) {
             LOGGER.error("Error get transmitted messages from database: error cod {}", e.getErrorCode());
+            deleteOldDb();
         }
         return txMessages;
     }
@@ -299,18 +315,34 @@ public class Data {
         try (Connection connection = createConnection()) {
             Statement statement = connection.createStatement();
             LOGGER.debug("Creating default tables ... ");
-            statement.executeUpdate("CREATE TABLE sessions (id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            statement.executeUpdate("CREATE TABLE profiles (id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "name TEXT, url TEXT, filter_on TEXT, filter_show TEXT, auto_scroll TEXT, bar_show TEXT)");
-            statement.executeUpdate("CREATE TABLE headers (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, name TEXT, value TEXT)");
-            statement.executeUpdate("CREATE TABLE filters (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
-            statement.executeUpdate("CREATE TABLE tx_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
-            statement.executeUpdate("CREATE TABLE rx_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, time TEXT, value TEXT)");
-            statement.executeUpdate("CREATE TABLE auto_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
+            statement.executeUpdate("CREATE TABLE headers " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, name TEXT, value TEXT)");
+            statement.executeUpdate("CREATE TABLE filters " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
+            statement.executeUpdate("CREATE TABLE tx_messages " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, value TEXT)");
+            statement.executeUpdate("CREATE TABLE rx_messages " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER, time TEXT, value TEXT)");
             LOGGER.debug("Default tables created successful");
-            LOGGER.debug("Insert default session");
-            setSession(new Session("default", "wss://echo.websocket.org", false, false, true, true));
+            LOGGER.debug("Insert default profile");
+            setProfile(new Profile("default", "wss://echo.websocket.org", false, false, true, true));
         } catch (SQLException e) {
             LOGGER.error("Error create default tables: {}", e.getMessage());
+            deleteOldDb();
+        }
+    }
+
+    /**
+     * Delete old data base file
+     */
+    private void deleteOldDb() {
+        File oldDb = new File(dbPath);
+        if (!oldDb.delete()) {
+            LOGGER.error("Error delete old db file");
+        } else {
+            LOGGER.info("Delete old db file successful");
         }
     }
 }

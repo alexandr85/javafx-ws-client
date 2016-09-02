@@ -12,9 +12,9 @@ import ru.testing.client.elements.message.OutputMessage;
 /**
  * Controller for detail message tab form
  */
-public class DetailMsgController {
+public class TabDetailController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DetailMsgController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TabDetailController.class.getName());
     private MainController main;
     private OutputMessage message;
 
@@ -29,7 +29,7 @@ public class DetailMsgController {
     @FXML
     private Label msgLengthLabel;
 
-    public DetailMsgController(OutputMessage item, MainController mainController) {
+    public TabDetailController(OutputMessage item, MainController mainController) {
         message = item;
         main = mainController;
     }

@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.AppProperties;
 import ru.testing.client.common.github.GitHub;
 import ru.testing.client.controllers.MainController;
 
@@ -17,6 +16,7 @@ import javax.swing.*;
 import java.io.IOException;
 
 import static org.controlsfx.tools.Platform.OSX;
+import static ru.testing.client.common.properties.AppProperties.getAppProperties;
 
 /**
  * Main application class
@@ -26,7 +26,6 @@ public class MainApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
-    private static AppProperties properties;
 
     /**
      * Entry point to application
@@ -50,37 +49,25 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
-        MainController controller = new MainController(primaryStage, getProperties());
+        MainController controller = new MainController(primaryStage);
         loader.setController(controller);
         try {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, controller);
-            primaryStage.setTitle(String.format("WebSocket Client v%s", getProperties().getVersion()));
+            primaryStage.setTitle(String.format("WebSocket Client v%s", getAppProperties().getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            new GitHub(getProperties());
+            new GitHub();
         } catch (IOException e) {
-            LOGGER.error("Error load fxml view");
+            LOGGER.error("Error load main fxml view");
             e.printStackTrace();
             System.exit(1);
         }
-    }
-
-    /**
-     * Get application properties
-     *
-     * @return AppProperties
-     */
-    public static AppProperties getProperties() {
-        if (properties == null) {
-            properties = new AppProperties();
-        }
-        return properties;
     }
 
     /**

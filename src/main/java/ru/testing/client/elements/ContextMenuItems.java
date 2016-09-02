@@ -5,9 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import ru.testing.client.common.FilesOperations;
-import ru.testing.client.common.db.objects.Session;
+import ru.testing.client.common.db.objects.Profile;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.controllers.ProfilesController;
 import ru.testing.client.elements.message.DetailTab;
 import ru.testing.client.elements.message.OutputMessage;
 
@@ -148,23 +147,12 @@ public class ContextMenuItems {
     }
 
     /**
-     * Delete selected session
-     *
-     * @return MenuItem
-     */
-    public MenuItem deleteSessionMenu(ListCell<Session> cell, ProfilesController profilesController) {
-        MenuItem deleteMenu = new MenuItem("Delete session");
-        deleteMenu.setOnAction(event -> profilesController.deleteSession(cell));
-        return deleteMenu;
-    }
-
-    /**
      * Set session data from selected session
      *
      * @param main MainController
      * @return MenuItem
      */
-    public MenuItem loadSession(ListCell<Session> cell, MainController main) {
+    public MenuItem loadSession(ListCell<Profile> cell, MainController main) {
         MenuItem loadSession = new MenuItem("Load session");
         loadSession.setOnAction(event -> {
             main.setDataFromSession(cell.getItem().getId());

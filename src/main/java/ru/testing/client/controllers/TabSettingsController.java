@@ -7,7 +7,7 @@ import javafx.scene.control.Slider;
 /**
  * Controller for settings tab form
  */
-public class SettingsController {
+public class TabSettingsController {
 
     private int fontValue;
 
@@ -16,7 +16,7 @@ public class SettingsController {
     @FXML
     private Slider fontValueSlider;
 
-    public SettingsController(MainController mainController) {
+    public TabSettingsController(MainController mainController) {
 
     }
 

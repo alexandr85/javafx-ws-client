@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.controllers.DetailMsgController;
+import ru.testing.client.controllers.TabDetailController;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.settings.SettingsTab;
 
@@ -31,8 +31,8 @@ public class DetailTab extends Tab {
 
             // Load detail message view form
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/detail.fxml"));
-                loader.setController(new DetailMsgController(item, main));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.detail.fxml"));
+                loader.setController(new TabDetailController(item, main));
                 Parent root = loader.load();
                 this.setContent(root);
             } catch (IOException e) {

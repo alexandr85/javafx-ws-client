@@ -83,7 +83,7 @@ public class Client extends Endpoint {
      */
     public void openConnection() throws Exception {
         if (session != null && session.isOpen()) {
-            LOGGER.warn("Session already connected!");
+            LOGGER.warn("Profile already connected!");
         } else {
             LOGGER.info("Connecting to {} ...", endpointURI.getHost());
             client.connectToServer(this, config, endpointURI);

@@ -8,12 +8,13 @@ import com.sun.jersey.api.client.WebResource;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.List;
+
+import static ru.testing.client.common.properties.AppProperties.*;
 
 /**
  * Git hub info
@@ -24,13 +25,11 @@ public class GitHub extends Thread {
     private static final int TIMEOUT = 30000;
     private Client client;
     private double lastVersion;
-    private AppProperties properties;
 
     /**
      * Constructor get tags info from git hub
      */
-    public GitHub(AppProperties properties) {
-        this.properties = properties;
+    public GitHub() {
         start();
     }
 
@@ -38,13 +37,13 @@ public class GitHub extends Thread {
      * Run get git hub info
      */
     public void run() {
-        String url = properties.getTagsUrl();
+        String url = getAppProperties().getTagsUrl();
         try {
             if (!url.isEmpty()) {
                 List<TagInfo> tags = createRequest();
                 setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v", "")));
             }
-            if (properties.getVersion() < getLastVersion()) {
+            if (getAppProperties().getVersion() < getLastVersion()) {
                 Platform.runLater(() -> Dialogs.getWarningDialog("New version is available! Please, download last client.\n" +
                         "Link can be found in 'Help' menu"));
             }
@@ -76,7 +75,7 @@ public class GitHub extends Thread {
      * @throws IOException mapping TagInfo
      */
     private List<TagInfo> createRequest() throws IOException {
-        WebResource resource = getClient().resource(properties.getTagsUrl());
+        WebResource resource = getClient().resource(getAppProperties().getTagsUrl());
         ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>() {
