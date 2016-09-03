@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.properties.AppProperties;
-import ru.testing.client.common.github.GitHub;
+import ru.testing.client.common.github.ReleaseChecker;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -13,9 +13,9 @@ import static org.hamcrest.Matchers.*;
 /**
  * Test git hub api data
  */
-public class GitHubTest {
+public class ReleaseCheckerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GitHubTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseCheckerTest.class);
     private static AppProperties properties;
 
     @BeforeClass
@@ -32,8 +32,9 @@ public class GitHubTest {
 
     @Test(timeout = 30000)
     public void testTagVersion() {
-        GitHub git = new GitHub();
-        while (git.isAlive()) {
+        ReleaseChecker checker = ReleaseChecker.getInstance();
+        checker.start();
+        while (checker.isAlive()) {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -41,6 +42,6 @@ public class GitHubTest {
             }
         }
         Double version = properties.getVersion();
-        assertThat("Version value", git.getLastVersion(), both(lessThanOrEqualTo(version)).and(greaterThan(1.0)));
+        assertThat("Version value", checker.getLastVersion(), both(lessThanOrEqualTo(version)).and(greaterThan(1.0)));
     }
 }

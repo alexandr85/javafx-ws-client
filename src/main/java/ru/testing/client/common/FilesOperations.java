@@ -23,9 +23,10 @@ public class FilesOperations {
      * @param main MainController
      */
     public void saveTextToFile(String text, MainController main) {
+        Dialogs dialogs = new Dialogs();
         main.setProgressVisible(true);
         if (text == null || text.isEmpty()) {
-            Platform.runLater(() -> Dialogs.getWarningDialog("Nothing for save"));
+            Platform.runLater(() -> dialogs.getWarningDialog("Nothing for save"));
             main.setProgressVisible(false);
             return;
         }
@@ -35,15 +36,15 @@ public class FilesOperations {
                     new FileOutputStream(TEXT_FILE_NAME), StandardCharsets.UTF_8));
             writer.write(text);
         } catch (IOException io) {
-            Dialogs.getExceptionDialog(io);
+            dialogs.getExceptionDialog(io);
             LOGGER.error("Can't save file: {}", io.getMessage());
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
-                    Dialogs.getInfoDialog(String.format("Save successful in file %s", TEXT_FILE_NAME));
+                    dialogs.getInfoDialog(String.format("Save successful in file %s", TEXT_FILE_NAME));
                 } catch (Exception e) {
-                    Dialogs.getExceptionDialog(e);
+                    dialogs.getExceptionDialog(e);
                     LOGGER.error("Can't close writer: {}", e.getMessage());
                 }
             }

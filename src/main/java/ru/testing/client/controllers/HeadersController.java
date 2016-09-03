@@ -95,7 +95,7 @@ public class HeadersController {
                     });
                     headerName.requestFocus();
                 } else {
-                    Dialogs.getWarningDialog("Headers max size is 9");
+                    new Dialogs().getWarningDialog("Headers max size is 9");
                 }
             } else {
                 headerValue.requestFocus();

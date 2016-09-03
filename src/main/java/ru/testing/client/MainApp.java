@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.github.GitHub;
+import ru.testing.client.common.github.ReleaseChecker;
 import ru.testing.client.controllers.MainController;
 
 import javax.swing.*;
@@ -26,6 +26,7 @@ public class MainApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
+    private static Stage primaryStage;
 
     /**
      * Entry point to application
@@ -50,6 +51,7 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
         MainController controller = new MainController(primaryStage);
+        MainApp.primaryStage = primaryStage;
         loader.setController(controller);
         try {
             Parent root = loader.load();
@@ -62,7 +64,7 @@ public class MainApp extends Application {
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            new GitHub();
+            ReleaseChecker.getInstance().start();
         } catch (IOException e) {
             LOGGER.error("Error load main fxml view");
             e.printStackTrace();
@@ -95,5 +97,21 @@ public class MainApp extends Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }
+    }
+
+    /**
+     * Get primary stage center X
+     * @return Double
+     */
+    public static Double getCenterX() {
+        return primaryStage.getX() + primaryStage.getWidth() / 2;
+    }
+
+    /**
+     * Get primary stage center Y
+     * @return Double
+     */
+    public static Double getY() {
+        return primaryStage.getY();
     }
 }

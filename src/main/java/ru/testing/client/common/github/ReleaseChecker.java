@@ -8,44 +8,62 @@ import com.sun.jersey.api.client.WebResource;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
 import javax.ws.rs.core.MediaType;
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
-import static ru.testing.client.common.properties.AppProperties.*;
 
 /**
  * Git hub info
  */
-public class GitHub extends Thread {
+public class ReleaseChecker extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GitHub.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseChecker.class);
     private static final int TIMEOUT = 30000;
+    private static ReleaseChecker instance;
+    private AppProperties appProperties = AppProperties.getAppProperties();
     private Client client;
     private double lastVersion;
 
-    /**
-     * Constructor get tags info from git hub
-     */
-    public GitHub() {
-        start();
+    private ReleaseChecker() {
+
+    }
+
+    public static ReleaseChecker getInstance() {
+        if (instance == null) {
+            instance = new ReleaseChecker();
+        }
+        return instance;
     }
 
     /**
      * Run get git hub info
      */
     public void run() {
-        String url = getAppProperties().getTagsUrl();
+        String url = appProperties.getTagsUrl();
         try {
             if (!url.isEmpty()) {
                 List<TagInfo> tags = createRequest();
                 setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v", "")));
             }
-            if (getAppProperties().getVersion() < getLastVersion()) {
-                Platform.runLater(() -> Dialogs.getWarningDialog("New version is available! Please, download last client.\n" +
-                        "Link can be found in 'Help' menu"));
+            if (appProperties.getVersion() < getLastVersion()) {
+                Platform.runLater(() -> {
+                    boolean goToPage = new Dialogs().getConfirmationDialog("Get new version",
+                            "New version is available! Go to new release page?");
+                    if (goToPage && Desktop.isDesktopSupported()) {
+                        try {
+                            Desktop.getDesktop().browse(new URI(appProperties.getLastReleaseUrl()));
+                        } catch (URISyntaxException | IOException e) {
+                            LOGGER.error("Error open new release web page");
+                        }
+                    }
+                });
             }
             LOGGER.debug("Last release version on git hub: {}", getLastVersion());
         } catch (IOException | NumberFormatException e) {
@@ -75,7 +93,7 @@ public class GitHub extends Thread {
      * @throws IOException mapping TagInfo
      */
     private List<TagInfo> createRequest() throws IOException {
-        WebResource resource = getClient().resource(getAppProperties().getTagsUrl());
+        WebResource resource = getClient().resource(appProperties.getTagsUrl());
         ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>() {

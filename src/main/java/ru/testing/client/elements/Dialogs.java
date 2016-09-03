@@ -1,11 +1,11 @@
 package ru.testing.client.elements;
 
-import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.MainApp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -17,67 +17,65 @@ import static javafx.scene.control.Alert.AlertType.*;
  * Class contains javafx modal dialogs
  * Examples @link {http://code.makery.ch/blog/javafx-dialogs-official/}
  */
-public abstract class Dialogs {
+public class Dialogs {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Dialogs.class);
+    private static final double DIALOG_WEIGHT = 420;
 
     /**
      * Show info message
      *
      * @param info String message
      */
-    public static void getInfoDialog(String info) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(INFORMATION);
-            alert.setTitle("Information");
-            alert.setHeaderText(null);
-            alert.setContentText(info);
-
-            alert.showAndWait();
-        });
+    public void getInfoDialog(String info) {
+        Alert alert = new Alert(INFORMATION);
+        alert.setTitle("Information");
+        alert.setHeaderText(null);
+        alert.setContentText(info);
+        alert.setOnShown(event -> setDialogCenter(alert));
+        alert.showAndWait();
     }
 
     /**
      * Show error dialog with exception message
      */
-    public static void getExceptionDialog(Exception e) {
+    public void getExceptionDialog(Exception e) {
         try {
-            Platform.runLater(() -> {
-                Alert alert = new Alert(ERROR);
-                alert.setTitle("Oops! Catch some error");
-                alert.setHeaderText(null);
-                if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) {
-                    alert.setContentText(e.getLocalizedMessage());
-                } else {
-                    alert.setContentText(e.getMessage());
-                }
+            Alert alert = new Alert(ERROR);
+            alert.setTitle("Oops! Catch some error");
+            alert.setHeaderText(null);
+            if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) {
+                alert.setContentText(e.getLocalizedMessage());
+            } else {
+                alert.setContentText(e.getMessage());
+            }
 
-                // Create expandable Exception.
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                String exceptionText = sw.toString();
+            // Create expandable Exception.
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String exceptionText = sw.toString();
 
-                Label label = new Label("The exception stacktrace was:");
+            Label label = new Label("The exception stacktrace was:");
 
-                TextArea textArea = new TextArea(exceptionText);
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
 
-                textArea.setMaxWidth(Double.MAX_VALUE);
-                textArea.setMaxHeight(Double.MAX_VALUE);
-                GridPane.setVgrow(textArea, Priority.ALWAYS);
-                GridPane.setHgrow(textArea, Priority.ALWAYS);
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-                GridPane expContent = new GridPane();
-                expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(label, 0, 0);
-                expContent.add(textArea, 0, 1);
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
 
-                // Set expandable Exception into the dialog pane.
-                alert.getDialogPane().setExpandableContent(expContent);
-                alert.showAndWait();
-            });
+            // Set expandable Exception into the dialog pane.
+            alert.getDialogPane().setExpandableContent(expContent);
+            alert.setOnShown(event -> setDialogCenter(alert));
+            alert.showAndWait();
         } catch (IllegalStateException se) {
             LOGGER.error("Error show exception dialog message: {}", se.getLocalizedMessage());
         }
@@ -89,13 +87,15 @@ public abstract class Dialogs {
      * @param message String
      * @return boolean
      */
-    public static boolean getConfirmationDialog(String message) {
+    public boolean getConfirmationDialog(String title, String message) {
         Alert alert = new Alert(CONFIRMATION);
-        alert.setTitle("Are you sure?");
+        alert.setWidth(DIALOG_WEIGHT);
+        alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        alert.setOnShown(event -> setDialogCenter(alert));
         Optional<ButtonType> result = alert.showAndWait();
-        return result.get() == ButtonType.OK;
+        return result.isPresent() && result.get() == ButtonType.OK;
     }
 
     /**
@@ -103,29 +103,17 @@ public abstract class Dialogs {
      *
      * @param message String
      */
-    public static void getWarningDialog(String message) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(WARNING);
-            alert.setTitle("Warning");
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
-        });
+    public void getWarningDialog(String message) {
+        Alert alert = new Alert(WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.setOnShown(event -> setDialogCenter(alert));
+        alert.showAndWait();
     }
 
-    /**
-     * Show text input dialog
-     *
-     * @param value String old value
-     * @param title String modal window title
-     * @return String
-     */
-    public static String getTextInputDialog(String value, String title) {
-        TextInputDialog dialog = new TextInputDialog(value);
-        dialog.setTitle(title);
-        dialog.setHeaderText(null);
-        dialog.setContentText("Please, enter value");
-        Optional<String> result = dialog.showAndWait();
-        return result.orElse(value);
+    private void setDialogCenter(Alert alert) {
+        alert.setX(MainApp.getCenterX() - DIALOG_WEIGHT / 2);
+        alert.setY(MainApp.getY());
     }
 }

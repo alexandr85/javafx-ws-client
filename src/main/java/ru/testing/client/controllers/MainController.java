@@ -333,7 +333,7 @@ public class MainController {
                 try {
                     client.sendMessage(sendMsg);
                 } catch (IOException e) {
-                    Dialogs.getExceptionDialog(e);
+                    new Dialogs().getExceptionDialog(e);
                 }
             }
             sendMsgTextField.clear();
@@ -832,7 +832,7 @@ public class MainController {
             connectionStatus = true;
         } catch (Exception e) {
             LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
-            Platform.runLater(() -> Dialogs.getExceptionDialog(e));
+            Platform.runLater(() -> new Dialogs().getExceptionDialog(e));
         } finally {
             setProgressVisible(false);
             checkConnectionStatus();
