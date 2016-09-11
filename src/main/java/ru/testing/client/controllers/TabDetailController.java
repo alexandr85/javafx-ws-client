@@ -7,6 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.db.DataBase;
 import ru.testing.client.elements.message.OutputMessage;
 
 /**
@@ -15,6 +16,7 @@ import ru.testing.client.elements.message.OutputMessage;
 public class TabDetailController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TabDetailController.class.getName());
+    private DataBase dataBase = DataBase.getInstance();
     private MainController main;
     private OutputMessage message;
 
@@ -69,10 +71,13 @@ public class TabDetailController {
      */
     private String getJsonPretty(String message) {
         try {
+            /*
             String json = message.replaceAll(main.getProperties().getJsonPrettyReplaceRegex(), "");
             ObjectMapper mapper = new ObjectMapper();
             Object object = mapper.readValue(json, Object.class);
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
+            */
+            return null;
         } catch (Exception e) {
             LOGGER.error("Error pretty json from string: {}", e.getMessage());
             jsonPrettyButton.setSelected(false);

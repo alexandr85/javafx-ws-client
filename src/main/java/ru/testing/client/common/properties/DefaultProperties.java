@@ -2,6 +2,7 @@ package ru.testing.client.common.properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.db.objects.Settings;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -17,6 +18,7 @@ public class DefaultProperties {
     private String profileName;
     private String profileWsUrl;
     private boolean profileAutoScroll;
+    private boolean profileFilterOn;
     private boolean profileShowFilter;
     private boolean profileShowBar;
     private int msgFontSize;
@@ -33,6 +35,7 @@ public class DefaultProperties {
             setProfileName(properties.getProperty("profile.name"));
             setProfileWsUrl(properties.getProperty("profile.ws.url"));
             setProfileAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
+            setProfileFilterOn(Boolean.parseBoolean(properties.getProperty("profile.filter.on")));
             setProfileShowFilter(Boolean.parseBoolean(properties.getProperty("profile.show.filter")));
             setProfileShowBar(Boolean.parseBoolean(properties.getProperty("profile.show.bar")));
 
@@ -50,11 +53,24 @@ public class DefaultProperties {
      * Get default properties
      * @return DefaultProperties
      */
-    public static DefaultProperties getDefaultProperties() {
+    public static DefaultProperties getInstance() {
         if (properties == null) {
             properties = new DefaultProperties();
         }
         return properties;
+    }
+
+    /**
+     * Get default message view setting as object
+     * @return Settings
+     */
+    public Settings getMessageSettings() {
+        return new Settings(
+                getMsgFontSize(),
+                isMsgWrap(),
+                isMsgJsonPretty(),
+                getMsgJsonPrettyReplaceRegex()
+        );
     }
 
     public String getProfileName() {
@@ -77,8 +93,16 @@ public class DefaultProperties {
         return profileAutoScroll;
     }
 
-    public void setProfileAutoScroll(boolean profileAutoScroll) {
+    private void setProfileAutoScroll(boolean profileAutoScroll) {
         this.profileAutoScroll = profileAutoScroll;
+    }
+
+    public boolean isProfileFilterOn() {
+        return profileFilterOn;
+    }
+
+    private void setProfileFilterOn(boolean profileFilterOn) {
+        this.profileFilterOn = profileFilterOn;
     }
 
     public boolean isProfileShowFilter() {

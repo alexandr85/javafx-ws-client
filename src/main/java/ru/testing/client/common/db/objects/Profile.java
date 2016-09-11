@@ -1,7 +1,5 @@
 package ru.testing.client.common.db.objects;
 
-import java.util.List;
-
 /**
  * Profile object for save in database
  */
@@ -10,27 +8,20 @@ public class Profile {
     private int id;
     private String name;
     private String url;
-    private boolean filterOn;
-    private boolean filterShow;
     private boolean autoScroll;
     private boolean barShow;
-    private List<String> filters;
-    private List<Header> headers;
-    private List<RxMessage> rxMessages;
-    private List<TxMessage> txMessages;
+    private boolean filterShow;
+    private boolean filterOn;
 
-    public Profile(int id, String name) {
+    public Profile(int id, String name, String url, boolean autoScroll,
+                   boolean barShow, boolean filterShow, boolean filterOn) {
         this.id = id;
         this.name = name;
-    }
-
-    public Profile(String name, String url, boolean filterOn, boolean filterShow, boolean autoScroll, boolean barShow) {
-        this.name = name;
         this.url = url;
-        this.filterOn = filterOn;
-        this.filterShow = filterShow;
         this.autoScroll = autoScroll;
         this.barShow = barShow;
+        this.filterShow = filterShow;
+        this.filterOn = filterOn;
     }
 
     public int getId() {
@@ -45,55 +36,47 @@ public class Profile {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getUrl() {
         return url;
     }
 
-    public boolean getFilterOn() {
-        return filterOn;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    public boolean getFilterShow() {
-        return filterShow;
-    }
-
-    public boolean getAutoScroll() {
+    public boolean isAutoScroll() {
         return autoScroll;
     }
 
-    public boolean getBarShow() {
+    public void setAutoScroll(boolean autoScroll) {
+        this.autoScroll = autoScroll;
+    }
+
+    public boolean isBarShow() {
         return barShow;
     }
 
-    public List<String> getFilters() {
-        return filters;
+    public void setBarShow(boolean barShow) {
+        this.barShow = barShow;
     }
 
-    public void setFilters(List<String> filters) {
-        this.filters = filters;
+    public boolean isFilterShow() {
+        return filterShow;
     }
 
-    public List<Header> getHeaders() {
-        return headers;
+    public void setFilterShow(boolean filterShow) {
+        this.filterShow = filterShow;
     }
 
-    public void setHeaders(List<Header> headers) {
-        this.headers = headers;
+    public boolean isFilterOn() {
+        return filterOn;
     }
 
-    public List<RxMessage> getRxMessages() {
-        return rxMessages;
-    }
-
-    public void setRxMessages(List<RxMessage> rxMessages) {
-        this.rxMessages = rxMessages;
-    }
-
-    public List<TxMessage> getTxMessages() {
-        return txMessages;
-    }
-
-    public void setTxMessages(List<TxMessage> txMessages) {
-        this.txMessages = txMessages;
+    public void setFilterOn(boolean filterOn) {
+        this.filterOn = filterOn;
     }
 }

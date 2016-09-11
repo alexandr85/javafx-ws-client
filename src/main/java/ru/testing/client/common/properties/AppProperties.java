@@ -15,6 +15,7 @@ public class AppProperties {
     private static final String PROP_FILE = "app.properties";
     private static AppProperties properties;
     private Double version;
+    private Double dbVersion;
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
@@ -25,6 +26,7 @@ public class AppProperties {
         try {
             properties.load(AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
             setVersion(Double.parseDouble(properties.getProperty("version")));
+            setDbVersion(Double.parseDouble(properties.getProperty("db.version")));
             setTagsUrl(properties.getProperty("tags.url"));
             setLastReleaseUrl(properties.getProperty("last.release.url"));
             setAboutUrl(properties.getProperty("about.url"));
@@ -51,6 +53,14 @@ public class AppProperties {
 
     private void setVersion(Double version) {
         this.version = version;
+    }
+
+    public Double getDbVersion() {
+        return dbVersion;
+    }
+
+    private void setDbVersion(Double dbVersion) {
+        this.dbVersion = dbVersion;
     }
 
     public String getTagsUrl() {

@@ -1,0 +1,8 @@
+.border-block {
+    -fx-border-color: #e6e6e6;
+    -fx-border-radius: 4px;
+}
+
+#txRegex {
+    -fx-font-family: monospace;
+}

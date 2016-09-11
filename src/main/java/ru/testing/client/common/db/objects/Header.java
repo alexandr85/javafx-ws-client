@@ -1,11 +1,11 @@
 package ru.testing.client.common.db.objects;
 
 /**
- * Headers list for save in database
+ * Headers list in database
  */
 public class Header {
 
-    private int sessionId;
+    private int profileId;
     private String name;
     private String value;
 
@@ -14,14 +14,14 @@ public class Header {
         this.value = value;
     }
 
-    public Header(int sessionId, String name, String value) {
-        this.sessionId = sessionId;
+    public Header(int profileId, String name, String value) {
+        this.profileId = profileId;
         this.name = name;
         this.value = value;
     }
 
-    public int getSessionId() {
-        return sessionId;
+    public int getProfileId() {
+        return profileId;
     }
 
     public String getName() {

@@ -27,7 +27,7 @@ public class ReleaseChecker extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseChecker.class);
     private static final int TIMEOUT = 30000;
     private static ReleaseChecker instance;
-    private AppProperties appProperties = AppProperties.getAppProperties();
+    private AppProperties properties = AppProperties.getAppProperties();
     private Client client;
     private double lastVersion;
 
@@ -46,19 +46,19 @@ public class ReleaseChecker extends Thread {
      * Run get git hub info
      */
     public void run() {
-        String url = appProperties.getTagsUrl();
+        String url = properties.getTagsUrl();
         try {
             if (!url.isEmpty()) {
                 List<TagInfo> tags = createRequest();
                 setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v", "")));
             }
-            if (appProperties.getVersion() < getLastVersion()) {
+            if (properties.getVersion() < getLastVersion()) {
                 Platform.runLater(() -> {
-                    boolean goToPage = new Dialogs().getConfirmationDialog("Get new version",
-                            "New version is available! Go to new release page?");
+                    boolean goToPage = new Dialogs().getConfirmationDialog("Great news!",
+                            String.format("New version `%s` is available! Go to new release page?", getLastVersion()));
                     if (goToPage && Desktop.isDesktopSupported()) {
                         try {
-                            Desktop.getDesktop().browse(new URI(appProperties.getLastReleaseUrl()));
+                            Desktop.getDesktop().browse(new URI(properties.getLastReleaseUrl()));
                         } catch (URISyntaxException | IOException e) {
                             LOGGER.error("Error open new release web page");
                         }
@@ -93,7 +93,7 @@ public class ReleaseChecker extends Thread {
      * @throws IOException mapping TagInfo
      */
     private List<TagInfo> createRequest() throws IOException {
-        WebResource resource = getClient().resource(appProperties.getTagsUrl());
+        WebResource resource = getClient().resource(properties.getTagsUrl());
         ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>() {

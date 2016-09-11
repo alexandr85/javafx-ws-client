@@ -22,12 +22,13 @@ import javafx.stage.Stage;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
+import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.Header;
-import ru.testing.client.common.db.objects.RxMessage;
 import ru.testing.client.common.db.objects.Profile;
+import ru.testing.client.common.db.objects.Settings;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
@@ -49,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
-import static ru.testing.client.common.db.Data.getData;
 
 /**
  * FXML controller for main page
@@ -63,7 +63,7 @@ public class MainController {
     private final ObservableList<OutputMessage> outputFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
-    private AppProperties properties;
+    private AppProperties properties = AppProperties.getAppProperties();
     private Client client;
     private boolean connectionStatus, autoScroll, filtered;
     private Stage mainStage;
@@ -173,7 +173,6 @@ public class MainController {
      * @param mainStage Stage
      */
     public MainController(Stage mainStage) {
-        this.properties = AppProperties.getAppProperties();
         this.mainStage = mainStage;
     }
 
@@ -276,8 +275,8 @@ public class MainController {
             }
         });
 
-        // Load default session
-        setDataFromSession(1);
+        // Load current profile
+        loadProfile(DataBase.getInstance().getCurrentProfile());
     }
 
     /**
@@ -440,8 +439,14 @@ public class MainController {
     private void showSettings() {
         if (settingsTab == null) {
             settingsTab = new SettingsTab(this);
+            settingsTab.setOnClosed(event -> settingsTab = null);
         }
-        settingsTab.showTab();
+        ObservableList<Tab> tabsList = tabPane.getTabs();
+        SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
+        if (!tabsList.contains(settingsTab)) {
+            tabsList.add(settingsTab);
+        }
+        selectTabModel.select(settingsTab);
     }
 
     /**
@@ -557,15 +562,6 @@ public class MainController {
     }
 
     /**
-     * Get application properties
-     *
-     * @return AppProperties
-     */
-    public AppProperties getProperties() {
-        return properties;
-    }
-
-    /**
      * Send message history toggle button
      *
      * @return ToggleButton
@@ -631,46 +627,32 @@ public class MainController {
     /**
      * Set data from selected session
      *
-     * @param sessionId int
+     * @param profileId int
      */
-    public void setDataFromSession(int sessionId) {
+    private void loadProfile(int profileId) {
         setProgressVisible(true);
-        Profile s = getData().getProfile(sessionId);
-        if (s != null) {
-            LOGGER.debug("Load session name: {}", s.getName());
+        Profile p = DataBase.getInstance().getProfile(profileId);
+        if (p != null) {
+            LOGGER.debug("Load profile name: {}", p.getName());
 
             // set websocket server url
-            serverUrl.setText(s.getUrl());
-
-            // set filter properties
-            showFilter.setSelected(s.getFilterShow());
-            changeFilterVisible();
-            filtered = !s.getFilterOn();
-            changeFilterStatus();
-            filterList.clear();
-            s.getFilters().forEach(filterList::add);
-            filterCount.setText(String.valueOf(filterList.size()));
+            serverUrl.setText(p.getUrl());
 
             // set auto scroll properties
-            autoScroll = !s.getAutoScroll();
+            autoScroll = !p.isAutoScroll();
             changeAutoScrollStatus();
 
             // set status bar properties
-            showStatusBar.setSelected(s.getBarShow());
+            showStatusBar.setSelected(p.isBarShow());
             changesStatusBarVisible();
 
-            // set headers data
-            getHeadersPopOver().getHeadersController().setHeaders(s.getHeaders());
+            // set filter block visible status
+            showFilter.setSelected(p.isFilterShow());
+            changeFilterVisible();
 
-            // set send messages
-            sendMsgList.clear();
-            s.getTxMessages().forEach(m -> sendMsgList.add(m.getValue()));
-
-            // set output messages
-            outputMessageList.clear();
-            s.getRxMessages().forEach(m ->
-                    outputMessageList.add(new OutputMessage(m.getTime(), m.getValue())));
-
+            // set filter active status
+            filtered = !p.isFilterOn();
+            changeFilterStatus();
         }
         setProgressVisible(false);
     }
@@ -684,17 +666,6 @@ public class MainController {
         List<String> items = new ArrayList<>();
         sendMsgList.forEach(items::add);
         return items;
-    }
-
-    /**
-     * Get received message list
-     *
-     * @return List<RxMessage>
-     */
-    List<RxMessage> getOutputMessageList() {
-        List<RxMessage> rxMessages = new ArrayList<>();
-        outputMessageList.forEach(m -> rxMessages.add(new RxMessage(m.getFormattedTime(), m.getMessage())));
-        return rxMessages;
     }
 
     /**

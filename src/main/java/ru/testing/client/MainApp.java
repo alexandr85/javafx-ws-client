@@ -9,14 +9,15 @@ import javafx.stage.Stage;
 import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.github.ReleaseChecker;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.controllers.MainController;
 
 import javax.swing.*;
 import java.io.IOException;
 
 import static org.controlsfx.tools.Platform.OSX;
-import static ru.testing.client.common.properties.AppProperties.getAppProperties;
 
 /**
  * Main application class
@@ -35,6 +36,7 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         try {
+            DataBase.getInstance();
             launch(args);
         } catch (Exception e) {
             LOGGER.error("Running exception: {}", e.getMessage());
@@ -49,6 +51,7 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        AppProperties properties = AppProperties.getAppProperties();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
         MainController controller = new MainController(primaryStage);
         MainApp.primaryStage = primaryStage;
@@ -57,7 +60,7 @@ public class MainApp extends Application {
             Parent root = loader.load();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, controller);
-            primaryStage.setTitle(String.format("WebSocket Client v%s", getAppProperties().getVersion()));
+            primaryStage.setTitle(String.format("WebSocket Client v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);

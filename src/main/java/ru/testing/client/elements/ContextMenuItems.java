@@ -145,19 +145,4 @@ public class ContextMenuItems {
         });
         return copyItem;
     }
-
-    /**
-     * Set session data from selected session
-     *
-     * @param main MainController
-     * @return MenuItem
-     */
-    public MenuItem loadSession(ListCell<Profile> cell, MainController main) {
-        MenuItem loadSession = new MenuItem("Load session");
-        loadSession.setOnAction(event -> {
-            main.setDataFromSession(cell.getItem().getId());
-            //main.getSessionsPopOver().hide();
-        });
-        return loadSession;
-    }
 }
