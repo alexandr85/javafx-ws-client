@@ -24,59 +24,41 @@ public class Profile {
         this.filterOn = filterOn;
     }
 
-    public int getId() {
-        return id;
+    public Profile(String name, String url, boolean autoScroll, boolean barShow,
+                   boolean filterShow, boolean filterOn) {
+        this.name = name;
+        this.url = url;
+        this.autoScroll = autoScroll;
+        this.barShow = barShow;
+        this.filterShow = filterShow;
+        this.filterOn = filterOn;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public boolean isAutoScroll() {
         return autoScroll;
     }
 
-    public void setAutoScroll(boolean autoScroll) {
-        this.autoScroll = autoScroll;
-    }
-
     public boolean isBarShow() {
         return barShow;
-    }
-
-    public void setBarShow(boolean barShow) {
-        this.barShow = barShow;
     }
 
     public boolean isFilterShow() {
         return filterShow;
     }
 
-    public void setFilterShow(boolean filterShow) {
-        this.filterShow = filterShow;
-    }
-
     public boolean isFilterOn() {
         return filterOn;
-    }
-
-    public void setFilterOn(boolean filterOn) {
-        this.filterOn = filterOn;
     }
 }

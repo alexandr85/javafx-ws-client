@@ -33,7 +33,7 @@ public class SettingsTab extends Tab {
             Parent root = loader.load();
             this.setContent(root);
         } catch (IOException e) {
-            LOGGER.error("Error load sessions pop over: {}", e.getMessage());
+            LOGGER.error("Error load settings tab: {}", e.getMessage());
         }
     }
 }

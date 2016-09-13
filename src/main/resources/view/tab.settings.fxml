@@ -42,10 +42,11 @@
                         <Font size="16.0"/>
                     </font>
                 </Label>
-                <TextField maxWidth="Infinity" prefHeight="25.0" promptText="name"
+                <TextField fx:id="tfProfileName" maxWidth="Infinity" prefHeight="25.0" promptText="name"
                            GridPane.rowIndex="1"/>
-                <Button maxWidth="Infinity" mnemonicParsing="false" prefHeight="25.0"
-                        text="Save" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Button fx:id="bSaveProfile" maxWidth="Infinity" mnemonicParsing="false" prefHeight="25.0"
+                        text="Save" GridPane.columnIndex="1" GridPane.rowIndex="1" disable="true"
+                        onAction="#addProfile">
                     <cursor>
                         <Cursor fx:constant="HAND"/>
                     </cursor>
@@ -63,13 +64,15 @@
                     <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                     </padding>
-                    <ChoiceBox fx:id="cbProfilesList" maxWidth="Infinity" GridPane.columnSpan="2"/>
-                    <Button mnemonicParsing="false" prefWidth="80.0" text="Remove" GridPane.rowIndex="1"/>
+                    <ComboBox fx:id="cbProfilesNames" maxWidth="Infinity" GridPane.columnSpan="2"/>
+                    <Button fx:id="bRemove" mnemonicParsing="false" prefWidth="80.0" text="Remove" GridPane.rowIndex="1"
+                            onAction="#removeProfile"/>
                     <Button mnemonicParsing="false" prefWidth="80.0" text="Load" GridPane.columnIndex="1"
-                            GridPane.rowIndex="1"/>
+                            GridPane.rowIndex="1" onAction="#loadSelectedProfile"/>
                 </GridPane>
                 <Label GridPane.rowIndex="3" wrapText="true" maxWidth="260" textAlignment="JUSTIFY"
-                       GridPane.columnSpan="2" style="-fx-font-size: 11px; -fx-font-family: 'Helvetica', Arial, sans-serif;"
+                       GridPane.columnSpan="2"
+                       style="-fx-font-size: 11px; -fx-font-family: 'Helvetica', Arial, sans-serif;"
                        text="Profile save data: url, headers, auto scroll status, show filter status, show bottom bar status, received messages, transferred messages, filter list"/>
             </GridPane>
         </HBox>
@@ -110,14 +113,15 @@
                     </rowConstraints>
                     <CheckBox fx:id="chWrap" mnemonicParsing="false" text="Text wrap by default" GridPane.columnSpan="2"
                               GridPane.rowIndex="0"/>
-                    <Label alignment="CENTER" text="Font size: 13px" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
-                           fx:id="fontValueLabel" GridPane.rowIndex="3"/>
+                    <Label alignment="CENTER" text="Font size: 13px" GridPane.columnIndex="1"
+                           GridPane.halignment="RIGHT"
+                           fx:id="fontLabel" GridPane.rowIndex="3"/>
                     <CheckBox fx:id="chPretty" mnemonicParsing="false" text="Json pretty by default (use replace regex)"
                               GridPane.columnSpan="2" GridPane.rowIndex="1"/>
-                    <TextField fx:id="txRegex" promptText="regex for json pretty message" GridPane.columnSpan="2"
+                    <TextField fx:id="tfRegex" promptText="regex for json pretty message" GridPane.columnSpan="2"
                                GridPane.rowIndex="2"/>
                     <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" GridPane.rowIndex="3"
-                            fx:id="fontValueSlider"/>
+                            fx:id="fontSlider"/>
                     <GridPane hgap="15.0" vgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
                         <columnConstraints>
                             <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -127,8 +131,10 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                         </rowConstraints>
-                        <Button onAction="#loadDefaultSettings" mnemonicParsing="false" prefWidth="80.0" text="Default" GridPane.rowIndex="1"/>
-                        <Button mnemonicParsing="false" prefWidth="80.0" text="Save" GridPane.columnIndex="1"
+                        <Button onAction="#loadDefaultSettings" mnemonicParsing="false" prefWidth="80.0" text="Default"
+                                GridPane.rowIndex="1"/>
+                        <Button onAction="#saveSettings" mnemonicParsing="false" prefWidth="80.0" text="Save"
+                                GridPane.columnIndex="1"
                                 GridPane.rowIndex="1"/>
                     </GridPane>
                 </GridPane>

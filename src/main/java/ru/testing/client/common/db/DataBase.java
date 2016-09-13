@@ -3,6 +3,7 @@ package ru.testing.client.common.db;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.objects.Profile;
+import ru.testing.client.common.db.objects.ProfileName;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.DefaultProperties;
@@ -90,6 +91,76 @@ public class DataBase {
     }
 
     /**
+     * Set current settings state
+     *
+     * @param settings Settings
+     * @return boolean status
+     */
+    public boolean setSettings(Settings settings) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement gs = connection.prepareStatement("UPDATE global_settings SET " +
+                    "font_size=?, text_wrap=?, json_pretty=?, json_regex=?");
+            gs.setInt(1, settings.getFontSize());
+            gs.setInt(2, settings.isTextWrap() ? 1 : 0);
+            gs.setInt(3, settings.isJsonPretty() ? 1 : 0);
+            gs.setString(4, settings.getJsonRegex());
+            gs.executeUpdate();
+            return true;
+        }catch (SQLException e) {
+            LOGGER.error("Error set current settings state in database");
+            return false;
+        }
+    }
+
+    /**
+     * Set selected current profile id
+     *
+     * @param id int
+     * @return boolean status
+     */
+    public boolean setCurrentProfileId(int id) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement gs = connection.prepareStatement("UPDATE global_settings SET current_profile_id=?");
+            gs.setInt(1, id);
+            gs.executeUpdate();
+            return true;
+        }catch (SQLException e) {
+            LOGGER.error("Error set selected profile in database");
+            return false;
+        }
+    }
+
+    /**
+     * Add new profile data in database
+     *
+     * @param profile Profile
+     * @return boolean status
+     */
+    public int addProfile(Profile profile) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement p = connection.prepareStatement("INSERT INTO profiles " +
+                    "(name, url, auto_scroll, bar_show, filter_show, filter_on) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)");
+            p.setString(1, profile.getName());
+            p.setString(2, profile.getUrl());
+            p.setInt(3, profile.isAutoScroll() ? 1 : 0);
+            p.setInt(4, profile.isBarShow() ? 1 : 0);
+            p.setInt(5, profile.isFilterShow() ? 1 : 0);
+            p.setInt(6, profile.isFilterOn() ? 1 : 0);
+            int status = p.executeUpdate();
+            if (status == 0) {
+                throw new SQLException("Profile not insert");
+            }
+            Statement statement = connection.createStatement();
+            ResultSet r = statement.executeQuery("SELECT last_insert_rowid()");
+            return r.getInt(1);
+        } catch (SQLException e) {
+            LOGGER.error("Error add profile in database", e.getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Get current profile id
      *
      * @return int
@@ -133,6 +204,7 @@ public class DataBase {
 
     /**
      * Get all profiles from database
+     *
      * @return List<Profile>
      */
     public List<Profile> getProfiles() {
@@ -157,6 +229,47 @@ public class DataBase {
             LOGGER.error("Error get profiles data", e.getMessage());
         }
         return profiles;
+    }
+
+    /**
+     * Get profiles name with id
+     * @return List<ProfileName>
+     */
+    public List<ProfileName> getProfilesName() {
+        List<ProfileName> profiles = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            Statement s = connection.createStatement();
+            ResultSet r = s.executeQuery("SELECT id, name FROM profiles");
+            while (r.next()) {
+                profiles.add(
+                        new ProfileName(
+                                r.getInt("id"),
+                                r.getString("name")
+                        )
+                );
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error get profiles data", e.getMessage());
+        }
+        return profiles;
+    }
+
+    /**
+     * Remove selected profile
+     *
+     * @param profileId int
+     * @return boolean status
+     */
+    public boolean removeProfile(int profileId) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM profiles WHERE id = ?");
+            ps.setInt(1, profileId);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            LOGGER.error("Error remove profile id `{}` from database", profileId, e.getMessage());
+            return false;
+        }
     }
 
     /**
@@ -195,7 +308,7 @@ public class DataBase {
             LOGGER.debug("Insert default settings ...");
             PreparedStatement gs = connection.prepareStatement("INSERT INTO global_settings " +
                     "(font_size, text_wrap, json_pretty, json_regex, current_profile_id) " +
-                    "VALUES(?, ?, ?, ?, ?)");
+                    "VALUES (?, ?, ?, ?, ?)");
             gs.setInt(1, properties.getMsgFontSize());
             gs.setInt(2, properties.isMsgWrap() ? 1 : 0);
             gs.setInt(3, properties.isMsgJsonPretty() ? 1 : 0);
@@ -207,7 +320,7 @@ public class DataBase {
             LOGGER.debug("Insert default profile ...");
             PreparedStatement p = connection.prepareStatement("INSERT INTO profiles " +
                     "(id , name, url, auto_scroll, bar_show, filter_show, filter_on) " +
-                    "VALUES(?, ?, ?, ?, ?, ?, ?)");
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)");
             p.setInt(1, 0);
             p.setString(2, properties.getProfileName());
             p.setString(3, properties.getProfileWsUrl());

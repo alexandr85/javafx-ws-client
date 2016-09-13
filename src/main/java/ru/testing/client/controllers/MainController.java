@@ -27,7 +27,6 @@ import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.common.db.objects.Profile;
-import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
@@ -223,6 +222,13 @@ public class MainController {
         serverUrl.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
                 connectDisconnectAction();
+            }
+        });
+        serverUrl.textProperty().addListener((observable) -> {
+            if (serverUrl.getText().length() > 0) {
+                connectBtn.setDisable(false);
+            } else {
+                connectBtn.setDisable(true);
             }
         });
 
@@ -629,8 +635,7 @@ public class MainController {
      *
      * @param profileId int
      */
-    private void loadProfile(int profileId) {
-        setProgressVisible(true);
+    boolean loadProfile(int profileId) {
         Profile p = DataBase.getInstance().getProfile(profileId);
         if (p != null) {
             LOGGER.debug("Load profile name: {}", p.getName());
@@ -653,8 +658,10 @@ public class MainController {
             // set filter active status
             filtered = !p.isFilterOn();
             changeFilterStatus();
+        } else {
+            return false;
         }
-        setProgressVisible(false);
+        return true;
     }
 
     /**

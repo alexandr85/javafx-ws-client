@@ -122,7 +122,7 @@
                     </TextField>
                     <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                             minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                            text="Connect" GridPane.columnIndex="3" onAction="#connectDisconnectAction">
+                            text="Connect" GridPane.columnIndex="3" onAction="#connectDisconnectAction" disable="true">
                         <cursor>
                             <Cursor fx:constant="HAND"/>
                         </cursor>
