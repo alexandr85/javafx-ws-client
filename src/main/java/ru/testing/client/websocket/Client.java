@@ -22,7 +22,7 @@ public class Client extends Endpoint {
     private final ClientManager client;
     private final ClientEndpointConfig config;
     private URI endpointURI;
-    private List<Header> headersList;
+    private List<Header> headerList;
     private Session session;
 
     /**
@@ -38,8 +38,8 @@ public class Client extends Endpoint {
                     @Override
                     public void beforeRequest(Map<String, List<String>> headers) {
                         try {
-                            if (headersList != null && headersList.size() > 0) {
-                                for (Header header : headersList) {
+                            if (headerList != null && headerList.size() > 0) {
+                                for (Header header : headerList) {
                                     String headerName = header.getName();
                                     if (headers.containsKey(headerName)) {
                                         String value = headers.get(headerName).get(0)
@@ -73,7 +73,7 @@ public class Client extends Endpoint {
      * @param headers List<Header>
      */
     public void setHeaders(List<Header> headers) {
-        this.headersList = headers;
+        this.headerList = headers;
     }
 
     /**
