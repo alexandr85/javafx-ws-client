@@ -2,16 +2,18 @@ package ru.testing.client.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.Profile;
 import ru.testing.client.common.db.objects.ProfileName;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.Dialogs;
+import ru.testing.client.elements.message.DetailTab;
 
 /**
  * Controller for settings tab form
@@ -19,7 +21,7 @@ import ru.testing.client.elements.Dialogs;
 public class TabSettingsController {
 
     private static final int TF_PROFILE_NAME_MAX_LENGTH = 20;
-    private static final String SLIDER_LABEL_TEXT = "Font size: %spx";
+    private static final String FONT_SIZE_FORMAT = "-fx-font-size: %spx;";
     private ObservableList<ProfileName> profilesList = FXCollections.observableArrayList();
     private DataBase dataBase = DataBase.getInstance();
     private MainController main;
@@ -53,7 +55,7 @@ public class TabSettingsController {
         // Slider value listener
         fontSlider.valueProperty().addListener(observable ->
                 fontLabel.setText(
-                        String.format(SLIDER_LABEL_TEXT, ((Number) fontSlider.getValue()).intValue())
+                        String.format("%spx", ((Number) fontSlider.getValue()).intValue())
                 )
         );
 
@@ -114,7 +116,23 @@ public class TabSettingsController {
                 tfRegex.getText()
         ));
         if (status) {
+            main.getOutputTextView()
+                    .setStyle(String.format(FONT_SIZE_FORMAT, dataBase.getSettings().getFontSize()));
+            for (Tab tab : main.getTabPane().getTabs()) {
+                if (tab instanceof DetailTab) {
+                    Node tabNode = tab.getContent();
+                    if (tabNode instanceof GridPane) {
+                        for (Node node : ((GridPane) tabNode).getChildren()) {
+                            if (node instanceof TextArea) {
+                                node.setStyle(String.format(FONT_SIZE_FORMAT, dataBase.getSettings().getFontSize()));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             new Dialogs().getInfoDialog("Settings save successful");
+
         } else {
             new Dialogs().getWarningDialog("Error save settings. See log.");
         }
@@ -125,18 +143,29 @@ public class TabSettingsController {
      */
     @FXML
     private void addProfile() {
-        if (tfProfileName.getText().length() > 0) {
+        String profileName = tfProfileName.getText();
+        if (profileName.length() > 0) {
+            main.setProgressVisible(true);
             int profileId = dataBase.addProfile(new Profile(
-                    tfProfileName.getText(),
+                    profileName,
                     main.getServerUrl(),
                     main.isAutoScroll(),
                     main.isStatusBarShow(),
                     main.isFilterVisible(),
                     main.isFiltered()
             ));
-            // todo: add filter list & messages
-            updateProfilesList();
-            tfProfileName.clear();
+            if (profileId != 0) {
+                dataBase.addHeaders(profileId, main.getHeadersList());
+
+
+                // todo: add filter list & messages
+                dataBase.setCurrentProfileId(profileId);
+                updateProfilesList();
+                tfProfileName.clear();
+                cbProfilesNames.requestFocus();
+                main.setProgressVisible(false);
+                new Dialogs().getInfoDialog(String.format("Profile `%s` add & set as current", profileName));
+            }
         }
     }
 
@@ -152,12 +181,13 @@ public class TabSettingsController {
             loadSelectedProfile();
         }
         dataBase.removeProfile(selectedId);
+        dataBase.removeHeaders(selectedId);
         profilesList.removeIf(profileName -> profileName.getId() == selectedId);
         selectCurrentProfile();
     }
 
     /**
-     * Load selected profile in choice box
+     * Load selected profile in combo box
      */
     @FXML
     private void loadSelectedProfile() {

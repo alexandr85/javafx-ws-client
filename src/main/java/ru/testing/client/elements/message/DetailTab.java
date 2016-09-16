@@ -32,7 +32,7 @@ public class DetailTab extends Tab {
             // Load detail message view form
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.detail.fxml"));
-                loader.setController(new TabDetailController(item, main));
+                loader.setController(new TabDetailController(item));
                 Parent root = loader.load();
                 this.setContent(root);
             } catch (IOException e) {

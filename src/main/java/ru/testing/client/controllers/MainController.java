@@ -6,7 +6,6 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
@@ -63,6 +62,7 @@ public class MainController {
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties = AppProperties.getAppProperties();
+    private DataBase dataBase = DataBase.getInstance();
     private Client client;
     private boolean connectionStatus, autoScroll, filtered;
     private Stage mainStage;
@@ -112,7 +112,7 @@ public class MainController {
      * Main buttons
      */
     @FXML
-    private ToggleButton httpSettings;
+    private ToggleButton tbHeaders;
     @FXML
     private ToggleButton sendAfterConnect;
     @FXML
@@ -150,7 +150,7 @@ public class MainController {
     @FXML
     private Label outputMsgCount;
     @FXML
-    private Label headersCount;
+    private Label lbHeadersCounter;
 
     /**
      * Other elements
@@ -217,6 +217,7 @@ public class MainController {
         outputSetList(false);
         outputTextView.getItems().addListener(this::outputMessageListener);
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
+        outputTextView.setStyle(String.format("-fx-font-size: %spx;", dataBase.getSettings().getFontSize()));
 
         // Connect or disconnect with websocket server
         serverUrl.setOnKeyPressed(keyEvent -> {
@@ -358,7 +359,7 @@ public class MainController {
                 filterListBtn.setDisable(true);
                 filtered = false;
                 outputSetList(false);
-                headersCount.requestFocus();
+                lbHeadersCounter.requestFocus();
             } else {
                 filterOnOffBtn.setSelected(true);
                 filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
@@ -460,12 +461,12 @@ public class MainController {
      */
     @FXML
     private void showHeadersPopOver() {
-        if (httpSettings.isSelected()) {
-            getHeadersPopOver().show(httpSettings, -4);
+        if (tbHeaders.isSelected()) {
+            getHeadersPopOver().show(tbHeaders, -4);
         } else {
             getHeadersPopOver().hide();
         }
-        headersCount.requestFocus();
+        lbHeadersCounter.requestFocus();
     }
 
     /**
@@ -729,17 +730,8 @@ public class MainController {
      *
      * @return Label
      */
-    public Label getHeadersCount() {
-        return headersCount;
-    }
-
-    /**
-     * Get main parent node
-     *
-     * @return Parent
-     */
-    public Parent getMainParent() {
-        return mainStage.getScene().getRoot();
+    Label getLbHeadersCounter() {
+        return lbHeadersCounter;
     }
 
     /**
@@ -792,8 +784,8 @@ public class MainController {
      *
      * @return ToggleButton
      */
-    public ToggleButton getHttpSettings() {
-        return httpSettings;
+    public ToggleButton getTbHeaders() {
+        return tbHeaders;
     }
 
     /**
@@ -858,7 +850,7 @@ public class MainController {
                 setCircleTooltip("Connected");
                 sendMsgTextField.setDisable(false);
                 messageSendBtn.setDisable(false);
-                httpSettings.setDisable(true);
+                tbHeaders.setDisable(true);
             } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
@@ -869,7 +861,7 @@ public class MainController {
                 sendMsgTextField.setDisable(true);
                 messageSendBtn.setDisable(true);
                 connectionStatus = false;
-                httpSettings.setDisable(false);
+                tbHeaders.setDisable(false);
             }
         });
     }

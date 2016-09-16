@@ -23,10 +23,13 @@ public class HeadersPopOver extends PopOver {
         // Pop over settings
         setDetachable(false);
         setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
-        setOnHidden(event -> main.getHttpSettings().setSelected(false));
+        setOnHidden(event -> {
+            main.getTbHeaders().setSelected(false);
+            headersController.getHeaderListView().getSelectionModel().clearSelection();
+        });
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/headers.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.headers.fxml"));
             headersController = new HeadersController(main);
             loader.setController(headersController);
             Parent root = loader.load();

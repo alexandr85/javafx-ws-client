@@ -15,12 +15,12 @@
     </rowConstraints>
 
     <!-- Message text area -->
-    <TextArea fx:id="msgTextArea" editable="false" styleClass="output_text" GridPane.rowIndex="0"/>
+    <TextArea fx:id="txMsgArea" editable="false" styleClass="output_text" GridPane.rowIndex="0"/>
 
     <!-- View settings and info block -->
     <VBox alignment="CENTER" GridPane.rowIndex="1">
         <GridPane.margin>
-            <Insets left="15.0" right="15.0" top="4.0"/>
+            <Insets left="15.0" right="15.0"/>
         </GridPane.margin>
         <GridPane>
             <columnConstraints>
@@ -38,10 +38,10 @@
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <ToggleButton fx:id="wrapTButton" mnemonicParsing="false" prefWidth="90" text="Wrap text"
+                <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap text"
                               GridPane.columnIndex="0" GridPane.rowIndex="0">
                 </ToggleButton>
-                <ToggleButton fx:id="jsonPrettyButton" mnemonicParsing="false" prefWidth="90"
+                <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90"
                               text="Json pretty" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 </ToggleButton>
             </GridPane>

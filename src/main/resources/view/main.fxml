@@ -98,7 +98,7 @@
                     <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                            prefHeight="25.0" prefWidth="25.0" text="Url" GridPane.columnIndex="0"
                            styleClass="label_field"/>
-                    <ToggleButton fx:id="httpSettings" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0"
+                    <ToggleButton fx:id="tbHeaders" GridPane.columnIndex="1" prefHeight="20.0" prefWidth="20.0"
                                   minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" contentDisplay="CENTER"
                                   onAction="#showHeadersPopOver">
                         <tooltip>
@@ -329,7 +329,7 @@
                 </padding>
             </Label>
             <Separator orientation="VERTICAL"/>
-            <Label fx:id="headersCount" maxWidth="-Infinity" text="0">
+            <Label fx:id="lbHeadersCounter" maxWidth="-Infinity" text="0">
                 <tooltip>
                     <Tooltip text="Custom headers count"/>
                 </tooltip>

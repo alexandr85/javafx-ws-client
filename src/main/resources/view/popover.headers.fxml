@@ -11,7 +11,7 @@
 <?import javafx.scene.control.Label?>
 <GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="130.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-          stylesheets="/styles/headers.css">
+          stylesheets="/styles/popover.headers.css">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES"/>
     </columnConstraints>
@@ -47,7 +47,7 @@
         <GridPane.margin>
             <Insets bottom="2.0" left="7.0" right="7.0"/>
         </GridPane.margin>
-        <Label fx:id="noHeadersLabel" text="No custom headers" alignment="CENTER" prefHeight="70" prefWidth="300"/>
-        <ListView fx:id="headerList" visible="false" managed="false" prefHeight="82.0"/>
+        <Label fx:id="lbNoHeaders" text="No custom headers" alignment="CENTER" prefHeight="70" prefWidth="300"/>
+        <ListView fx:id="headerListView" visible="false" managed="false" prefHeight="82.0"/>
     </GridPane>
 </GridPane>

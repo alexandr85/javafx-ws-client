@@ -2,6 +2,7 @@ package ru.testing.client.common.db;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.common.db.objects.Header;
 import ru.testing.client.common.db.objects.Profile;
 import ru.testing.client.common.db.objects.ProfileName;
 import ru.testing.client.common.db.objects.Settings;
@@ -107,7 +108,7 @@ public class DataBase {
             gs.executeUpdate();
             return true;
         }catch (SQLException e) {
-            LOGGER.error("Error set current settings state in database");
+            LOGGER.error("Error set current settings state: {}", e.getMessage());
             return false;
         }
     }
@@ -125,7 +126,7 @@ public class DataBase {
             gs.executeUpdate();
             return true;
         }catch (SQLException e) {
-            LOGGER.error("Error set selected profile in database");
+            LOGGER.error("Error set selected profile: {}", e.getMessage());
             return false;
         }
     }
@@ -155,7 +156,7 @@ public class DataBase {
             ResultSet r = statement.executeQuery("SELECT last_insert_rowid()");
             return r.getInt(1);
         } catch (SQLException e) {
-            LOGGER.error("Error add profile in database", e.getMessage());
+            LOGGER.error("Error add profile: {}", e.getMessage());
             return 0;
         }
     }
@@ -197,38 +198,9 @@ public class DataBase {
                     r.getInt("filter_on") == 1
             );
         } catch (SQLException e) {
-            LOGGER.error("Error get profile id `{}` from database", id, e.getMessage());
+            LOGGER.error("Error get profile id `{}`: {}", id, e.getMessage());
         }
         return profile;
-    }
-
-    /**
-     * Get all profiles from database
-     *
-     * @return List<Profile>
-     */
-    public List<Profile> getProfiles() {
-        List<Profile> profiles = new ArrayList<>();
-        try (Connection connection = getConnection()) {
-            Statement s = connection.createStatement();
-            ResultSet r = s.executeQuery("SELECT * FROM profiles");
-            while (r.next()) {
-                profiles.add(
-                        new Profile(
-                                r.getInt("id"),
-                                r.getString("name"),
-                                r.getString("url"),
-                                r.getInt("auto_scroll") == 1,
-                                r.getInt("bar_show") == 1,
-                                r.getInt("filter_show") == 1,
-                                r.getInt("filter_on") == 1
-                        )
-                );
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Error get profiles data", e.getMessage());
-        }
-        return profiles;
     }
 
     /**
@@ -249,7 +221,7 @@ public class DataBase {
                 );
             }
         } catch (SQLException e) {
-            LOGGER.error("Error get profiles data", e.getMessage());
+            LOGGER.error("Error get profiles data: {}", e.getMessage());
         }
         return profiles;
     }
@@ -269,6 +241,103 @@ public class DataBase {
         } catch (SQLException e) {
             LOGGER.error("Error remove profile id `{}` from database", profileId, e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Get headers list from database
+     *
+     * @param profileId int
+     * @return List<Header>
+     */
+    public List<Header> getHeaders(int profileId) {
+        List<Header> headers = new ArrayList<>();
+        try (Connection connection = getConnection()) {
+            Statement s = connection.createStatement();
+            ResultSet r = s.executeQuery("SELECT * FROM headers WHERE profile_id = " + profileId);
+            while (r.next()) {
+                headers.add(new Header(r.getString("name"), r.getString("value")));
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Error get headers: {}", e.getMessage());
+        }
+        return headers;
+    }
+
+    /**
+     * Add headers in database
+     *
+     * @param profileId int
+     * @param headers List<Header>
+     */
+    public void addHeaders(int profileId, List<Header> headers) {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement ps = connection
+                    .prepareStatement("INSERT INTO headers (profile_id, name, value) VALUES (?, ?, ?)");
+            for (Header header : headers) {
+                ps.setInt(1, profileId);
+                ps.setString(2, header.getName());
+                ps.setString(3, header.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            LOGGER.error("Error add headers: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Remove headers by profile id
+     *
+     * @param profileId int
+     */
+    public void removeHeaders(int profileId) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM headers WHERE profile_id = ?");
+            ps.setInt(1, profileId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error remove headers: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Add filter list in database
+     *
+     * @param profileId int
+     * @param filterList List<String>
+     */
+    public void addFilterList(int profileId, List<String> filterList) {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            PreparedStatement ps = connection
+                    .prepareStatement("INSERT INTO filter (profile_id, value) VALUES (?, ?)");
+            for (String filter : filterList) {
+                ps.setInt(1, profileId);
+                ps.setString(2, filter);
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            connection.commit();
+        } catch (SQLException e) {
+            LOGGER.error("Error add filter: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Remove filter list by profile id
+     *
+     * @param profileId int
+     */
+    public void removeFilterList(int profileId) {
+        try (Connection connection = getConnection()) {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM filter WHERE profile_id = ?");
+            ps.setInt(1, profileId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("Error remove filter: {}", e.getMessage());
         }
     }
 

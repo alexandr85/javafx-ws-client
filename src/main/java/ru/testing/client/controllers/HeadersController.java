@@ -17,52 +17,41 @@ import ru.testing.client.elements.headers.HeadersCellFactory;
 import java.util.List;
 
 /**
- * Http settings controller
+ * Http headers controller
  */
 public class HeadersController {
 
-    private MainController main;
     private ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
+    private MainController main;
 
     public HeadersController(MainController main) {
         this.main = main;
     }
 
-    /**
-     * Text fields
-     */
     @FXML
     private TextField headerName;
     @FXML
     private TextField headerValue;
-
-    /**
-     * List view
-     */
     @FXML
-    private ListView<Header> headerList;
-
-    /**
-     * Label
-     */
+    private ListView<Header> headerListView;
     @FXML
-    private Label noHeadersLabel;
+    private Label lbNoHeaders;
 
     @FXML
     private void initialize() {
-        Platform.runLater(() -> noHeadersLabel.requestFocus());
-        headerList.setItems(headerObservableList);
-        headerList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        headerList.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
-        headerList.getItems().addListener((ListChangeListener<Header>) change -> {
+        Platform.runLater(() -> lbNoHeaders.requestFocus());
+        headerListView.setItems(headerObservableList);
+        headerListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        headerListView.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
+        headerListView.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
-                main.getHeadersCount().setText(String.valueOf(size));
+                main.getLbHeadersCounter().setText(String.valueOf(size));
                 if (size > 0) {
-                    setHeaderVisible(true);
+                    setListViewVisible(true);
                 } else {
-                    setHeaderVisible(false);
-                    Platform.runLater(() -> noHeadersLabel.requestFocus());
+                    setListViewVisible(false);
+                    Platform.runLater(() -> lbNoHeaders.requestFocus());
                 }
             }
         });
@@ -83,8 +72,8 @@ public class HeadersController {
      */
     @FXML
     private void addHeader() {
-        String name = headerName.getText();
-        String value = headerValue.getText();
+        final String name = headerName.getText();
+        final String value = headerValue.getText();
         if (!name.isEmpty()) {
             if (!value.isEmpty()) {
                 if (headerObservableList.size() < 9) {
@@ -110,7 +99,7 @@ public class HeadersController {
      *
      * @return ObservableList<Header>
      */
-    public ObservableList<Header> getHeaderObservableList() {
+    ObservableList<Header> getHeaderObservableList() {
         return headerObservableList;
     }
 
@@ -122,8 +111,8 @@ public class HeadersController {
     public void setHeaders(List<Header> headers) {
         Platform.runLater(() -> {
             headerObservableList.clear();
-            headers.stream().forEach(header -> headerObservableList.add(new Header(header.getName(), header.getValue())));
-            //main.getHeadersCount().setText(String.valueOf(headers.size()));
+            headers.forEach(header -> headerObservableList.add(new Header(header.getName(), header.getValue())));
+            main.getLbHeadersCounter().setText(String.valueOf(headers.size()));
         });
     }
 
@@ -132,10 +121,19 @@ public class HeadersController {
      *
      * @param visible boolean visible status
      */
-    private void setHeaderVisible(boolean visible) {
-        headerList.setVisible(visible);
-        headerList.setManaged(visible);
-        noHeadersLabel.setVisible(!visible);
-        noHeadersLabel.setManaged(!visible);
+    private void setListViewVisible(boolean visible) {
+        headerListView.setVisible(visible);
+        headerListView.setManaged(visible);
+        lbNoHeaders.setVisible(!visible);
+        lbNoHeaders.setManaged(!visible);
+    }
+
+    /**
+     * Get header list view
+     *
+     * @return ListView<Header>
+     */
+    public ListView<Header> getHeaderListView() {
+        return headerListView;
     }
 }

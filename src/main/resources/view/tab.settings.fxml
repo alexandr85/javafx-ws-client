@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
 <TilePane alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
           stylesheets="/styles/tab.settings.css">
     <GridPane alignment="CENTER" hgap="10.0" vgap="2.0">
@@ -20,7 +21,7 @@
         </rowConstraints>
 
         <!-- Profiles block -->
-        <HBox maxHeight="260.0" GridPane.valignment="TOP">
+        <HBox maxHeight="280.0" GridPane.valignment="TOP">
             <padding>
                 <Insets bottom="20.0" left="25.0" right="25.0" top="20.0"/>
             </padding>
@@ -33,14 +34,11 @@
                     <RowConstraints maxHeight="30.0" minHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0"/>
-                    <RowConstraints minHeight="10.0" prefHeight="60.0"/>
+                    <RowConstraints minHeight="10.0" prefHeight="80.0"/>
                 </rowConstraints>
-                <Label alignment="CENTER" maxHeight="Infinity"
+                <Label alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
                        maxWidth="Infinity" style="-fx-font-size: 16px;" text="Profiles"
                        underline="true" GridPane.columnSpan="2">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
                 </Label>
                 <TextField fx:id="tfProfileName" maxWidth="Infinity" prefHeight="25.0" promptText="name"
                            GridPane.rowIndex="1"/>
@@ -70,10 +68,11 @@
                     <Button mnemonicParsing="false" prefWidth="80.0" text="Load" GridPane.columnIndex="1"
                             GridPane.rowIndex="1" onAction="#loadSelectedProfile"/>
                 </GridPane>
-                <Label GridPane.rowIndex="3" wrapText="true" maxWidth="260" textAlignment="JUSTIFY"
-                       GridPane.columnSpan="2"
-                       style="-fx-font-size: 11px; -fx-font-family: 'Helvetica', Arial, sans-serif;"
-                       text="Profile save data: url, headers, auto scroll status, show filter status, show bottom bar status, received messages, transferred messages, filter list"/>
+                <TextFlow GridPane.rowIndex="3" maxWidth="280.0" textAlignment="JUSTIFY" GridPane.columnSpan="2">
+                    <Text styleClass="profile-desc-title, profile-desc" text="Profile data:"/>
+                    <Text styleClass="profile-desc"
+                          text=" websocket url, headers, auto scroll status, show filter status, enable filter status, show bottom bar status, received messages, transferred messages, filter list"/>
+                </TextFlow>
             </GridPane>
         </HBox>
 
@@ -92,12 +91,9 @@
                     <RowConstraints maxHeight="30.0" minHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <Label alignment="CENTER" maxHeight="Infinity"
-                       maxWidth="Infinity" style="-fx-font-size: 16px;" text="Message view"
+                <Label alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
+                       maxWidth="Infinity" style="-fx-font-size: 16px;" text="Detail message"
                        underline="true" GridPane.columnSpan="2" GridPane.halignment="CENTER">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
                 </Label>
                 <GridPane hgap="5.0" vgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                     <columnConstraints>
@@ -109,20 +105,29 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES"/>
                     </rowConstraints>
                     <CheckBox fx:id="chWrap" mnemonicParsing="false" text="Text wrap by default" GridPane.columnSpan="2"
                               GridPane.rowIndex="0"/>
-                    <Label alignment="CENTER" text="Font size: 13px" GridPane.columnIndex="1"
-                           GridPane.halignment="RIGHT"
-                           fx:id="fontLabel" GridPane.rowIndex="3"/>
                     <CheckBox fx:id="chPretty" mnemonicParsing="false" text="Json pretty by default (use replace regex)"
                               GridPane.columnSpan="2" GridPane.rowIndex="1"/>
                     <TextField fx:id="tfRegex" promptText="regex for json pretty message" GridPane.columnSpan="2"
                                GridPane.rowIndex="2"/>
-                    <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" GridPane.rowIndex="3"
-                            fx:id="fontSlider"/>
-                    <GridPane hgap="15.0" vgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                    <Label alignment="CENTER" maxHeight="Infinity" GridPane.rowIndex="3" styleClass="title-label"
+                           maxWidth="Infinity" style="-fx-font-size: 16px;" text="All messages"
+                           underline="true" GridPane.columnSpan="2" GridPane.halignment="CENTER">
+                    </Label>
+                    <HBox GridPane.columnSpan="2" GridPane.rowIndex="4" maxWidth="Infinity" alignment="CENTER"
+                          styleClass="border-block">
+                        <padding>
+                            <Insets left="2" top="5" right="2" bottom="5"/>
+                        </padding>
+                        <Label text="Font size:" wrapText="true" maxWidth="140"/>
+                        <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" fx:id="fontSlider"/>
+                        <Label alignment="CENTER"  GridPane.halignment="RIGHT" fx:id="fontLabel"/>
+                    </HBox>
+                    <GridPane hgap="15.0" vgap="5.0" GridPane.columnSpan="2" GridPane.rowIndex="5">
                         <columnConstraints>
                             <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                             <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>

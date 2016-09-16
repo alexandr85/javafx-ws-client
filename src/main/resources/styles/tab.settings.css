@@ -3,6 +3,16 @@
     -fx-border-radius: 4px;
 }
 
+.title-label {
+    -fx-font-size: 16px;
+}
+
+.label,
+.check-box {
+    -fx-font-size: 13px;
+    -fx-font-family: sans-serif;
+}
+
 .combo-box .list-cell {
     -fx-background: white;
     -fx-background-color: transparent;
@@ -33,6 +43,16 @@
     -fx-font-weight: bold;
 }
 
-#txRegex {
+.profile-desc-title {
+    -fx-underline: true;
+}
+
+.profile-desc {
+    -fx-font-size: 11px;
+    -fx-font-family: serif;
+    -fx-font-smoothing-type: lcd;
+}
+
+#tfRegex {
     -fx-font-family: monospace;
 }

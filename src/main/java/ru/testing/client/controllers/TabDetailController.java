@@ -8,6 +8,7 @@ import javafx.scene.control.ToggleButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.DataBase;
+import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.elements.message.OutputMessage;
 
 /**
@@ -17,50 +18,58 @@ public class TabDetailController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TabDetailController.class.getName());
     private DataBase dataBase = DataBase.getInstance();
-    private MainController main;
     private OutputMessage message;
 
     @FXML
-    private TextArea msgTextArea;
+    private TextArea txMsgArea;
     @FXML
-    private ToggleButton wrapTButton;
+    private ToggleButton bWrapText;
     @FXML
-    private ToggleButton jsonPrettyButton;
+    private ToggleButton bPrettyJson;
     @FXML
     private Label msgTimeLabel;
     @FXML
     private Label msgLengthLabel;
 
-    public TabDetailController(OutputMessage item, MainController mainController) {
+    public TabDetailController(OutputMessage item) {
         message = item;
-        main = mainController;
     }
 
     @FXML
     private void initialize() {
 
+        // Get message settings
+        Settings settings = dataBase.getSettings();
+
         // Set message text and data on init tab
-        msgTextArea.setText(message.getMessage());
+        txMsgArea.setText(message.getMessage());
         msgTimeLabel.setText(String.format("Time: %s", message.getFormattedTime()));
         msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
 
         // Set message as json pretty or text
-        jsonPrettyButton.setOnAction(event -> {
-            if (jsonPrettyButton.isSelected()){
-                msgTextArea.setText(getJsonPretty(message.getMessage()));
+        bPrettyJson.setOnAction(event -> {
+            if (bPrettyJson.isSelected()){
+                txMsgArea.setText(getJsonPretty(message.getMessage()));
             } else {
-                msgTextArea.setText(message.getMessage());
+                txMsgArea.setText(message.getMessage());
             }
         });
+        if (settings.isJsonPretty()) {
+            bPrettyJson.fire();
+        }
 
         // Set text area wrap or not
-        wrapTButton.setOnAction(event -> {
-            if (wrapTButton.isSelected()) {
-                msgTextArea.setWrapText(true);
+        bWrapText.setOnAction(event -> {
+            if (bWrapText.isSelected()) {
+                txMsgArea.setWrapText(true);
             } else {
-                msgTextArea.setWrapText(false);
+                txMsgArea.setWrapText(false);
             }
         });
+        bWrapText.setSelected(settings.isTextWrap());
+
+        // Set message font size
+        txMsgArea.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
     }
 
     /**
@@ -71,16 +80,13 @@ public class TabDetailController {
      */
     private String getJsonPretty(String message) {
         try {
-            /*
-            String json = message.replaceAll(main.getProperties().getJsonPrettyReplaceRegex(), "");
+            String json = message.replaceAll(dataBase.getSettings().getJsonRegex(), "");
             ObjectMapper mapper = new ObjectMapper();
             Object object = mapper.readValue(json, Object.class);
             return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-            */
-            return null;
         } catch (Exception e) {
             LOGGER.error("Error pretty json from string: {}", e.getMessage());
-            jsonPrettyButton.setSelected(false);
+            bPrettyJson.setSelected(false);
             return message;
         }
     }
