@@ -182,7 +182,7 @@
     </TilePane>
 
     <!-- Tab pane with tabs -->
-    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2" tabMinWidth="120">
+    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2" tabMinWidth="120" tabClosingPolicy="ALL_TABS">
         <padding>
             <Insets left="4" right="4" bottom="4"/>
         </padding>
