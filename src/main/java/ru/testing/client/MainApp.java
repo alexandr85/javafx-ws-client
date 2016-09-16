@@ -103,18 +103,11 @@ public class MainApp extends Application {
     }
 
     /**
-     * Get primary stage center X
-     * @return Double
+     * Get primary stage
+     *
+     * @return Stage
      */
-    public static Double getCenterX() {
-        return primaryStage.getX() + primaryStage.getWidth() / 2;
-    }
-
-    /**
-     * Get primary stage center Y
-     * @return Double
-     */
-    public static Double getY() {
-        return primaryStage.getY();
+    public static Stage getPrimaryStage() {
+        return primaryStage;
     }
 }
