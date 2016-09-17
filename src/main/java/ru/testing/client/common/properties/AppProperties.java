@@ -14,23 +14,21 @@ public class AppProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(AppProperties.class);
     private static final String PROP_FILE = "app.properties";
     private static AppProperties properties;
-    private Double version;
-    private Double dbVersion;
+    private String version;
+    private String dbVersion;
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
-    private String jsonPrettyReplaceRegex;
 
     private AppProperties() {
         Properties properties = new Properties();
         try {
             properties.load(AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
-            setVersion(Double.parseDouble(properties.getProperty("version")));
-            setDbVersion(Double.parseDouble(properties.getProperty("db.version")));
+            setVersion(properties.getProperty("version"));
+            setDbVersion(properties.getProperty("db.version"));
             setTagsUrl(properties.getProperty("tags.url"));
             setLastReleaseUrl(properties.getProperty("last.release.url"));
             setAboutUrl(properties.getProperty("about.url"));
-            setJsonPrettyReplaceRegex(properties.getProperty("json.pretty.replace.regex"));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -47,19 +45,19 @@ public class AppProperties {
         return properties;
     }
 
-    public Double getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    private void setVersion(Double version) {
+    private void setVersion(String version) {
         this.version = version;
     }
 
-    public Double getDbVersion() {
+    public String getDbVersion() {
         return dbVersion;
     }
 
-    private void setDbVersion(Double dbVersion) {
+    private void setDbVersion(String dbVersion) {
         this.dbVersion = dbVersion;
     }
 
@@ -85,13 +83,5 @@ public class AppProperties {
 
     private void setAboutUrl(String aboutUrl) {
         this.aboutUrl = aboutUrl;
-    }
-
-    public String getJsonPrettyReplaceRegex() {
-        return jsonPrettyReplaceRegex;
-    }
-
-    private void setJsonPrettyReplaceRegex(String jsonPrettyReplaceRegex) {
-        this.jsonPrettyReplaceRegex = jsonPrettyReplaceRegex;
     }
 }

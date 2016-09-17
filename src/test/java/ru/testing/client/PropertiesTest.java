@@ -22,9 +22,9 @@ public class PropertiesTest {
 
     @Test
     public void testVersionValue() {
-        Double version = properties.getVersion();
-        assertThat("Version type", version, instanceOf(Double.class));
-        assertThat("Version value", version, greaterThan(0.1));
+        String version = properties.getVersion();
+        assertThat("Version type", version, instanceOf(String.class));
+        assertThat("Version value", Double.parseDouble(version), greaterThan(1.0));
     }
 
     @Test

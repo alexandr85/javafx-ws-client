@@ -41,7 +41,7 @@ public class ReleaseCheckerTest {
                 LOGGER.error("Thread interrupted exception: {}", e.getMessage());
             }
         }
-        Double version = properties.getVersion();
-        assertThat("Version value", checker.getLastVersion(), both(lessThanOrEqualTo(version)).and(greaterThan(1.0)));
+        String currentVersion = properties.getVersion();
+        assertThat("Current version is old", checker.isCurrentVersionOld(currentVersion, checker.getLastVersion()), is(false));
     }
 }

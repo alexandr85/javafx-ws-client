@@ -16,6 +16,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -28,8 +29,8 @@ public class ReleaseChecker extends Thread {
     private static final int TIMEOUT = 30000;
     private static ReleaseChecker instance;
     private AppProperties properties = AppProperties.getAppProperties();
+    private String lastVersion = "1.0";
     private Client client;
-    private double lastVersion;
 
     private ReleaseChecker() {
 
@@ -50,12 +51,12 @@ public class ReleaseChecker extends Thread {
         try {
             if (!url.isEmpty()) {
                 List<TagInfo> tags = createRequest();
-                setLastVersion(Double.valueOf(tags.get(0).getName().replaceAll("v", "")));
+                setLastVersion(tags.get(0).getName().replace("v", ""));
             }
-            if (properties.getVersion() < getLastVersion()) {
+            if (isCurrentVersionOld(properties.getVersion(), lastVersion)) {
                 Platform.runLater(() -> {
                     boolean goToPage = new Dialogs().getConfirmationDialog("Great news!",
-                            String.format("New version `%s` is available! Go to new release page?", getLastVersion()));
+                            String.format("New version `%s` is available! Go to new release page?", lastVersion));
                     if (goToPage && Desktop.isDesktopSupported()) {
                         try {
                             Desktop.getDesktop().browse(new URI(properties.getLastReleaseUrl()));
@@ -68,7 +69,6 @@ public class ReleaseChecker extends Thread {
             LOGGER.debug("Last release version on git hub: {}", getLastVersion());
         } catch (IOException | NumberFormatException e) {
             LOGGER.error(e.getMessage());
-            setLastVersion(1.0);
         }
     }
 
@@ -103,18 +103,38 @@ public class ReleaseChecker extends Thread {
     /**
      * Get last tag version from git hub
      *
-     * @return Double
+     * @return String
      */
-    public double getLastVersion() {
+    public String getLastVersion() {
         return lastVersion;
     }
 
     /**
      * Set last tag version
      *
-     * @param lastVersion double
+     * @param lastVersion String
      */
-    private void setLastVersion(double lastVersion) {
+    private void setLastVersion(String lastVersion) {
         this.lastVersion = lastVersion;
+    }
+
+    /**
+     * Compare current and latest git hub versions
+     *
+     * @param currentVersion String
+     * @param newVersion String from git hub
+     * @return boolean compare status
+     */
+    public boolean isCurrentVersionOld(String currentVersion, String newVersion) {
+        int[] cvt = Arrays.stream(currentVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
+        int[] nvt = Arrays.stream(newVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
+        if (cvt[0] > nvt[0]) {
+            return false;
+        } else if (cvt[0] < nvt[0]) {
+            return true;
+        } else if (cvt[1] < nvt[1]) {
+            return true;
+        }
+        return false;
     }
 }
