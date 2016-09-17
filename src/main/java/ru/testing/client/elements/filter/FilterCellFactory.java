@@ -38,7 +38,7 @@ class FilterCellFactory extends ListCell<String> {
         ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.clearPopOverCell(cell),
+                m.removeCell(cell),
                 m.clearListView(list)
         );
         return contextMenu;

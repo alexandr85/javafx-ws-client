@@ -16,11 +16,11 @@ import java.io.IOException;
 /**
  * Tab with detail message
  */
-public class DetailTab extends Tab {
+public class DetailMsgTab extends Tab {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
 
-    public DetailTab(final OutputMessage item, MainController main) {
+    public DetailMsgTab(final OutputMessage item, MainController main) {
         ObservableList<Tab> tabsList = main.getTabPane().getTabs();
         if (item != null) {
 
@@ -31,7 +31,7 @@ public class DetailTab extends Tab {
 
             // Load detail message view form
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.detail.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.detail.msg.fxml"));
                 loader.setController(new TabDetailController(item));
                 Parent root = loader.load();
                 this.setContent(root);

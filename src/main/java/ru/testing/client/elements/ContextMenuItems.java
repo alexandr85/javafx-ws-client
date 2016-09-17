@@ -4,10 +4,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import org.controlsfx.control.IndexedCheckModel;
 import ru.testing.client.common.FilesOperations;
-import ru.testing.client.common.db.objects.Profile;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.elements.message.DetailTab;
+import ru.testing.client.elements.message.DetailMsgTab;
 import ru.testing.client.elements.message.OutputMessage;
 
 
@@ -29,12 +29,27 @@ public class ContextMenuItems {
     }
 
     /**
+     * Menu item for clear all cell in check list view
+     *
+     * @param list ObservableList
+     * @return MenuItem
+     */
+    public MenuItem clearCheckListView(ObservableList list, IndexedCheckModel<String> checkModel) {
+        MenuItem deleteAll = new MenuItem("Delete all");
+        deleteAll.setOnAction(event -> {
+            checkModel.clearChecks();
+            list.clear();
+        });
+        return deleteAll;
+    }
+
+    /**
      * Menu item for delete selected item cell
      *
      * @param cell ListCell
      * @return MenuItem
      */
-    public MenuItem clearPopOverCell(ListCell cell) {
+    public MenuItem removeCell(ListCell cell) {
         MenuItem deleteCell = new MenuItem("Delete item");
         deleteCell.setOnAction(event -> cell.getListView().getItems().remove(cell.getIndex()));
         return deleteCell;
@@ -125,7 +140,7 @@ public class ContextMenuItems {
      */
     public MenuItem showMessage(final OutputMessage item, MainController main) {
         MenuItem show = new MenuItem("Show body message");
-        show.setOnAction(event -> new DetailTab(item, main));
+        show.setOnAction(event -> new DetailMsgTab(item, main));
         return show;
     }
 
@@ -135,7 +150,7 @@ public class ContextMenuItems {
      * @param cell ListCell<String>
      * @return MenuItem
      */
-    public MenuItem copyHistoryText(ListCell<String> cell) {
+    public MenuItem copySendMsg(ListCell<String> cell) {
         MenuItem copyItem = new MenuItem("Copy message");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();

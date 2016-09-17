@@ -29,7 +29,7 @@ public class HeadersPopOver extends PopOver {
         });
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.headers.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.http.headers.fxml"));
             headersController = new HeadersController(main);
             loader.setController(headersController);
             Parent root = loader.load();

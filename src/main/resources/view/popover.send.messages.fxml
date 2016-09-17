@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import org.controlsfx.control.CheckListView?>
+
+<GridPane hgap="5" vgap="7" prefHeight="180.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8"
+          xmlns:fx="http://javafx.com/fxml/1" stylesheets="/styles/popover.send.messages.css">
+    <padding>
+        <Insets top="7"/>
+    </padding>
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="15" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="130" vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <FlowPane GridPane.rowIndex="0" alignment="CENTER" hgap="10">
+
+        <TextField fx:id="txMsgValue" promptText="message" prefWidth="300"/>
+        <Button fx:id="btAddMsg" onAction="#addMessage" mnemonicParsing="false"
+                minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0">
+            <graphic>
+                <ImageView>
+                    <Image url="@/images/add.png" requestedWidth="25.0" requestedHeight="25.0"/>
+                </ImageView>
+            </graphic>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </FlowPane>
+    <Label fx:id="lbCheckInfo" styleClass="check-info" GridPane.rowIndex="1" maxWidth="Infinity" visible="false"
+           text="Check messages for auto send after successful connect"/>
+    <GridPane GridPane.rowIndex="2">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="ALWAYS"/>
+        </rowConstraints>
+        <GridPane.margin>
+            <Insets bottom="2.0" left="7.0" right="7.0"/>
+        </GridPane.margin>
+        <Label fx:id="noMessagesLabel" text="No messages" alignment="CENTER" prefHeight="70" prefWidth="400"/>
+        <CheckListView fx:id="messagesList" visible="false" managed="false" prefHeight="112.0"/>
+    </GridPane>
+</GridPane>

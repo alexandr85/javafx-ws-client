@@ -4,6 +4,7 @@ import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.objects.Header;
+import ru.testing.client.elements.Dialogs;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -121,11 +122,14 @@ public class Client extends Endpoint {
      * Send string message to websocket session
      *
      * @param message String
-     * @throws IOException send message
      */
-    public void sendMessage(String message) throws IOException {
-        if (session != null) {
-            session.getBasicRemote().sendText(message);
+    public void sendMessage(String message) {
+        try {
+            if (session != null) {
+                session.getBasicRemote().sendText(message);
+            }
+        } catch (IOException e) {
+            new Dialogs().getExceptionDialog(e);
         }
     }
 

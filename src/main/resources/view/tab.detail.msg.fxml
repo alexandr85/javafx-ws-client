@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-          stylesheets="/styles/tab.detail.css">
+          stylesheets="/styles/tab.detail.msg.css">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
     </columnConstraints>
@@ -45,9 +45,9 @@
                               text="Json pretty" GridPane.columnIndex="1" GridPane.rowIndex="0">
                 </ToggleButton>
             </GridPane>
-            <GridPane maxWidth="260.0" GridPane.columnIndex="1">
+            <GridPane maxWidth="320.0" GridPane.columnIndex="1">
                 <columnConstraints>
-                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="130.0"/>
+                    <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="190.0"/>
                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="130.0"/>
                 </columnConstraints>
                 <rowConstraints>

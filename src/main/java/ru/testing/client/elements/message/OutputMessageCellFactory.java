@@ -50,7 +50,7 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
             }
             if (event.getButton().equals(MouseButton.PRIMARY)) {
                 if (event.getClickCount() >= 2) {
-                    new DetailTab(getItem(), main);
+                    new DetailMsgTab(getItem(), main);
                 }
             }
         });

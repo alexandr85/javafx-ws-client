@@ -1,0 +1,9 @@
+.check-info {
+    -fx-font-size: 12px;
+    -fx-alignment: center;
+    -fx-font-style: italic;
+}
+
+#messagesList {
+    -fx-font-size: 13px;
+}

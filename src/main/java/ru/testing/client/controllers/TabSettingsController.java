@@ -13,7 +13,7 @@ import ru.testing.client.common.db.objects.ProfileName;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.message.DetailTab;
+import ru.testing.client.elements.message.DetailMsgTab;
 
 /**
  * Controller for settings tab form
@@ -79,14 +79,10 @@ public class TabSettingsController {
 
         // New profile name text field listener
         tfProfileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (tfProfileName.getText().length() > 0) {
-                bSaveProfile.setDisable(false);
-            } else {
-                bSaveProfile.setDisable(true);
-            }
-            if (tfProfileName.getText().length() > TF_PROFILE_NAME_MAX_LENGTH) {
-                String s = tfProfileName.getText().substring(0, TF_PROFILE_NAME_MAX_LENGTH);
-                tfProfileName.setText(s);
+            String text = tfProfileName.getText().trim();
+            bSaveProfile.setDisable(text.length() <= 0);
+            if (text.length() > TF_PROFILE_NAME_MAX_LENGTH) {
+                tfProfileName.setText(text.substring(0, TF_PROFILE_NAME_MAX_LENGTH));
             }
         });
         tfProfileName.setOnKeyPressed(keyEvent -> {
@@ -119,7 +115,7 @@ public class TabSettingsController {
             main.getOutputTextView()
                     .setStyle(String.format(FONT_SIZE_FORMAT, dataBase.getSettings().getFontSize()));
             for (Tab tab : main.getTabPane().getTabs()) {
-                if (tab instanceof DetailTab) {
+                if (tab instanceof DetailMsgTab) {
                     Node tabNode = tab.getContent();
                     if (tabNode instanceof GridPane) {
                         for (Node node : ((GridPane) tabNode).getChildren()) {

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.elements.message.OutputMessage;
+import ru.testing.client.elements.message.OutputMessageType;
 
 /**
  * Controller for detail message tab form
@@ -43,7 +44,9 @@ public class TabDetailController {
 
         // Set message text and data on init tab
         txMsgArea.setText(message.getMessage());
-        msgTimeLabel.setText(String.format("Time: %s", message.getFormattedTime()));
+        String sb = (message.getMessageType() == OutputMessageType.RECEIVED ? "Received " : "Send ") +
+                "time: " + message.getFormattedTime();
+        msgTimeLabel.setText(sb);
         msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
 
         // Set message as json pretty or text
@@ -66,7 +69,9 @@ public class TabDetailController {
                 txMsgArea.setWrapText(false);
             }
         });
-        bWrapText.setSelected(settings.isTextWrap());
+        if (settings.isTextWrap()) {
+            bWrapText.fire();
+        }
 
         // Set message font size
         txMsgArea.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));

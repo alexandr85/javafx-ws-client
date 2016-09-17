@@ -147,7 +147,7 @@
                     <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
                            prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0" styleClass="label_field"/>
                     <TextField fx:id="sendMsgTextField" disable="true" maxWidth="Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" prefHeight="25.0" prefWidth="420.0" promptText="some text message"
+                               minWidth="-Infinity" prefHeight="25.0" prefWidth="420.0" promptText="text message"
                                GridPane.columnIndex="1">
                         <padding>
                             <Insets left="5.0"/>
@@ -164,7 +164,7 @@
                         </tooltip>
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/history.png"/>
+                                <Image url="@/images/send-message.png"/>
                             </ImageView>
                         </graphic>
                     </ToggleButton>

@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class HeadersController {
 
-    private ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
+    private final ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
     private MainController main;
 
     public HeadersController(MainController main) {
@@ -51,7 +51,7 @@ public class HeadersController {
                     setListViewVisible(true);
                 } else {
                     setListViewVisible(false);
-                    Platform.runLater(() -> lbNoHeaders.requestFocus());
+                    lbNoHeaders.requestFocus();
                 }
             }
         });

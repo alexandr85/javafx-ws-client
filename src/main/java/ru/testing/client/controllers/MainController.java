@@ -30,11 +30,8 @@ import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
-import ru.testing.client.elements.history.SendHistoryPopOver;
-import ru.testing.client.elements.message.OutputMessage;
-import ru.testing.client.elements.message.OutputMessageCellFactory;
-import ru.testing.client.elements.message.OutputMessageFormat;
-import ru.testing.client.elements.message.OutputMessageType;
+import ru.testing.client.elements.message.*;
+import ru.testing.client.elements.message.SendMessagesPopOver;
 import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
@@ -44,7 +41,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
@@ -56,7 +52,6 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
-    private final ObservableList<String> sendMsgList = FXCollections.observableArrayList();
     private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
     private final ObservableList<OutputMessage> outputFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
@@ -68,7 +63,7 @@ public class MainController {
     private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
-    private SendHistoryPopOver historyPopOver;
+    private SendMessagesPopOver sendMessagesPopOver;
     private FilterListPopOver filterPopOver;
     private SettingsTab settingsTab;
 
@@ -239,17 +234,6 @@ public class MainController {
                 sendWebsocketMessage();
             }
         });
-        sendMsgList.addListener((ListChangeListener<String>) c -> {
-            if (c.next()) {
-                if (sendMsgList.size() > 0) {
-                    sendMsgHistoryBtn.setDisable(false);
-                } else {
-                    sendMsgHistoryBtn.setDisable(true);
-                    sendMsgHistoryBtn.setSelected(false);
-                    getHistoryPopOver().hide();
-                }
-            }
-        });
 
         // Filters
         filterList.addListener((ListChangeListener<String>) c -> {
@@ -331,16 +315,15 @@ public class MainController {
      */
     @FXML
     private void sendWebsocketMessage() {
-        String sendMsg = sendMsgTextField.getText();
-        if (!sendMsg.isEmpty()) {
-            sendMsgList.add(sendMsg);
-            addMessageToOutput(OutputMessageType.SEND, sendMsg);
+        String text = sendMsgTextField.getText().trim();
+        if (!text.isEmpty()) {
+            ObservableList<String> sendList = getSendMessagesPopOver().getController().getList();
+            if (!sendList.contains(text)) {
+                sendList.add(text);
+            }
+            addMessageToOutput(OutputMessageType.SEND, text);
             if (client != null) {
-                try {
-                    client.sendMessage(sendMsg);
-                } catch (IOException e) {
-                    new Dialogs().getExceptionDialog(e);
-                }
+                client.sendMessage(text);
             }
             sendMsgTextField.clear();
         }
@@ -475,9 +458,9 @@ public class MainController {
     @FXML
     private void showSendHistoryPopOver() {
         if (sendMsgHistoryBtn.isSelected()) {
-            getHistoryPopOver().show(sendMsgHistoryBtn, -7);
+            getSendMessagesPopOver().show(sendMsgHistoryBtn, -7);
         } else {
-            getHistoryPopOver().hide();
+            getSendMessagesPopOver().hide();
         }
     }
 
@@ -538,13 +521,13 @@ public class MainController {
     /**
      * Get send message history pop over
      *
-     * @return SendHistoryPopOver
+     * @return SendMessagesPopOver
      */
-    private SendHistoryPopOver getHistoryPopOver() {
-        if (historyPopOver == null) {
-            historyPopOver = new SendHistoryPopOver(this);
+    public SendMessagesPopOver getSendMessagesPopOver() {
+        if (sendMessagesPopOver == null) {
+            sendMessagesPopOver = new SendMessagesPopOver(this);
         }
-        return historyPopOver;
+        return sendMessagesPopOver;
     }
 
     /**
@@ -575,24 +558,6 @@ public class MainController {
      */
     public ToggleButton getSendMsgHistoryBtn() {
         return sendMsgHistoryBtn;
-    }
-
-    /**
-     * Send message observable list
-     *
-     * @return ObservableList<String>
-     */
-    public ObservableList<String> getSendMsgList() {
-        return sendMsgList;
-    }
-
-    /**
-     * Send message field
-     *
-     * @return TextField
-     */
-    public TextField getSendMsgTextField() {
-        return sendMsgTextField;
     }
 
     /**
@@ -632,6 +597,15 @@ public class MainController {
     }
 
     /**
+     * Get send message text field
+     *
+     * @return TextField
+     */
+    public TextField getSendMsgTextField() {
+        return sendMsgTextField;
+    }
+
+    /**
      * Set data from selected session
      *
      * @param profileId int
@@ -663,17 +637,6 @@ public class MainController {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Get send message list
-     *
-     * @return List<ItemElement>
-     */
-    List<String> getSendMsgItems() {
-        List<String> items = new ArrayList<>();
-        sendMsgList.forEach(items::add);
-        return items;
     }
 
     /**
@@ -799,6 +762,13 @@ public class MainController {
             client.setHeaders(getHeadersList());
             client.openConnection();
             client.setMessageHandler(new MessageHandler(this));
+            getSendMessagesPopOver().getController().getSentMessages().forEach(sentMessage -> {
+                if (client != null && sentMessage.isAutoSend()) {
+                    String msgValue = sentMessage.getValue();
+                    client.sendMessage(msgValue);
+                    addMessageToOutput(OutputMessageType.SEND, msgValue);
+                }
+            });
             connectionStatus = true;
         } catch (Exception e) {
             LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
