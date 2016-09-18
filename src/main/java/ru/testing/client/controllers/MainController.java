@@ -688,11 +688,11 @@ public class MainController {
 
             // Get profile send messages
             List<SendMessage> sendMessages = dataBase.getSendMessages(profileId);
+            CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
+            IndexedCheckModel<String> checkModel = listView.getCheckModel();
+            checkModel.clearChecks();
+            listView.getItems().clear();
             if (sendMessages != null) {
-                CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
-                IndexedCheckModel<String> checkModel = listView.getCheckModel();
-                listView.getItems().clear();
-                checkModel.clearChecks();
                 for (int i = 0; i < sendMessages.size(); i++) {
                     SendMessage message = sendMessages.get(i);
                     listView.getItems().add(i, message.getValue());
