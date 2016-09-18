@@ -252,7 +252,7 @@ public class MainController {
                                     receivedFilteredMessageList.add(message);
                                 }
                             }));
-                    outputSetList(true);
+                    outputSetList(filtered);
                 } else {
                     filterListBtn.setDisable(true);
                     filterListBtn.setSelected(false);
@@ -376,8 +376,9 @@ public class MainController {
      */
     @FXML
     private void addToFilterList() {
-        if (!filterTextField.getText().isEmpty()) {
-            filterList.add(filterTextField.getText());
+        String text = filterTextField.getText().trim();
+        if (!text.isEmpty()) {
+            filterList.add(text);
             filterTextField.clear();
         }
         filterTextField.requestFocus();
@@ -657,6 +658,11 @@ public class MainController {
         if (profile != null) {
             LOGGER.debug("Load profile name: {}", profile.getName());
 
+            // Disconnect if connected
+            if (connectionStatus) {
+                connectBtn.fire();
+            }
+
             // Set websocket server url
             serverUrl.setText(profile.getUrl());
 
@@ -673,6 +679,10 @@ public class MainController {
             if (filters != null) {
                 filterList.clear();
                 filterList.addAll(filters);
+
+                // Set filter status is false
+                filtered = true;
+                changeFilterStatus();
             }
 
             // Get profile send messages
@@ -680,7 +690,13 @@ public class MainController {
             if (sendMessages != null) {
                 CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
                 listView.getItems().clear();
-                //listView.getItems().addAll(sendMessages)
+                for (int i = 0; i < sendMessages.size(); i++) {
+                    SendMessage message = sendMessages.get(i);
+                    listView.getItems().add(i, message.getValue());
+                    if (message.isAutoSend()) {
+                        listView.getCheckModel().check(i);
+                    }
+                }
             }
 
             // Get profile received messages
@@ -689,7 +705,6 @@ public class MainController {
                 receivedMessageList.clear();
                 receivedMessageList.addAll(receivedMessages);
             }
-
         } else {
             return false;
         }
@@ -770,33 +785,6 @@ public class MainController {
      */
     public void setProgressVisible(boolean isVisible) {
         Platform.runLater(() -> progress.setVisible(isVisible));
-    }
-
-    /**
-     * Get visible filter pane status
-     *
-     * @return boolean
-     */
-    boolean isFilterVisible() {
-        return showFilter.isSelected();
-    }
-
-    /**
-     * Get auto scroll status
-     *
-     * @return boolean
-     */
-    boolean isAutoScroll() {
-        return autoScroll;
-    }
-
-    /**
-     * Get status bar visible status
-     *
-     * @return boolean
-     */
-    boolean isStatusBarShow() {
-        return statusBar.isVisible();
     }
 
     /**
