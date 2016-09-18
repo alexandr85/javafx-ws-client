@@ -1,7 +1,8 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.common.db.objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.elements.message.ReceivedMessageType;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -12,22 +13,22 @@ import static ru.testing.client.common.Utils.getDateFormat;
 /**
  * Class described output message object
  */
-public class OutputMessage {
+public class ReceivedMessage {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OutputMessage.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReceivedMessage.class);
 
     private Date time;
     private String message;
-    private OutputMessageType type;
+    private ReceivedMessageType type;
 
-    public OutputMessage(OutputMessageType type, String message) {
+    public ReceivedMessage(ReceivedMessageType type, String message) {
         this.type = type;
         this.time = Calendar.getInstance().getTime();
         this.message = message;
     }
 
-    public OutputMessage(String time, String message) {
-        this.type = OutputMessageType.RECEIVED;
+    public ReceivedMessage(ReceivedMessageType type, String time, String message) {
+        this.type = type;
         this.message = message;
         try {
             this.time = getDateFormat().parse(time);
@@ -67,14 +68,14 @@ public class OutputMessage {
     /**
      * Get cell message type
      *
-     * @return OutputMessageType
+     * @return ReceivedMessageType
      */
-    public OutputMessageType getMessageType() {
+    public ReceivedMessageType getMessageType() {
         return type;
     }
 
     /**
-     * Get OutputMessage as string
+     * Get ReceivedMessage as string
      *
      * @return String
      */

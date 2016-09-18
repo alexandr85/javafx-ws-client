@@ -3,8 +3,9 @@
     -fx-border-radius: 4px;
 }
 
-.title-label {
+.label.title-label {
     -fx-font-size: 16px;
+    -fx-underline: true;
 }
 
 .label,
@@ -43,14 +44,11 @@
     -fx-font-weight: bold;
 }
 
-.profile-desc-title {
-    -fx-underline: true;
-}
-
 .profile-desc {
-    -fx-font-size: 11px;
+    -fx-font-size: 12px;
     -fx-font-family: serif;
     -fx-font-smoothing-type: lcd;
+    -fx-font-style: italic;
 }
 
 #tfRegex {

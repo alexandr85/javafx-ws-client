@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.MainController;
 
-import static ru.testing.client.elements.message.OutputMessageType.RECEIVED;
+import static ru.testing.client.elements.message.ReceivedMessageType.RECEIVED;
 
 /**
  * FX output message handler

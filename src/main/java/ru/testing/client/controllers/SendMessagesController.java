@@ -24,7 +24,7 @@ public class SendMessagesController {
     private MainController main;
 
     @FXML
-    private TextField txMsgValue;
+    private TextField tfMsgValue;
     @FXML
     private Button btAddMsg;
     @FXML
@@ -32,7 +32,7 @@ public class SendMessagesController {
     @FXML
     private Label noMessagesLabel;
     @FXML
-    private CheckListView<String> messagesList;
+    private CheckListView<String> checkListView;
 
     public SendMessagesController(MainController mainController) {
         main = mainController;
@@ -42,9 +42,9 @@ public class SendMessagesController {
     private void initialize() {
 
         // Setup messages list
-        messagesList.setItems(list);
-        messagesList.setCellFactory(list -> new SendMessagesCellFactory(main, this));
-        messagesList.getItems().addListener((ListChangeListener<? super String>) change -> {
+        checkListView.setItems(list);
+        checkListView.setCellFactory(list -> new SendMessagesCellFactory(main, this));
+        checkListView.getItems().addListener((ListChangeListener<? super String>) change -> {
             if (change.next()) {
                 int size = list.size();
                 if (size > 0) {
@@ -57,11 +57,9 @@ public class SendMessagesController {
         });
 
         // Setup new message value and add button
-        txMsgValue.textProperty().addListener((observable, oldValue, newValue) -> {
-            String text = txMsgValue.getText().trim();
-            btAddMsg.setDisable(text.length() <= 0);
-        });
-        txMsgValue.setOnKeyPressed(key -> {
+        checkTextFieldMessage();
+        tfMsgValue.textProperty().addListener((observable, oldValue, newValue) -> checkTextFieldMessage());
+        tfMsgValue.setOnKeyPressed(key -> {
             if (key.getCode() == KeyCode.ENTER) {
                 addMessage();
             }
@@ -73,13 +71,13 @@ public class SendMessagesController {
      */
     @FXML
     public void addMessage() {
-        String text = txMsgValue.getText().trim();
+        String text = tfMsgValue.getText().trim();
         if (!text.isEmpty()) {
             if (!list.contains(text)) {
                 list.add(text);
             }
-            txMsgValue.clear();
-            txMsgValue.requestFocus();
+            tfMsgValue.clear();
+            tfMsgValue.requestFocus();
         }
     }
 
@@ -91,7 +89,7 @@ public class SendMessagesController {
     List<SendMessage> getSentMessages() {
         List<SendMessage> checkedList = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            checkedList.add(i, new SendMessage(messagesList.getCheckModel().isChecked(i), list.get(i)));
+            checkedList.add(i, new SendMessage(checkListView.getCheckModel().isChecked(i), list.get(i)));
         }
         return checkedList;
     }
@@ -110,8 +108,8 @@ public class SendMessagesController {
      *
      * @return CheckListView<String>
      */
-    public CheckListView<String> getMessagesList() {
-        return messagesList;
+    public CheckListView<String> getCheckListView() {
+        return checkListView;
     }
 
     /**
@@ -120,11 +118,19 @@ public class SendMessagesController {
      * @param visible boolean visible status
      */
     private void setListViewVisible(boolean visible) {
-        messagesList.setVisible(visible);
-        messagesList.setManaged(visible);
+        checkListView.setVisible(visible);
+        checkListView.setManaged(visible);
         lbCheckInfo.setVisible(visible);
         lbCheckInfo.setManaged(visible);
         noMessagesLabel.setVisible(!visible);
         noMessagesLabel.setManaged(!visible);
+    }
+
+    /**
+     * Check text field message value
+     */
+    private void checkTextFieldMessage() {
+        String text = tfMsgValue.getText().trim();
+        btAddMsg.setDisable(text.length() <= 0);
     }
 }

@@ -44,6 +44,12 @@ public class TabSettingsController {
     private Label fontLabel;
     @FXML
     private Slider fontSlider;
+    @FXML
+    private CheckBox cbAutoScroll;
+    @FXML
+    private CheckBox cbShowBar;
+    @FXML
+    private CheckBox cbShowFilter;
 
     public TabSettingsController(MainController mainController) {
         main = mainController;
@@ -67,15 +73,7 @@ public class TabSettingsController {
         updateProfilesList();
 
         // Choice box listener
-        cbProfilesNames.setOnAction(event -> {
-            if (cbProfilesNames.getItems().size() > 0) {
-                if (cbProfilesNames.getSelectionModel().getSelectedItem().getId() == 0) {
-                    bRemove.setDisable(true);
-                } else {
-                    bRemove.setDisable(false);
-                }
-            }
-        });
+        cbProfilesNames.setOnAction(event -> checkSelectedProfile());
 
         // New profile name text field listener
         tfProfileName.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -87,7 +85,7 @@ public class TabSettingsController {
         });
         tfProfileName.setOnKeyPressed(keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ENTER) {
-                addProfile();
+                addNewProfile();
             }
         });
     }
@@ -105,32 +103,54 @@ public class TabSettingsController {
      */
     @FXML
     private void saveSettings() {
+
+        // Enable loader
+        main.setProgressVisible(true);
+
+        // Save new settings in database
         boolean status = dataBase.setSettings(new Settings(
                 ((Number) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
                 chPretty.isSelected(),
-                tfRegex.getText()
+                tfRegex.getText(),
+                cbAutoScroll.isSelected(),
+                cbShowBar.isSelected(),
+                cbShowFilter.isSelected()
         ));
         if (status) {
+
+            Settings settings = dataBase.getSettings();
+
+            // Set font size for all messages
             main.getOutputTextView()
-                    .setStyle(String.format(FONT_SIZE_FORMAT, dataBase.getSettings().getFontSize()));
+                    .setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
             for (Tab tab : main.getTabPane().getTabs()) {
                 if (tab instanceof DetailMsgTab) {
                     Node tabNode = tab.getContent();
                     if (tabNode instanceof GridPane) {
                         for (Node node : ((GridPane) tabNode).getChildren()) {
                             if (node instanceof TextArea) {
-                                node.setStyle(String.format(FONT_SIZE_FORMAT, dataBase.getSettings().getFontSize()));
+                                node.setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
                                 break;
                             }
                         }
                     }
                 }
             }
-            new Dialogs().getInfoDialog("Settings save successful");
 
+            // Set auto scroll status
+            main.setAutoScroll(settings.isAutoScroll());
+
+            // Set show bar status
+            main.setStatusBarVisible(settings.isBarShow());
+
+            // Set show filter status
+            main.setFilterVisible(settings.isFilterShow());
+
+            // Show successful dialog
+            new Dialogs().getInfoDialog("Settings save successful", main, false);
         } else {
-            new Dialogs().getWarningDialog("Error save settings. See log.");
+            new Dialogs().getWarningDialog("Error save settings. See log.", main, false);
         }
     }
 
@@ -138,48 +158,43 @@ public class TabSettingsController {
      * Add new profile
      */
     @FXML
-    private void addProfile() {
+    private void addNewProfile() {
+
+        // Enable loader
+        main.setProgressVisible(true);
+
+        // Add new profile by name
         String profileName = tfProfileName.getText();
         if (profileName.length() > 0) {
-            main.setProgressVisible(true);
             int profileId = dataBase.addProfile(new Profile(
                     profileName,
-                    main.getServerUrl(),
-                    main.isAutoScroll(),
-                    main.isStatusBarShow(),
-                    main.isFilterVisible(),
-                    main.isFiltered()
+                    main.getServerUrl()
             ));
             if (profileId != 0) {
+
+                // Add headers
                 dataBase.addHeaders(profileId, main.getHeadersList());
 
+                // Add filters
+                dataBase.addFilters(profileId, main.getFilterList());
 
-                // todo: add filter list & messages
+                // Add send messages
+                dataBase.addSendMessages(profileId, main.getSendMessages());
+
+                // Add received messages
+                dataBase.addReceivedMessages(profileId, main.getOutputTextView().getItems());
+
+                // Prepare profiles list
                 dataBase.setCurrentProfileId(profileId);
                 updateProfilesList();
                 tfProfileName.clear();
                 cbProfilesNames.requestFocus();
-                main.setProgressVisible(false);
-                new Dialogs().getInfoDialog(String.format("Profile `%s` add & set as current", profileName));
+                new Dialogs().getInfoDialog(String.format("Profile `%s` add & set as current", profileName), main, false);
             }
         }
-    }
 
-    /**
-     * Remove selected profile
-     */
-    @FXML
-    private void removeProfile() {
-        int selectedId = cbProfilesNames.getSelectionModel().getSelectedItem().getId();
-        if (selectedId == dataBase.getCurrentProfile()) {
-            dataBase.setCurrentProfileId(0);
-            selectCurrentProfile();
-            loadSelectedProfile();
-        }
-        dataBase.removeProfile(selectedId);
-        dataBase.removeHeaders(selectedId);
-        profilesList.removeIf(profileName -> profileName.getId() == selectedId);
-        selectCurrentProfile();
+        // Disable loader
+        main.setProgressVisible(false);
     }
 
     /**
@@ -187,14 +202,61 @@ public class TabSettingsController {
      */
     @FXML
     private void loadSelectedProfile() {
+
+        // Enable loader
+        main.setProgressVisible(true);
+
+        // Load selected profile
         ProfileName selectedProfile = cbProfilesNames.getSelectionModel().getSelectedItem();
         boolean setCurrent = dataBase.setCurrentProfileId(selectedProfile.getId());
         boolean loadProfile = main.loadProfile(selectedProfile.getId());
         if (setCurrent && loadProfile) {
-            new Dialogs().getInfoDialog(String.format("Profile `%s` load successful", selectedProfile.toString()));
+            new Dialogs().getInfoDialog(String.format("Profile `%s` load successful", selectedProfile.toString()), main, false);
         } else {
-            new Dialogs().getWarningDialog("Error load selected profile. See log.");
+            new Dialogs().getWarningDialog("Error load selected profile. See log.", main, false);
         }
+    }
+
+    /**
+     * Remove selected profile
+     */
+    @FXML
+    private void removeSelectedProfile() {
+
+        // Enable loader
+        main.setProgressVisible(true);
+
+        // Get selected profile id
+        int profileId = cbProfilesNames.getSelectionModel().getSelectedItem().getId();
+
+        // Select current profile name in combo box
+        if (profileId == dataBase.getCurrentProfileId()) {
+            dataBase.setCurrentProfileId(0);
+            selectCurrentProfile();
+            loadSelectedProfile();
+        }
+
+        // Remove profile data
+        dataBase.removeProfile(profileId);
+
+        // Remove headers data
+        dataBase.removeHeaders(profileId);
+
+        // Remove filters data
+        dataBase.removeFilters(profileId);
+
+        // Remove send messages data
+        dataBase.removeSendMessages(profileId);
+
+        // Remove received messages data
+        dataBase.removeReceivedMessages(profileId);
+
+        // Remove profile name from list
+        profilesList.removeIf(profileName -> profileName.getId() == profileId);
+        selectCurrentProfile();
+
+        // Disable loader
+        main.setProgressVisible(false);
     }
 
     /**
@@ -217,6 +279,15 @@ public class TabSettingsController {
         // Set font size value
         fontSlider.setValue(settings.getFontSize());
 
+        // Set auto scroll status
+        cbAutoScroll.setSelected(settings.isAutoScroll());
+
+        // Set show bar status
+        cbShowBar.setSelected(settings.isBarShow());
+
+        // Set show filter status
+        cbShowFilter.setSelected(settings.isFilterShow());
+
         // Disable loader
         main.setProgressVisible(false);
     }
@@ -227,6 +298,7 @@ public class TabSettingsController {
     private void updateProfilesList() {
         profilesList.setAll(dataBase.getProfilesName());
         selectCurrentProfile();
+        checkSelectedProfile();
     }
 
     /**
@@ -234,7 +306,7 @@ public class TabSettingsController {
      */
     private void selectCurrentProfile() {
         ProfileName profile = profilesList.get(0);
-        int currentId = dataBase.getCurrentProfile();
+        int currentId = dataBase.getCurrentProfileId();
         for (ProfileName p : profilesList) {
             if (p.getId() == currentId) {
                 profile = p;
@@ -242,5 +314,18 @@ public class TabSettingsController {
             }
         }
         cbProfilesNames.setValue(profile);
+    }
+
+    /**
+     * Check selected profile in combo box
+     */
+    private void checkSelectedProfile() {
+        if (cbProfilesNames.getItems().size() > 0) {
+            if (cbProfilesNames.getSelectionModel().getSelectedItem().getId() == 0) {
+                bRemove.setDisable(true);
+            } else {
+                bRemove.setDisable(false);
+            }
+        }
     }
 }

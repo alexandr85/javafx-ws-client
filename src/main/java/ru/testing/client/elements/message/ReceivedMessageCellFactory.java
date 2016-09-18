@@ -3,30 +3,31 @@ package ru.testing.client.elements.message;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
 
-import static ru.testing.client.elements.message.OutputMessageType.SEND;
+import static ru.testing.client.elements.message.ReceivedMessageType.SEND;
 
 /**
  * Output message cell factory
  */
-public class OutputMessageCellFactory extends ListCell<OutputMessage> {
+public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
-    private ObservableList<OutputMessage> list;
+    private ObservableList<ReceivedMessage> list;
     private MainController main;
 
-    public OutputMessageCellFactory(ObservableList<OutputMessage> list, MainController mainController) {
+    public ReceivedMessageCellFactory(ObservableList<ReceivedMessage> list, MainController mainController) {
         this.list = list;
         main = mainController;
     }
 
     @Override
-    protected void updateItem(OutputMessage item, boolean empty) {
+    protected void updateItem(ReceivedMessage item, boolean empty) {
         super.updateItem(item, empty);
         if (item != null) {
-            setText(String.format(OutputMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
+            setText(String.format(ReceivedMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
             if (item.getMessageType() == SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
             } else {
@@ -41,8 +42,8 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
     }
 
     @Override
-    protected boolean isItemChanged(OutputMessage oldItem, OutputMessage newItem) {
-        MultipleSelectionModel<OutputMessage> selectionModel = main.getOutputTextView().getSelectionModel();
+    protected boolean isItemChanged(ReceivedMessage oldItem, ReceivedMessage newItem) {
+        MultipleSelectionModel<ReceivedMessage> selectionModel = main.getOutputTextView().getSelectionModel();
         setOnMouseClicked(event -> {
             if (event.getButton().equals(MouseButton.SECONDARY)) {
                 selectionModel.clearSelection();
@@ -60,10 +61,10 @@ public class OutputMessageCellFactory extends ListCell<OutputMessage> {
     /**
      * Context menu for output message view
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @return ContextMenu
      */
-    private ContextMenu getContextMenu(final OutputMessage item) {
+    private ContextMenu getContextMenu(final ReceivedMessage item) {
         final ContextMenu contextMenu = new ContextMenu();
         ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(

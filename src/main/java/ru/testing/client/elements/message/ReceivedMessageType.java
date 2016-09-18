@@ -3,7 +3,7 @@ package ru.testing.client.elements.message;
 /**
  * Class described constant message type
  */
-public enum OutputMessageType {
+public enum ReceivedMessageType {
     RECEIVED,
     SEND
 }

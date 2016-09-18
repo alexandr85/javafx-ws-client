@@ -27,7 +27,7 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
         this.list = sendMessagesController.getList();
         sendMsgTextField = mainController.getSendMsgTextField();
         sentMsgPopOver = mainController.getSendMessagesPopOver();
-        checkModel = sendMessagesController.getMessagesList().getCheckModel();
+        checkModel = sendMessagesController.getCheckListView().getCheckModel();
     }
 
     @Override

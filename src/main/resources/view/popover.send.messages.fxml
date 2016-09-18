@@ -25,7 +25,7 @@
     </rowConstraints>
     <FlowPane GridPane.rowIndex="0" alignment="CENTER" hgap="10">
 
-        <TextField fx:id="txMsgValue" promptText="message" prefWidth="300"/>
+        <TextField fx:id="tfMsgValue" promptText="message" prefWidth="300"/>
         <Button fx:id="btAddMsg" onAction="#addMessage" mnemonicParsing="false"
                 minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0">
             <graphic>
@@ -51,6 +51,6 @@
             <Insets bottom="2.0" left="7.0" right="7.0"/>
         </GridPane.margin>
         <Label fx:id="noMessagesLabel" text="No messages" alignment="CENTER" prefHeight="70" prefWidth="400"/>
-        <CheckListView fx:id="messagesList" visible="false" managed="false" prefHeight="112.0"/>
+        <CheckListView fx:id="checkListView" visible="false" managed="false" prefHeight="112.0"/>
     </GridPane>
 </GridPane>

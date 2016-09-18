@@ -17,14 +17,13 @@ public class DefaultProperties {
     private static DefaultProperties properties;
     private String profileName;
     private String profileWsUrl;
-    private boolean profileAutoScroll;
-    private boolean profileFilterOn;
-    private boolean profileShowFilter;
-    private boolean profileShowBar;
     private int msgFontSize;
     private boolean msgWrap;
     private boolean msgJsonPretty;
     private String msgJsonPrettyReplaceRegex;
+    private boolean autoScroll;
+    private boolean showFilter;
+    private boolean showBar;
 
     private DefaultProperties() {
         Properties properties = new Properties();
@@ -34,16 +33,15 @@ public class DefaultProperties {
             // Set profile default value
             setProfileName(properties.getProperty("profile.name"));
             setProfileWsUrl(properties.getProperty("profile.ws.url"));
-            setProfileAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
-            setProfileFilterOn(Boolean.parseBoolean(properties.getProperty("profile.filter.on")));
-            setProfileShowFilter(Boolean.parseBoolean(properties.getProperty("profile.show.filter")));
-            setProfileShowBar(Boolean.parseBoolean(properties.getProperty("profile.show.bar")));
 
             // Set message default value
             setMsgFontSize(Integer.parseInt(properties.getProperty("msg.font.size")));
             setMsgWrap(Boolean.parseBoolean(properties.getProperty("msg.wrap")));
             setMsgJsonPretty(Boolean.parseBoolean(properties.getProperty("msg.json.pretty")));
             setMsgJsonPrettyReplaceRegex(properties.getProperty("msg.json.pretty.replace.regex"));
+            setAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
+            setShowFilter(Boolean.parseBoolean(properties.getProperty("profile.show.filter")));
+            setShowBar(Boolean.parseBoolean(properties.getProperty("profile.show.bar")));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -69,7 +67,10 @@ public class DefaultProperties {
                 getMsgFontSize(),
                 isMsgWrap(),
                 isMsgJsonPretty(),
-                getMsgJsonPrettyReplaceRegex()
+                getMsgJsonPrettyReplaceRegex(),
+                isAutoScroll(),
+                isShowBar(),
+                isShowFilter()
         );
     }
 
@@ -89,36 +90,28 @@ public class DefaultProperties {
         this.profileWsUrl = profileWsUrl;
     }
 
-    public boolean isProfileAutoScroll() {
-        return profileAutoScroll;
+    public boolean isAutoScroll() {
+        return autoScroll;
     }
 
-    private void setProfileAutoScroll(boolean profileAutoScroll) {
-        this.profileAutoScroll = profileAutoScroll;
+    private void setAutoScroll(boolean profileAutoScroll) {
+        this.autoScroll = profileAutoScroll;
     }
 
-    public boolean isProfileFilterOn() {
-        return profileFilterOn;
+    public boolean isShowFilter() {
+        return showFilter;
     }
 
-    private void setProfileFilterOn(boolean profileFilterOn) {
-        this.profileFilterOn = profileFilterOn;
+    private void setShowFilter(boolean profileShowFilter) {
+        this.showFilter = profileShowFilter;
     }
 
-    public boolean isProfileShowFilter() {
-        return profileShowFilter;
+    public boolean isShowBar() {
+        return showBar;
     }
 
-    private void setProfileShowFilter(boolean profileShowFilter) {
-        this.profileShowFilter = profileShowFilter;
-    }
-
-    public boolean isProfileShowBar() {
-        return profileShowBar;
-    }
-
-    private void setProfileShowBar(boolean profileShowBar) {
-        this.profileShowBar = profileShowBar;
+    private void setShowBar(boolean showBar) {
+        this.showBar = showBar;
     }
 
     public int getMsgFontSize() {

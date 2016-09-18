@@ -3,13 +3,13 @@ package ru.testing.client.elements.message;
 /**
  * Enum class for constant output message string format
  */
-public enum OutputMessageFormat {
+public enum ReceivedMessageFormat {
 
     DEFAULT("%-12s %s");
 
     String format;
 
-    OutputMessageFormat(String format) {
+    ReceivedMessageFormat(String format) {
         this.format = format;
     }
 

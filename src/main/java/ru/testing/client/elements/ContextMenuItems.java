@@ -6,9 +6,9 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.controlsfx.control.IndexedCheckModel;
 import ru.testing.client.common.FilesOperations;
+import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.message.DetailMsgTab;
-import ru.testing.client.elements.message.OutputMessage;
 
 
 /**
@@ -58,10 +58,10 @@ public class ContextMenuItems {
     /**
      * Menu item for deselect selected item cell
      *
-     * @param list ListView<OutputMessage>
+     * @param list ListView<ReceivedMessage>
      * @return MenuItem
      */
-    public MenuItem deselectCell(ListView<OutputMessage> list) {
+    public MenuItem deselectCell(ListView<ReceivedMessage> list) {
         MenuItem deselect = new MenuItem("Deselect item");
         deselect.setOnAction(event -> list.getSelectionModel().clearSelection());
         return deselect;
@@ -70,10 +70,10 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellAll(OutputMessage item) {
+    public MenuItem copyCellAll(ReceivedMessage item) {
         MenuItem copyItem = new MenuItem("Copy full message");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -87,10 +87,10 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy item message string to clipboard
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellMessage(OutputMessage item) {
+    public MenuItem copyCellMessage(ReceivedMessage item) {
         MenuItem copyItem = new MenuItem("Copy body message");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -104,10 +104,10 @@ public class ContextMenuItems {
     /**
      * Menu item 'copy' for copy string to clipboard
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellTime(OutputMessage item) {
+    public MenuItem copyCellTime(ReceivedMessage item) {
         MenuItem copyItem = new MenuItem("Copy time message");
         copyItem.setOnAction(event -> {
             final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -121,11 +121,11 @@ public class ContextMenuItems {
     /**
      * Save message from cell to file
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveMessageToFile(OutputMessage item, MainController main) {
+    public MenuItem saveMessageToFile(ReceivedMessage item, MainController main) {
         MenuItem saveFileItem = new MenuItem("Save full message");
         saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString(), main));
         return saveFileItem;
@@ -134,11 +134,11 @@ public class ContextMenuItems {
     /**
      * Save send selected messages to file
      *
-     * @param item OutputMessage
+     * @param item ReceivedMessage
      * @param main MainController
      * @return MenuItem
      */
-    public MenuItem showMessage(final OutputMessage item, MainController main) {
+    public MenuItem showMessage(final ReceivedMessage item, MainController main) {
         MenuItem show = new MenuItem("Show body message");
         show.setOnAction(event -> new DetailMsgTab(item, main));
         return show;

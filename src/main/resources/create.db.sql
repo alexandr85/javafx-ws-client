@@ -3,17 +3,16 @@ CREATE TABLE global_settings (
 	text_wrap integer,
 	json_pretty integer,
 	json_regex text,
-	current_profile_id integer
+	current_profile_id integer,
+	auto_scroll integer,
+	bar_show integer,
+	filter_show integer
 );
 
 CREATE TABLE profiles (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	name text,
-	url text,
-	auto_scroll integer,
-	bar_show integer,
-	filter_show integer,
-	filter_on integer
+	url text
 );
 
 CREATE TABLE headers (
@@ -23,7 +22,7 @@ CREATE TABLE headers (
 	value text
 );
 
-CREATE TABLE msg_received (
+CREATE TABLE messages_rx (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	profile_id integer,
 	type text,
@@ -31,13 +30,14 @@ CREATE TABLE msg_received (
 	value text
 );
 
-CREATE TABLE msg_transferred (
+CREATE TABLE messages_tx (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	profile_id integer,
+	auto_send integer,
 	value text
 );
 
-CREATE TABLE filter (
+CREATE TABLE filters (
 	id integer PRIMARY KEY AUTOINCREMENT,
 	profile_id integer,
 	value text

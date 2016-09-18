@@ -18,14 +18,14 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.DataBase;
-import ru.testing.client.common.db.objects.Header;
-import ru.testing.client.common.db.objects.Profile;
+import ru.testing.client.common.db.objects.*;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
@@ -52,8 +52,8 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
-    private final ObservableList<OutputMessage> outputMessageList = FXCollections.observableArrayList();
-    private final ObservableList<OutputMessage> outputFilteredMessageList = FXCollections.observableArrayList();
+    private final ObservableList<ReceivedMessage> receivedMessageList = FXCollections.observableArrayList();
+    private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private AppProperties properties = AppProperties.getAppProperties();
@@ -129,7 +129,7 @@ public class MainController {
      * List views
      */
     @FXML
-    private ListView<OutputMessage> outputTextView;
+    private ListView<ReceivedMessage> outputTextView;
 
     /**
      * Labels
@@ -176,6 +176,9 @@ public class MainController {
     @FXML
     private void initialize() {
 
+        // Load settings
+        Settings settings = dataBase.getSettings();
+
         // Tabs change listener
         tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
             if (c.next()) {
@@ -210,9 +213,9 @@ public class MainController {
         // Update output message list view
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputSetList(false);
-        outputTextView.getItems().addListener(this::outputMessageListener);
+        outputTextView.getItems().addListener(this::receivedMessageListener);
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
-        outputTextView.setStyle(String.format("-fx-font-size: %spx;", dataBase.getSettings().getFontSize()));
+        outputTextView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
 
         // Connect or disconnect with websocket server
         serverUrl.setOnKeyPressed(keyEvent -> {
@@ -242,11 +245,11 @@ public class MainController {
                 if (size > 0) {
                     filterListBtn.setDisable(false);
                     filterCount.setText(String.valueOf(size));
-                    outputFilteredMessageList.clear();
-                    outputMessageList.forEach(message ->
+                    receivedFilteredMessageList.clear();
+                    receivedMessageList.forEach(message ->
                             filterList.forEach(filter -> {
                                 if (message.getMessage().contains(filter)) {
-                                    outputFilteredMessageList.add(message);
+                                    receivedFilteredMessageList.add(message);
                                 }
                             }));
                     outputSetList(true);
@@ -255,7 +258,7 @@ public class MainController {
                     filterListBtn.setSelected(false);
                     getFilterPopOver().hide();
                     filterCount.setText("");
-                    outputFilteredMessageList.clear();
+                    receivedFilteredMessageList.clear();
                     outputSetList(false);
                 }
             }
@@ -266,8 +269,17 @@ public class MainController {
             }
         });
 
+        // Set auto scroll settings
+        setAutoScroll(settings.isAutoScroll());
+
+        // Set status bar settings
+        setStatusBarVisible(settings.isBarShow());
+
+        // Set filter block visible status
+        setFilterVisible(settings.isFilterShow());
+
         // Load current profile
-        loadProfile(DataBase.getInstance().getCurrentProfile());
+        loadProfile(DataBase.getInstance().getCurrentProfileId());
     }
 
     /**
@@ -321,7 +333,7 @@ public class MainController {
             if (!sendList.contains(text)) {
                 sendList.add(text);
             }
-            addMessageToOutput(OutputMessageType.SEND, text);
+            addMessageToOutput(ReceivedMessageType.SEND, text);
             if (client != null) {
                 client.sendMessage(text);
             }
@@ -333,7 +345,7 @@ public class MainController {
     @FXML
     private void changeFilterStatus() {
         Platform.runLater(() -> {
-            if (isFiltered()) {
+            if (filtered) {
                 filterOnOffBtn.setSelected(false);
                 filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
                 filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
@@ -377,7 +389,7 @@ public class MainController {
     @FXML
     private void changeAutoScrollStatus() {
         Platform.runLater(() -> {
-            if (autoScroll) {
+            if (!autoScroll) {
                 autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
                 autoScrollMenuItem.setSelected(false);
                 autoScroll = false;
@@ -395,8 +407,8 @@ public class MainController {
     @FXML
     private void saveOutputToFile() {
         StringBuilder builder = new StringBuilder();
-        for (OutputMessage message : outputMessageList) {
-            builder.append(String.format(OutputMessageFormat.DEFAULT.getFormat().concat("\n"),
+        for (ReceivedMessage message : receivedMessageList) {
+            builder.append(String.format(ReceivedMessageFormat.DEFAULT.getFormat().concat("\n"),
                     message.getFormattedTime(), message.getMessage()));
         }
         new FilesOperations().saveTextToFile(builder.toString(), this);
@@ -493,16 +505,46 @@ public class MainController {
     }
 
     /**
+     * Set auto scroll status
+     *
+     * @param status boolean
+     */
+    void setAutoScroll(boolean status) {
+        autoScroll = status;
+        changeAutoScrollStatus();
+    }
+
+    /**
+     * Set status bar visible
+     *
+     * @param status boolean
+     */
+    void setStatusBarVisible(boolean status) {
+        showStatusBar.setSelected(status);
+        changesStatusBarVisible();
+    }
+
+    /**
+     * Set filter visible status
+     *
+     * @param status boolean
+     */
+    void setFilterVisible(boolean status) {
+        showFilter.setSelected(status);
+        changeFilterVisible();
+    }
+
+    /**
      * Set output text list
      * @param isFiltered boolean
      */
     private void outputSetList(boolean isFiltered) {
         if (isFiltered) {
-            outputTextView.setItems(outputFilteredMessageList);
-            outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputFilteredMessageList, this));
+            outputTextView.setItems(receivedFilteredMessageList);
+            outputTextView.setCellFactory(listView -> new ReceivedMessageCellFactory(receivedFilteredMessageList, this));
         } else {
-            outputTextView.setItems(outputMessageList);
-            outputTextView.setCellFactory(listView -> new OutputMessageCellFactory(outputMessageList, this));
+            outputTextView.setItems(receivedMessageList);
+            outputTextView.setCellFactory(listView -> new ReceivedMessageCellFactory(receivedMessageList, this));
         }
     }
 
@@ -611,28 +653,43 @@ public class MainController {
      * @param profileId int
      */
     boolean loadProfile(int profileId) {
-        Profile p = DataBase.getInstance().getProfile(profileId);
-        if (p != null) {
-            LOGGER.debug("Load profile name: {}", p.getName());
+        Profile profile = dataBase.getProfile(profileId);
+        if (profile != null) {
+            LOGGER.debug("Load profile name: {}", profile.getName());
 
-            // set websocket server url
-            serverUrl.setText(p.getUrl());
+            // Set websocket server url
+            serverUrl.setText(profile.getUrl());
 
-            // set auto scroll properties
-            autoScroll = !p.isAutoScroll();
-            changeAutoScrollStatus();
+            // Get profile http header
+            List<Header> headers = dataBase.getHeaders(profileId);
+            if (headers != null) {
+                ObservableList<Header> currentHeaders = getHeadersList();
+                currentHeaders.clear();
+                currentHeaders.addAll(headers);
+            }
 
-            // set status bar properties
-            showStatusBar.setSelected(p.isBarShow());
-            changesStatusBarVisible();
+            // Get profile filters
+            List<String> filters = dataBase.getFilters(profileId);
+            if (filters != null) {
+                filterList.clear();
+                filterList.addAll(filters);
+            }
 
-            // set filter block visible status
-            showFilter.setSelected(p.isFilterShow());
-            changeFilterVisible();
+            // Get profile send messages
+            List<SendMessage> sendMessages = dataBase.getSendMessages(profileId);
+            if (sendMessages != null) {
+                CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
+                listView.getItems().clear();
+                //listView.getItems().addAll(sendMessages)
+            }
 
-            // set filter active status
-            filtered = !p.isFilterOn();
-            changeFilterStatus();
+            // Get profile received messages
+            List<ReceivedMessage> receivedMessages = dataBase.getReceivedMessages(profileId);
+            if (receivedMessages != null) {
+                receivedMessageList.clear();
+                receivedMessageList.addAll(receivedMessages);
+            }
+
         } else {
             return false;
         }
@@ -642,9 +699,9 @@ public class MainController {
     /**
      * Get output message list view
      *
-     * @return ListView<OutputMessage>
+     * @return ListView<ReceivedMessage>
      */
-    public ListView<OutputMessage> getOutputTextView() {
+    public ListView<ReceivedMessage> getOutputTextView() {
         return outputTextView;
     }
 
@@ -662,8 +719,17 @@ public class MainController {
      *
      * @return ObservableList<Header>
      */
-    List<Header> getHeadersList() {
+    ObservableList<Header> getHeadersList() {
         return getHeadersPopOver().getHeadersController().getHeaderObservableList();
+    }
+
+    /**
+     * Get send messages
+     *
+     * @return List<SendMessage>
+     */
+    List<SendMessage> getSendMessages() {
+        return getSendMessagesPopOver().getController().getSentMessages();
     }
 
     /**
@@ -672,19 +738,19 @@ public class MainController {
      * @param type    Message type
      * @param message String message
      */
-    public void addMessageToOutput(OutputMessageType type, String message) {
-        if (isFiltered() && filterList.size() > 0) {
+    public void addMessageToOutput(ReceivedMessageType type, String message) {
+        if (filtered && filterList.size() > 0) {
             for (String filterItem : filterList) {
                 if (message.contains(filterItem)) {
                     Platform.runLater(() -> {
-                        outputMessageList.add(new OutputMessage(type, message));
-                        outputFilteredMessageList.add(new OutputMessage(type, message));
+                        receivedMessageList.add(new ReceivedMessage(type, message));
+                        receivedFilteredMessageList.add(new ReceivedMessage(type, message));
                     });
                     break;
                 }
             }
         } else {
-            Platform.runLater(() -> outputMessageList.add(new OutputMessage(type, message)));
+            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
         }
     }
 
@@ -704,15 +770,6 @@ public class MainController {
      */
     public void setProgressVisible(boolean isVisible) {
         Platform.runLater(() -> progress.setVisible(isVisible));
-    }
-
-    /**
-     * Get on off filter status
-     *
-     * @return boolean
-     */
-    boolean isFiltered() {
-        return filtered;
     }
 
     /**
@@ -766,7 +823,7 @@ public class MainController {
                 if (client != null && sentMessage.isAutoSend()) {
                     String msgValue = sentMessage.getValue();
                     client.sendMessage(msgValue);
-                    addMessageToOutput(OutputMessageType.SEND, msgValue);
+                    addMessageToOutput(ReceivedMessageType.SEND, msgValue);
                 }
             });
             connectionStatus = true;
@@ -839,13 +896,13 @@ public class MainController {
     /**
      * Scroll to last list message after new message added
      *
-     * @param change ListChangeListener.Change<? extends OutputMessage>
+     * @param change ListChangeListener.Change<? extends ReceivedMessage>
      */
-    private void outputMessageListener(ListChangeListener.Change<? extends OutputMessage> change) {
+    private void receivedMessageListener(ListChangeListener.Change<? extends ReceivedMessage> change) {
         if (change.next()) {
             Platform.runLater(() -> {
                 showAllMsgAndSelectedMsgCount();
-                final int size = outputMessageList.size();
+                final int size = receivedMessageList.size();
                 if (size > 0 && autoScroll) {
                     outputTextView.scrollTo(size - 1);
                 }
@@ -858,16 +915,16 @@ public class MainController {
      */
     private void showAllMsgAndSelectedMsgCount() {
         outputMsgCount.setText(String.format("%s/%s",
-                outputMessageList.size(),
+                receivedMessageList.size(),
                 outputTextView.getSelectionModel().getSelectedItems().size()));
     }
 
     /**
      * Show time diff between first and last selected message
      *
-     * @param change ListChangeListener.Change<? extends OutputMessage>
+     * @param change ListChangeListener.Change<? extends ReceivedMessage>
      */
-    private void selectedActions(ListChangeListener.Change<? extends OutputMessage> change) {
+    private void selectedActions(ListChangeListener.Change<? extends ReceivedMessage> change) {
         if (change.next()) {
             showAllMsgAndSelectedMsgCount();
             int selectedSize = change.getList().size();
