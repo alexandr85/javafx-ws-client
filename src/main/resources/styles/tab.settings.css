@@ -4,13 +4,13 @@
 }
 
 .label.title-label {
-    -fx-font-size: 16px;
+    -fx-font-size: 13px;
     -fx-underline: true;
 }
 
 .label,
 .check-box {
-    -fx-font-size: 13px;
+    -fx-font-size: 12px;
     -fx-font-family: sans-serif;
 }
 

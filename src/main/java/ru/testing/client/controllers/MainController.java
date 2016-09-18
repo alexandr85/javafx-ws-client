@@ -19,6 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
+import org.controlsfx.control.IndexedCheckModel;
 import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,7 +271,7 @@ public class MainController {
         });
 
         // Set auto scroll settings
-        setAutoScroll(settings.isAutoScroll());
+        setAutoScroll(!settings.isAutoScroll());
 
         // Set status bar settings
         setStatusBarVisible(settings.isBarShow());
@@ -390,7 +391,7 @@ public class MainController {
     @FXML
     private void changeAutoScrollStatus() {
         Platform.runLater(() -> {
-            if (!autoScroll) {
+            if (autoScroll) {
                 autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
                 autoScrollMenuItem.setSelected(false);
                 autoScroll = false;
@@ -689,12 +690,14 @@ public class MainController {
             List<SendMessage> sendMessages = dataBase.getSendMessages(profileId);
             if (sendMessages != null) {
                 CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
+                IndexedCheckModel<String> checkModel = listView.getCheckModel();
                 listView.getItems().clear();
+                checkModel.clearChecks();
                 for (int i = 0; i < sendMessages.size(); i++) {
                     SendMessage message = sendMessages.get(i);
                     listView.getItems().add(i, message.getValue());
                     if (message.isAutoSend()) {
-                        listView.getCheckModel().check(i);
+                        checkModel.check(i);
                     }
                 }
             }

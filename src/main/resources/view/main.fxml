@@ -31,7 +31,7 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
+            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save Rx" onAction="#saveOutputToFile">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/save-output.png"/>

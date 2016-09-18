@@ -139,7 +139,7 @@ public class TabSettingsController {
             }
 
             // Set auto scroll status
-            main.setAutoScroll(settings.isAutoScroll());
+            main.setAutoScroll(!settings.isAutoScroll());
 
             // Set show bar status
             main.setStatusBarVisible(settings.isBarShow());

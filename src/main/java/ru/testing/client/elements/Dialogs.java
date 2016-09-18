@@ -3,7 +3,6 @@ package ru.testing.client.elements;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
@@ -31,7 +30,6 @@ public class Dialogs {
      */
     public void getInfoDialog(String info) {
         Alert alert = new Alert(INFORMATION);
-        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setContentText(info);
@@ -57,7 +55,6 @@ public class Dialogs {
     public void getExceptionDialog(Exception e) {
         try {
             Alert alert = new Alert(ERROR);
-            alert.initStyle(StageStyle.UNDECORATED);
             alert.setTitle("Oops! Catch some error");
             alert.setHeaderText(null);
             if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) {
@@ -105,7 +102,6 @@ public class Dialogs {
      */
     public boolean getConfirmationDialog(String title, String message) {
         Alert alert = new Alert(CONFIRMATION);
-        alert.initStyle(StageStyle.UNDECORATED);
         alert.setWidth(DIALOG_WEIGHT);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -122,7 +118,6 @@ public class Dialogs {
      */
     public void getWarningDialog(String message) {
         Alert alert = new Alert(WARNING);
-        alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Warning");
         alert.setHeaderText(null);
         alert.setContentText(message);
