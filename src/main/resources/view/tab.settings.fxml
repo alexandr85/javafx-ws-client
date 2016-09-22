@@ -94,7 +94,7 @@
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
                 <Label GridPane.rowIndex="0" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
                        maxWidth="Infinity" text="Detail message" GridPane.halignment="CENTER"/>
@@ -107,7 +107,7 @@
                 <CheckBox GridPane.rowIndex="5" fx:id="cbAutoScroll" mnemonicParsing="false" text="Enable auto scroll"/>
                 <CheckBox GridPane.rowIndex="6" fx:id="cbShowBar" mnemonicParsing="false" text="Show status bar"/>
                 <CheckBox GridPane.rowIndex="7" fx:id="cbShowFilter" mnemonicParsing="false" text="Show filter"/>
-                <HBox GridPane.rowIndex="8" maxWidth="Infinity" alignment="CENTER_LEFT">
+                <HBox GridPane.rowIndex="8" maxWidth="Infinity" maxHeight="30.0">
                     <Label text="Messages font size:" wrapText="true" maxWidth="140"/>
                     <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" fx:id="fontSlider"
                             prefWidth="90">
