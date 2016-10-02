@@ -764,9 +764,10 @@ public class MainController {
                         receivedMessageList.add(new ReceivedMessage(type, message));
                         receivedFilteredMessageList.add(new ReceivedMessage(type, message));
                     });
-                    break;
+                    return;
                 }
             }
+            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
         } else {
             Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
         }
@@ -950,10 +951,7 @@ public class MainController {
      * @param keyCode KeyCode
      */
     private void setHotKey(MenuItem item, KeyCode keyCode) {
-        KeyCombination.Modifier key = KeyCombination.CONTROL_DOWN;
-        if (platform == OSX) {
-            key = KeyCombination.META_DOWN;
-        }
+        KeyCombination.Modifier key = (platform == OSX) ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
         item.setAccelerator(new KeyCodeCombination(keyCode, key));
     }
 

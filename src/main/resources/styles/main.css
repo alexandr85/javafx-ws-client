@@ -32,7 +32,7 @@
 .label,
 .toolbar {
     -fx-font-family: 'Helvetica', Arial, sans-serif;
-    -fx-font-size: 13px;
+    -fx-font-size: 1.0em;
 }
 
 .label_field {
@@ -132,12 +132,6 @@
     -fx-background-color: derive(black,90%);
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
-}
-
-/* ========== Context menu style ============ */
-
-.context-menu {
-    -fx-pref-width: 140;
 }
 
 /* ========== Progress bar style ============ */
