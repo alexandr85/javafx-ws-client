@@ -224,17 +224,14 @@ public class DataBase {
      * Remove selected profile
      *
      * @param profileId int
-     * @return boolean status
      */
-    public boolean removeProfile(int profileId) {
+    public void removeProfile(int profileId) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM profiles WHERE id = ?");
             ps.setInt(1, profileId);
             ps.executeUpdate();
-            return true;
         } catch (SQLException e) {
             LOGGER.error("Error remove profile id `{}` from database", profileId, e.getMessage());
-            return false;
         }
     }
 

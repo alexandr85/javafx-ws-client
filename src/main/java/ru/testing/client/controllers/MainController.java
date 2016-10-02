@@ -32,7 +32,6 @@ import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
 import ru.testing.client.elements.message.*;
-import ru.testing.client.elements.message.SendMessagesPopOver;
 import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
