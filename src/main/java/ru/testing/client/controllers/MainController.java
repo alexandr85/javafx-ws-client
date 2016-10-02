@@ -707,6 +707,13 @@ public class MainController {
             if (receivedMessages != null) {
                 receivedMessageList.clear();
                 receivedMessageList.addAll(receivedMessages);
+                if (filterList.size() > 0) {
+                    receivedMessages.forEach(message -> filterList.forEach(item -> {
+                        if (message.getMessage().contains(item)) {
+                            receivedFilteredMessageList.add(message);
+                        }
+                    }));
+                }
             }
         } else {
             return false;
@@ -721,6 +728,15 @@ public class MainController {
      */
     public ListView<ReceivedMessage> getOutputTextView() {
         return outputTextView;
+    }
+
+    /**
+     * Get received messages list
+     *
+     * @return ObservableList<ReceivedMessage>
+     */
+    ObservableList<ReceivedMessage> getReceivedMessageList() {
+        return receivedMessageList;
     }
 
     /**

@@ -182,7 +182,7 @@ public class TabSettingsController {
                 dataBase.addSendMessages(profileId, main.getSendMessages());
 
                 // Add received messages
-                dataBase.addReceivedMessages(profileId, main.getOutputTextView().getItems());
+                dataBase.addReceivedMessages(profileId, main.getReceivedMessageList());
 
                 // Prepare profiles list
                 dataBase.setCurrentProfileId(profileId);
