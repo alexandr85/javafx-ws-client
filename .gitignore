@@ -1,5 +1,5 @@
 # IDE files
-.idea
+.idea/
 *.iml
 
 # Package Files
@@ -7,9 +7,13 @@
 *.war
 *.ear
 
+# Gradle
+.gradle/
+!gradle-wrapper.jar
+
 # compile folders
-**/target
-**/out
+target/
+build/
 
 # logging
 **/logs
