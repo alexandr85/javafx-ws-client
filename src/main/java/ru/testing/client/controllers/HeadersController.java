@@ -16,17 +16,14 @@ import ru.testing.client.elements.headers.HeadersCellFactory;
 
 import java.util.List;
 
+import static ru.testing.client.MainApp.getMainController;
+
 /**
  * Http headers controller
  */
 public class HeadersController {
 
     private final ObservableList<Header> headerObservableList = FXCollections.observableArrayList();
-    private MainController main;
-
-    public HeadersController(MainController main) {
-        this.main = main;
-    }
 
     @FXML
     private TextField headerName;
@@ -46,7 +43,7 @@ public class HeadersController {
         headerListView.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
-                main.getLbHeadersCounter().setText(String.valueOf(size));
+                getMainController().getLbHeadersCounter().setText(String.valueOf(size));
                 if (size > 0) {
                     setListViewVisible(true);
                 } else {
@@ -112,7 +109,7 @@ public class HeadersController {
         Platform.runLater(() -> {
             headerObservableList.clear();
             headers.forEach(header -> headerObservableList.add(new Header(header.getName(), header.getValue())));
-            main.getLbHeadersCounter().setText(String.valueOf(headers.size()));
+            getMainController().getLbHeadersCounter().setText(String.valueOf(headers.size()));
         });
     }
 

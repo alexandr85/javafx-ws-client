@@ -9,9 +9,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxListCell;
 import org.controlsfx.control.IndexedCheckModel;
 import org.controlsfx.control.PopOver;
-import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.SendMessagesController;
 import ru.testing.client.elements.ContextMenuItems;
+
+import static ru.testing.client.MainApp.getMainController;
 
 /**
  * History send message cell factory
@@ -23,10 +24,10 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
     private PopOver sentMsgPopOver;
     private IndexedCheckModel<String> checkModel;
 
-    public SendMessagesCellFactory(MainController mainController, SendMessagesController sendMessagesController) {
+    public SendMessagesCellFactory(SendMessagesController sendMessagesController) {
         this.list = sendMessagesController.getList();
-        sendMsgTextField = mainController.getSendMsgTextField();
-        sentMsgPopOver = mainController.getSendMessagesPopOver();
+        sendMsgTextField = getMainController().getSendMsgTextField();
+        sentMsgPopOver = getMainController().getSendMessagesPopOver();
         checkModel = sendMessagesController.getCheckListView().getCheckModel();
     }
 

@@ -13,11 +13,12 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.IndexedCheckModel;
 import org.controlsfx.control.StatusBar;
@@ -31,7 +32,10 @@ import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.headers.HeadersPopOver;
-import ru.testing.client.elements.message.*;
+import ru.testing.client.elements.message.ReceivedMessageCellFactory;
+import ru.testing.client.elements.message.ReceivedMessageFormat;
+import ru.testing.client.elements.message.ReceivedMessageType;
+import ru.testing.client.elements.message.SendMessagesPopOver;
 import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.Client;
 import ru.testing.client.websocket.MessageHandler;
@@ -44,6 +48,7 @@ import java.net.URL;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
+import static ru.testing.client.MainApp.getPrimaryStage;
 
 /**
  * FXML controller for main page
@@ -60,7 +65,6 @@ public class MainController {
     private DataBase dataBase = DataBase.getInstance();
     private Client client;
     private boolean connectionStatus, autoScroll, filtered;
-    private Stage mainStage;
     private Tooltip statusTooltip;
     private HeadersPopOver headersPopOver;
     private SendMessagesPopOver sendMessagesPopOver;
@@ -162,19 +166,10 @@ public class MainController {
     private ProgressBar progress;
 
     /**
-     * Main controller default contractor
-     *
-     * @param mainStage Stage
-     */
-    public MainController(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-
-    /**
      * Method run then this controller initialize
      */
     @FXML
-    private void initialize() {
+    protected void initialize() {
 
         // Load settings
         Settings settings = dataBase.getSettings();
@@ -183,8 +178,8 @@ public class MainController {
         tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
             if (c.next()) {
                 final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
-                if(header != null) {
-                    if(tabPane.getTabs().size() == 1) {
+                if (header != null) {
+                    if (tabPane.getTabs().size() == 1) {
                         header.setStyle("-fx-pref-height: 0");
                     } else {
                         header.setStyle("-fx-pref-height: 30");
@@ -208,7 +203,7 @@ public class MainController {
         setCircleTooltip("Disconnected");
 
         // Close application
-        mainStage.setOnCloseRequest((event -> exitApplication()));
+        getPrimaryStage().setOnCloseRequest((event -> exitApplication()));
 
         // Update output message list view
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -441,7 +436,7 @@ public class MainController {
     @FXML
     private void showSettings() {
         if (settingsTab == null) {
-            settingsTab = new SettingsTab(this);
+            settingsTab = new SettingsTab();
             settingsTab.setOnClosed(event -> settingsTab = null);
         }
         ObservableList<Tab> tabsList = tabPane.getTabs();
@@ -537,6 +532,7 @@ public class MainController {
 
     /**
      * Set output text list
+     *
      * @param isFiltered boolean
      */
     private void outputSetList(boolean isFiltered) {
@@ -556,7 +552,7 @@ public class MainController {
      */
     private HeadersPopOver getHeadersPopOver() {
         if (headersPopOver == null) {
-            headersPopOver = new HeadersPopOver(this);
+            headersPopOver = new HeadersPopOver();
         }
         return headersPopOver;
     }
@@ -568,7 +564,7 @@ public class MainController {
      */
     public SendMessagesPopOver getSendMessagesPopOver() {
         if (sendMessagesPopOver == null) {
-            sendMessagesPopOver = new SendMessagesPopOver(this);
+            sendMessagesPopOver = new SendMessagesPopOver();
         }
         return sendMessagesPopOver;
     }

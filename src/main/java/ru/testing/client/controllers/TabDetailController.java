@@ -32,22 +32,11 @@ public class TabDetailController {
     @FXML
     private Label msgLengthLabel;
 
-    public TabDetailController(ReceivedMessage item) {
-        message = item;
-    }
-
     @FXML
     private void initialize() {
 
         // Get message settings
         Settings settings = dataBase.getSettings();
-
-        // Set message text and data on init tab
-        txMsgArea.setText(message.getMessage());
-        String sb = (message.getMessageType() == ReceivedMessageType.RECEIVED ? "Received " : "Send ") +
-                "time: " + message.getFormattedTime();
-        msgTimeLabel.setText(sb);
-        msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
 
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
@@ -75,6 +64,22 @@ public class TabDetailController {
 
         // Set message font size
         txMsgArea.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
+    }
+
+    /**
+     * Set message data in tab
+     *
+     * @param message ReceivedMessage
+     */
+    public void setMessage(ReceivedMessage message) {
+        this.message = message;
+
+        // Set message text and data on init tab
+        txMsgArea.setText(message.getMessage());
+        String sb = (message.getMessageType() == ReceivedMessageType.RECEIVED ? "Received " : "Send ") +
+                "time: " + message.getFormattedTime();
+        msgTimeLabel.setText(sb);
+        msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
     }
 
     /**

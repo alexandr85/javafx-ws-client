@@ -15,6 +15,8 @@ import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.message.DetailMsgTab;
 
+import static ru.testing.client.MainApp.getMainController;
+
 /**
  * Controller for settings tab form
  */
@@ -51,12 +53,11 @@ public class TabSettingsController {
     @FXML
     private CheckBox cbShowFilter;
 
-    public TabSettingsController(MainController mainController) {
-        main = mainController;
-    }
-
     @FXML
     private void initialize() {
+
+        // Init main controller
+        main = getMainController();
 
         // Slider value listener
         fontSlider.valueProperty().addListener(observable ->

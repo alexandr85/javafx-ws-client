@@ -21,7 +21,6 @@ import java.util.List;
 public class SendMessagesController {
 
     private final ObservableList<String> list = FXCollections.observableArrayList();
-    private MainController main;
 
     @FXML
     private TextField tfMsgValue;
@@ -34,16 +33,12 @@ public class SendMessagesController {
     @FXML
     private CheckListView<String> checkListView;
 
-    public SendMessagesController(MainController mainController) {
-        main = mainController;
-    }
-
     @FXML
     private void initialize() {
 
         // Setup messages list
         checkListView.setItems(list);
-        checkListView.setCellFactory(list -> new SendMessagesCellFactory(main, this));
+        checkListView.setCellFactory(list -> new SendMessagesCellFactory(this));
         checkListView.getItems().addListener((ListChangeListener<? super String>) change -> {
             if (change.next()) {
                 int size = list.size();

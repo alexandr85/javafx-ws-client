@@ -19,7 +19,7 @@ import java.util.Arrays;
 
 
 /**
- * Git hub info
+ * Git hub tags versions
  */
 public class ReleaseChecker extends Thread {
 
@@ -49,7 +49,7 @@ public class ReleaseChecker extends Thread {
         try {
             if (!url.isEmpty()) {
                 TagInfo[] tags = getTagsFromApi();
-                setLastVersion(tags[0].getName().replace("v", ""));
+                lastVersion = tags[0].getName().replace("v", "");
             }
             if (isCurrentVersionOld(properties.getVersion(), lastVersion)) {
                 Platform.runLater(() -> {
@@ -103,15 +103,6 @@ public class ReleaseChecker extends Thread {
      */
     public String getLastVersion() {
         return lastVersion;
-    }
-
-    /**
-     * Set last tag version
-     *
-     * @param lastVersion String
-     */
-    private void setLastVersion(String lastVersion) {
-        this.lastVersion = lastVersion;
     }
 
     /**

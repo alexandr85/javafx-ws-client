@@ -33,8 +33,9 @@ public class DetailMsgTab extends Tab {
             // Load detail message view form
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.detail.msg.fxml"));
-                loader.setController(new TabDetailController(item));
                 Parent root = loader.load();
+                TabDetailController controller = loader.getController();
+                controller.setMessage(item);
                 this.setContent(root);
             } catch (IOException e) {
                 LOGGER.error("Error load detail message form: {}", e.getMessage());

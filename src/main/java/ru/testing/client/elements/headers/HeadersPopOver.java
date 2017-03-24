@@ -6,9 +6,10 @@ import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.HeadersController;
-import ru.testing.client.controllers.MainController;
 
 import java.io.IOException;
+
+import static ru.testing.client.MainApp.getMainController;
 
 /**
  * Http setting pop over
@@ -18,25 +19,23 @@ public class HeadersPopOver extends PopOver {
     private static final Logger LOGGER = LoggerFactory.getLogger(HeadersPopOver.class);
     private HeadersController headersController;
 
-    public HeadersPopOver(MainController main) {
+    public HeadersPopOver() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.http.headers.fxml"));
+            Parent root = loader.load();
+            headersController = loader.getController();
+            setContentNode(root);
+        } catch (IOException e) {
+            LOGGER.error("Error load headers pop over: {}", e.getMessage());
+        }
 
         // Pop over settings
         setDetachable(false);
         setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
         setOnHidden(event -> {
-            main.getTbHeaders().setSelected(false);
+            getMainController().getTbHeaders().setSelected(false);
             headersController.getHeaderListView().getSelectionModel().clearSelection();
         });
-
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.http.headers.fxml"));
-            headersController = new HeadersController(main);
-            loader.setController(headersController);
-            Parent root = loader.load();
-            setContentNode(root);
-        } catch (IOException e) {
-            LOGGER.error("Error load headers pop over: {}", e.getMessage());
-        }
     }
 
     /**
