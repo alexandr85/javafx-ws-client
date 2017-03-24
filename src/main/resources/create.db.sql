@@ -1,44 +1,44 @@
 CREATE TABLE global_settings (
-	font_size integer,
-	text_wrap integer,
-	json_pretty integer,
-	json_regex text,
-	current_profile_id integer,
-	auto_scroll integer,
-	bar_show integer,
-	filter_show integer
+	font_size SMALLINT,
+	text_wrap BOOL,
+	json_pretty BOOL,
+	json_regex VARCHAR(50),
+	current_profile_id SMALLINT,
+	auto_scroll BOOL,
+	bar_show BOOL,
+	filter_show BOOL
 );
 
 CREATE TABLE profiles (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	name text,
-	url text
+	id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	name VARCHAR(50),
+	url CLOB
 );
 
 CREATE TABLE headers (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	profile_id integer,
-	name text,
-	value text
+	id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	profile_id SMALLINT,
+	name VARCHAR,
+	value VARCHAR
 );
 
 CREATE TABLE messages_rx (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	profile_id integer,
-	type text,
-	time text,
-	value text
+	id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	profile_id SMALLINT,
+	type VARCHAR,
+	time VARCHAR,
+	value CLOB
 );
 
 CREATE TABLE messages_tx (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	profile_id integer,
-	auto_send integer,
-	value text
+	id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	profile_id SMALLINT,
+	auto_send BOOL,
+	value CLOB
 );
 
 CREATE TABLE filters (
-	id integer PRIMARY KEY AUTOINCREMENT,
-	profile_id integer,
-	value text
+	id SMALLINT PRIMARY KEY AUTO_INCREMENT,
+	profile_id SMALLINT,
+	value CLOB
 );

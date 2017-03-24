@@ -1,5 +1,6 @@
 package ru.testing.client.common.db;
 
+import org.h2.tools.RunScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.objects.*;
@@ -7,14 +8,10 @@ import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.message.ReceivedMessageType;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -23,8 +20,8 @@ public class DataBase {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataBase.class);
     private static final String APP_FOLDER = ".ws.client";
-    private static final String DB_TYPE = "jdbc:sqlite";
-    private static final String DB_NAME = "data.v%s.db";
+    private static final String DB_TYPE = "jdbc:h2";
+    private static final String DB_NAME = "data.v%s";
     private static final String CREATE_SQL_SCRIPT = "create.db.sql";
     private static String dbPath;
     private static DataBase instance;
@@ -34,7 +31,7 @@ public class DataBase {
 
         // Add database driver to class path
         try {
-            Class.forName("org.sqlite.JDBC");
+            Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
             LOGGER.error("Error load sqlite jdbc driver: {}", e.getMessage());
             System.exit(1);
@@ -50,7 +47,7 @@ public class DataBase {
         boolean settingPathExists = path.exists() || path.mkdirs();
 
         // Create
-        if (settingPathExists && !new File(dbPath).exists()) {
+        if (settingPathExists && !new File(dbPath + ".h2.db").exists()) {
             getInstance().createTables();
         }
     }
@@ -77,15 +74,17 @@ public class DataBase {
         try (Connection connection = getConnection()) {
             Statement s = connection.createStatement();
             ResultSet r = s.executeQuery("SELECT * FROM global_settings");
-            settings = new Settings(
-                    r.getInt("font_size"),
-                    r.getInt("text_wrap") == 1,
-                    r.getInt("json_pretty") == 1,
-                    r.getString("json_regex"),
-                    r.getInt("auto_scroll") == 1,
-                    r.getInt("bar_show") == 1,
-                    r.getInt("filter_show") == 1
-            );
+            while (r.next()) {
+                settings = new Settings(
+                        r.getInt("font_size"),
+                        r.getBoolean("text_wrap"),
+                        r.getBoolean("json_pretty"),
+                        r.getString("json_regex"),
+                        r.getBoolean("auto_scroll"),
+                        r.getBoolean("bar_show"),
+                        r.getBoolean("filter_show")
+                );
+            }
         } catch (SQLException e) {
             LOGGER.error("Error get global settings: {}", e.getMessage());
         }
@@ -103,12 +102,12 @@ public class DataBase {
             PreparedStatement ps = connection.prepareStatement("UPDATE global_settings SET " +
                     "font_size=?, text_wrap=?, json_pretty=?, json_regex=?, auto_scroll=?, bar_show=?, filter_show=?");
             ps.setInt(1, settings.getFontSize());
-            ps.setInt(2, settings.isTextWrap() ? 1 : 0);
-            ps.setInt(3, settings.isJsonPretty() ? 1 : 0);
+            ps.setBoolean(2, settings.isTextWrap());
+            ps.setBoolean(3, settings.isJsonPretty());
             ps.setString(4, settings.getJsonRegex());
-            ps.setInt(5, settings.isAutoScroll() ? 1 : 0);
-            ps.setInt(6, settings.isBarShow() ? 1 : 0);
-            ps.setInt(7, settings.isFilterShow() ? 1 : 0);
+            ps.setBoolean(5, settings.isAutoScroll());
+            ps.setBoolean(6, settings.isBarShow());
+            ps.setBoolean(7, settings.isFilterShow());
             ps.executeUpdate();
             return true;
         }catch (SQLException e) {
@@ -126,11 +125,13 @@ public class DataBase {
         try (Connection connection = getConnection()) {
             Statement s = connection.createStatement();
             ResultSet r = s.executeQuery("SELECT current_profile_id FROM global_settings");
-            return r.getInt("current_profile_id");
+            if (r.next()) {
+                return r.getInt("current_profile_id");
+            }
         } catch (SQLException e) {
             LOGGER.error("Error get current profile from global settings: {}", e.getMessage());
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -141,9 +142,9 @@ public class DataBase {
      */
     public boolean setCurrentProfileId(int id) {
         try (Connection connection = getConnection()) {
-            PreparedStatement gs = connection.prepareStatement("UPDATE global_settings SET current_profile_id=?");
-            gs.setInt(1, id);
-            gs.executeUpdate();
+            PreparedStatement ps = connection.prepareStatement("UPDATE global_settings SET current_profile_id=?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
             return true;
         }catch (SQLException e) {
             LOGGER.error("Error set selected profile: {}", e.getMessage());
@@ -162,11 +163,13 @@ public class DataBase {
         try (Connection connection = getConnection()) {
             Statement s = connection.createStatement();
             ResultSet r = s.executeQuery("SELECT * FROM profiles WHERE id = " + id);
-            profile = new Profile(
-                    r.getInt("id"),
-                    r.getString("name"),
-                    r.getString("url")
-            );
+            if (r.next()) {
+                profile = new Profile(
+                        r.getInt("id"),
+                        r.getString("name"),
+                        r.getString("url")
+                );
+            }
         } catch (SQLException e) {
             LOGGER.error("Error get profile id `{}`: {}", id, e.getMessage());
         }
@@ -212,12 +215,14 @@ public class DataBase {
                 throw new SQLException("Profile not insert");
             }
             Statement statement = connection.createStatement();
-            ResultSet r = statement.executeQuery("SELECT last_insert_rowid()");
-            return r.getInt(1);
+            ResultSet r = statement.executeQuery("SELECT SCOPE_IDENTITY()");
+            if (r.next()) {
+                return r.getInt(1);
+            }
         } catch (SQLException e) {
             LOGGER.error("Error add profile: {}", e.getMessage());
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -485,7 +490,7 @@ public class DataBase {
      */
     private Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(String.format("%s:%s", DB_TYPE, dbPath));
+            connection = DriverManager.getConnection(String.format("%s:%s", DB_TYPE, dbPath), "sa", "");
         }
         return connection;
     }
@@ -494,20 +499,16 @@ public class DataBase {
      * Create default tables in database
      */
     private void createTables() {
-        try (Connection connection = getConnection()) {
-            Statement s = connection.createStatement();
-
-            // Create tables script
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream(CREATE_SQL_SCRIPT);
-            String script = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
+        try (final Connection connection = getConnection()) {
 
             // Default properties values
             DefaultProperties properties = DefaultProperties.getInstance();
 
             // Create tables
             LOGGER.debug("Create tables in database ...");
-            s.executeUpdate(script);
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream(CREATE_SQL_SCRIPT);
+            RunScript.execute(connection, new InputStreamReader(is));
 
             // Insert default settings values
             LOGGER.debug("Insert default settings ...");
@@ -515,13 +516,13 @@ public class DataBase {
                     "(font_size, text_wrap, json_pretty, json_regex, current_profile_id, auto_scroll, bar_show, filter_show) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             pss.setInt(1, properties.getMsgFontSize());
-            pss.setInt(2, properties.isMsgWrap() ? 1 : 0);
-            pss.setInt(3, properties.isMsgJsonPretty() ? 1 : 0);
+            pss.setBoolean(2, properties.isMsgWrap());
+            pss.setBoolean(3, properties.isMsgJsonPretty());
             pss.setString(4, properties.getMsgJsonPrettyReplaceRegex());
             pss.setInt(5, 0);
-            pss.setInt(6, properties.isAutoScroll() ? 1 : 0);
-            pss.setInt(7, properties.isShowBar() ? 1 : 0);
-            pss.setInt(8, properties.isShowFilter() ? 1 : 0);
+            pss.setBoolean(6, properties.isAutoScroll());
+            pss.setBoolean(7, properties.isShowBar());
+            pss.setBoolean(8, properties.isShowFilter());
             pss.executeUpdate();
 
             // Insert default profile values
