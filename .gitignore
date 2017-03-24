@@ -16,6 +16,7 @@
 # compile folders
 target/
 build/
+out/
 
 # logging
 **/logs

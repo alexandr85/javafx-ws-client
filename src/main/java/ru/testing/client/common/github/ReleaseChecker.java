@@ -1,7 +1,6 @@
 package ru.testing.client.common.github;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -50,8 +48,8 @@ public class ReleaseChecker extends Thread {
         String url = properties.getTagsUrl();
         try {
             if (!url.isEmpty()) {
-                List<TagInfo> tags = createRequest();
-                setLastVersion(tags.get(0).getName().replace("v", ""));
+                TagInfo[] tags = getTagsFromApi();
+                setLastVersion(tags[0].getName().replace("v", ""));
             }
             if (isCurrentVersionOld(properties.getVersion(), lastVersion)) {
                 Platform.runLater(() -> {
@@ -92,12 +90,10 @@ public class ReleaseChecker extends Thread {
      * @return List<TagInfo>
      * @throws IOException mapping TagInfo
      */
-    private List<TagInfo> createRequest() throws IOException {
+    private TagInfo[] getTagsFromApi() throws IOException {
         WebResource resource = getClient().resource(properties.getTagsUrl());
         ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.getEntity(String.class), new TypeReference<List<TagInfo>>() {
-        });
+        return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
     }
 
     /**

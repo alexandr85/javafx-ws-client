@@ -1,6 +1,6 @@
 package ru.testing.client.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -8,8 +8,8 @@ import javafx.scene.control.ToggleButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.DataBase;
-import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.db.objects.ReceivedMessage;
+import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.elements.message.ReceivedMessageType;
 
 /**
@@ -51,7 +51,7 @@ public class TabDetailController {
 
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
-            if (bPrettyJson.isSelected()){
+            if (bPrettyJson.isSelected()) {
                 txMsgArea.setText(getJsonPretty(message.getMessage()));
             } else {
                 txMsgArea.setText(message.getMessage());
@@ -86,10 +86,11 @@ public class TabDetailController {
     private String getJsonPretty(String message) {
         try {
             String json = message.replaceAll(dataBase.getSettings().getJsonRegex(), "");
-            ObjectMapper mapper = new ObjectMapper();
-            Object object = mapper.readValue(json, Object.class);
-            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
-        } catch (Exception e) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonParser parser = new JsonParser();
+            JsonElement jsonElement = parser.parse(json);
+            return gson.toJson(jsonElement);
+        } catch (JsonIOException e) {
             LOGGER.error("Error pretty json from string: {}", e.getMessage());
             bPrettyJson.setSelected(false);
             return message;
