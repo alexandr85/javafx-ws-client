@@ -27,7 +27,7 @@ public class DetailMsgTab extends Tab {
 
             // Setup tab
             MultipleSelectionModel<ReceivedMessage> selectionModel = main.getOutputTextView().getSelectionModel();
-            this.setText(String.format("Message #%s", selectionModel.getSelectedIndex() + 1));
+            this.setText(String.format("WS Message #%s", selectionModel.getSelectedIndex() + 1));
             this.setGraphic(new ImageView("/images/message.png"));
 
             // Load detail message view form

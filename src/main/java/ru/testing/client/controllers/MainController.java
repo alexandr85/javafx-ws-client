@@ -1,6 +1,8 @@
 package ru.testing.client.controllers;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -25,6 +27,7 @@ import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
+import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.*;
@@ -57,6 +60,7 @@ public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
+    private final ObservableList<HttpTypes> httpTypes = FXCollections.observableArrayList();
     private final ObservableList<ReceivedMessage> receivedMessageList = FXCollections.observableArrayList();
     private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
@@ -76,6 +80,8 @@ public class MainController {
      */
     @FXML
     private TabPane tabPane;
+    @FXML
+    private ComboBox<HttpTypes> httpTypesComboBox;
 
     /**
      * Menu buttons
@@ -157,6 +163,8 @@ public class MainController {
     @FXML
     private StatusBar statusBar;
     @FXML
+    private FlowPane sendMessagePane;
+    @FXML
     private FlowPane filterBar;
     @FXML
     private FlowPane findBar;
@@ -185,6 +193,22 @@ public class MainController {
                         header.setStyle("-fx-pref-height: 30");
                     }
                 }
+            }
+        });
+
+        // Http clients types
+        httpTypes.addAll(
+                HttpTypes.WEBSOCKET,
+                HttpTypes.REST_GET,
+                HttpTypes.REST_POST
+        );
+        httpTypesComboBox.setItems(httpTypes);
+        httpTypesComboBox.getSelectionModel().select(0);
+        httpTypesComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (httpTypesComboBox.getSelectionModel().getSelectedItem() != HttpTypes.WEBSOCKET) {
+                connectBtn.setText("Send");
+            } else {
+                connectBtn.setText("Connect");
             }
         });
 
@@ -878,8 +902,8 @@ public class MainController {
                 connectBtn.setText("Disconnect");
                 connectBtn.setDisable(false);
                 setCircleTooltip("Connected");
-                sendMsgTextField.setDisable(false);
-                messageSendBtn.setDisable(false);
+                sendMessagePane.setVisible(true);
+                sendMessagePane.setManaged(true);
                 tbHeaders.setDisable(true);
             } else {
                 connectStatus.getStyleClass().clear();
@@ -888,8 +912,8 @@ public class MainController {
                 connectBtn.setText("Connect");
                 connectBtn.setDisable(false);
                 setCircleTooltip("Disconnected");
-                sendMsgTextField.setDisable(true);
-                messageSendBtn.setDisable(true);
+                sendMessagePane.setVisible(false);
+                sendMessagePane.setManaged(false);
                 connectionStatus = false;
                 tbHeaders.setDisable(false);
             }
