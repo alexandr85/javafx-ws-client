@@ -2,9 +2,7 @@ package ru.testing.client.elements.tabs;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
@@ -31,8 +29,10 @@ public class WsMessagesTab extends Tab {
         this.setGraphic(new ImageView("/images/messages.png"));
         this.setOnClosed(event -> {
             WsClient wsClient = controller.getWsClient();
-            wsClient.closeConnection();
-            mainController.getWsClients().remove(wsClient);
+            if (wsClient != null) {
+                wsClient.closeConnection();
+                mainController.getWsClients().remove(wsClient);
+            }
         });
 
         // Load detail message view form
@@ -45,11 +45,7 @@ public class WsMessagesTab extends Tab {
             LOGGER.error("Error load view form: {}", e.getMessage());
         }
 
-        // Setup new tab with content in tabPane
-        TabPane tabPane = MainApp.getMainController().getTabPane();
-        SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
-        tabPane.getTabs().add(this);
-        selectTabModel.select(this);
+        // Setup tab tooltip
         this.setTooltip(new Tooltip(String.format("Connected to %s", mainController.getServerUrl().getText())));
     }
 

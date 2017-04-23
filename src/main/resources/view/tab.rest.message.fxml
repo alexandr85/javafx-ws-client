@@ -19,10 +19,10 @@
     <MasterDetailPane fx:id="masterDetailPane" detailSide="TOP" showDetailNode="false" GridPane.rowIndex="0"
                       dividerPosition=".3">
         <masterNode>
-            <TextArea fx:id="masterNode" disable="true"/>
+            <TextArea fx:id="masterNode" editable="false"/>
         </masterNode>
         <detailNode>
-            <TextArea fx:id="detailNode" disable="true"/>
+            <TextArea fx:id="detailNode" editable="false"/>
         </detailNode>
     </MasterDetailPane>
 

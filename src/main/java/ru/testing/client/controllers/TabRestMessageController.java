@@ -1,6 +1,8 @@
 package ru.testing.client.controllers;
 
 import com.google.gson.*;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -8,10 +10,10 @@ import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.MasterDetailPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.MainApp;
 import ru.testing.client.common.db.DataBase;
-import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.common.db.objects.Settings;
-import ru.testing.client.websocket.ReceivedMessageType;
+import ru.testing.client.rest.RestClient;
 
 /**
  * Controller for detail message tab form
@@ -20,7 +22,7 @@ public class TabRestMessageController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TabRestMessageController.class.getName());
     private DataBase dataBase = DataBase.getInstance();
-    private ReceivedMessage message;
+    private String message;
 
     @FXML
     private MasterDetailPane masterDetailPane;
@@ -46,9 +48,9 @@ public class TabRestMessageController {
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
             if (bPrettyJson.isSelected()) {
-                masterNode.setText(getJsonPretty(message.getMessage()));
+                masterNode.setText(getJsonPretty(message));
             } else {
-                masterNode.setText(message.getMessage());
+                masterNode.setText(message);
             }
         });
         if (settings.isJsonPretty()) {
@@ -78,21 +80,24 @@ public class TabRestMessageController {
                 masterDetailPane.setShowDetailNode(false);
             }
         });
-    }
 
-    /**
-     * Set message data in tab
-     *
-     * @param message ReceivedMessage
-     */
-    public void setMessage(ReceivedMessage message) {
-        this.message = message;
-
-        // Set message text and data on init tab
-        masterNode.setText(message.getMessage());
-        String sb = (message.getMessageType() == ReceivedMessageType.RECEIVED ? "Received " : "Send ") +
-                "time: " + message.getFormattedTime();
-        msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
+        RestClient restClient = new RestClient();
+        MainController mainController = MainApp.getMainController();
+        WebResource resource = restClient.getResource(mainController.getServerUrl().getText());
+        ClientResponse response = null;
+        switch (mainController.getHttpType()) {
+            case HTTP_GET:
+                response = resource.get(ClientResponse.class);
+                break;
+            case HTTP_POST:
+                response = resource.post(ClientResponse.class);
+                break;
+        }
+        if (response != null) {
+            message = response.getEntity(String.class);
+            masterNode.setText(message);
+            detailNode.setText(response.getStatusInfo().toString());
+        }
     }
 
     /**
@@ -108,7 +113,7 @@ public class TabRestMessageController {
             JsonParser parser = new JsonParser();
             JsonElement jsonElement = parser.parse(json);
             return gson.toJson(jsonElement);
-        } catch (JsonIOException e) {
+        } catch (JsonIOException | JsonSyntaxException e) {
             LOGGER.error("Error pretty json from string: {}", e.getMessage());
             bPrettyJson.setSelected(false);
             return message;

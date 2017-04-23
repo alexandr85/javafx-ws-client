@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.*;
@@ -125,6 +126,7 @@ public class MainController {
             } else {
                 connectionButton.setText("Connect");
             }
+            validateServerUrl();
         });
 
         // Set hot keys
@@ -140,7 +142,7 @@ public class MainController {
         });
         serverUrl.textProperty().addListener((observable) -> {
             if (serverUrl.getText().length() > 0) {
-                connectionButton.setDisable(false);
+                validateServerUrl();
                 serverUrlClear.setVisible(true);
             } else {
                 connectionButton.setDisable(true);
@@ -168,12 +170,25 @@ public class MainController {
 
     @FXML
     private void createRequest() {
-        if (httpTypesComboBox.getSelectionModel().getSelectedItem() == HttpTypes.WEBSOCKET) {
-            WsMessagesTab wsClientTab = new WsMessagesTab();
-            wsClients.add(wsClientTab.getController().getWsClient());
-        } else {
-            new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
-        }
+        HttpTypes currentType = httpTypesComboBox.getSelectionModel().getSelectedItem();
+        Task task = new Task() {
+
+            @Override
+            protected Object call() throws Exception {
+                setProgressVisible(true);
+                if (currentType == HttpTypes.WEBSOCKET) {
+                    WsMessagesTab wsClientTab = new WsMessagesTab();
+                    wsClients.add(wsClientTab.getController().getWsClient());
+                    addNewTab(wsClientTab);
+                } else {
+                    RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
+                    addNewTab(restTab);
+                }
+                setProgressVisible(false);
+                return null;
+            }
+        };
+        new Thread(task).start();
     }
 
     /**
@@ -248,12 +263,53 @@ public class MainController {
     }
 
     /**
+     * Add new client as tab with result
+     *
+     * @param tab Tab
+     */
+    private void addNewTab(Tab tab) {
+        Platform.runLater(() -> {
+            TabPane tabPane = getTabPane();
+            SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
+            tabPane.getTabs().add(tab);
+            selectTabModel.select(tab);
+        });
+    }
+
+    /**
+     * Validate server url start with correct uri schema
+     */
+    private void validateServerUrl() {
+        if (getHttpType() == HttpTypes.WEBSOCKET) {
+            if (serverUrl.getText().startsWith("ws://") || serverUrl.getText().startsWith("wss://")) {
+                connectionButton.setDisable(false);
+            } else {
+                connectionButton.setDisable(true);
+            }
+        } else {
+            if (serverUrl.getText().startsWith("http://") || serverUrl.getText().startsWith("https://")) {
+                connectionButton.setDisable(false);
+            } else {
+                connectionButton.setDisable(true);
+            }
+        }
+    }
+
+    /**
      * Get ws clients list
      *
      * @return List<WsClient>
      */
     public List<WsClient> getWsClients() {
         return wsClients;
+    }
+
+    /**
+     * Get current selected http type
+     * @return HttpTypes
+     */
+    HttpTypes getHttpType() {
+        return httpTypesComboBox.getSelectionModel().getSelectedItem();
     }
 
     /**

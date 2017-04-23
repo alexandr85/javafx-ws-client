@@ -106,7 +106,7 @@ public class TabSettingsController {
     private void saveSettings() {
 
         // Enable loader
-//        main.setProgressVisible(true);
+        main.setProgressVisible(true);
 
         // Save new settings in database
         boolean status = dataBase.setSettings(new Settings(
@@ -156,7 +156,7 @@ public class TabSettingsController {
     private void addNewProfile() {
 
         // Enable loader
-//        main.setProgressVisible(true);
+        main.setProgressVisible(true);
 
         // Add new profile by name
         String profileName = tfProfileName.getText();
@@ -189,7 +189,7 @@ public class TabSettingsController {
         }
 
         // Disable loader
-//        main.setProgressVisible(false);
+        main.setProgressVisible(false);
     }
 
     /**
@@ -199,7 +199,7 @@ public class TabSettingsController {
     private void loadSelectedProfile() {
 
         // Enable loader
-//        main.setProgressVisible(true);
+        main.setProgressVisible(true);
 
         // Load selected profile
         ProfileName selectedProfile = cbProfilesNames.getSelectionModel().getSelectedItem();
@@ -219,7 +219,7 @@ public class TabSettingsController {
     private void removeSelectedProfile() {
 
         // Enable loader
-//        main.setProgressVisible(true);
+        main.setProgressVisible(true);
 
         // Get selected profile id
         int profileId = cbProfilesNames.getSelectionModel().getSelectedItem().getId();
@@ -251,7 +251,7 @@ public class TabSettingsController {
         selectCurrentProfile();
 
         // Disable loader
-//        main.setProgressVisible(false);
+        main.setProgressVisible(false);
     }
 
     /**
@@ -260,7 +260,7 @@ public class TabSettingsController {
     private void setSettingsValues(Settings settings) {
 
         // Enable loader
-//        main.setProgressVisible(true);
+        main.setProgressVisible(true);
 
         // Set text wrap value
         chWrap.setSelected(settings.isTextWrap());
@@ -284,7 +284,7 @@ public class TabSettingsController {
         cbShowFilter.setSelected(settings.isFilterShow());
 
         // Disable loader
-//        main.setProgressVisible(false);
+        main.setProgressVisible(false);
     }
 
     /**
