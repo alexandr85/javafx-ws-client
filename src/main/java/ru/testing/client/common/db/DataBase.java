@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.objects.*;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.DefaultProperties;
-import ru.testing.client.elements.message.ReceivedMessageType;
+import ru.testing.client.websocket.ReceivedMessageType;
 
 import java.io.*;
 import java.sql.*;

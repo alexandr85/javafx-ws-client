@@ -8,7 +8,7 @@ import org.controlsfx.control.IndexedCheckModel;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.elements.message.DetailMsgTab;
+import ru.testing.client.elements.tabs.WsMessageTab;
 
 
 /**
@@ -135,12 +135,11 @@ public class ContextMenuItems {
      * Save send selected messages to file
      *
      * @param item ReceivedMessage
-     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem showMessage(final ReceivedMessage item, MainController main) {
+    public MenuItem showMessage(final ReceivedMessage item) {
         MenuItem show = new MenuItem("Show body message");
-        show.setOnAction(event -> new DetailMsgTab(item, main));
+        show.setOnAction(event -> new WsMessageTab(item));
         return show;
     }
 

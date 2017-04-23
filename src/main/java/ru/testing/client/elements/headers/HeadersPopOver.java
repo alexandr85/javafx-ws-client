@@ -33,7 +33,7 @@ public class HeadersPopOver extends PopOver {
         setDetachable(false);
         setArrowLocation(PopOver.ArrowLocation.TOP_LEFT);
         setOnHidden(event -> {
-            getMainController().getTbHeaders().setSelected(false);
+            getMainController().getHttpSettings().setSelected(false);
             headersController.getHeaderListView().getSelectionModel().clearSelection();
         });
     }

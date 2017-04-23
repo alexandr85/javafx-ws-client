@@ -1,4 +1,4 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.websocket;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.SendMessagesController;
 
 import java.io.IOException;
-
-import static ru.testing.client.MainApp.getMainController;
 
 /**
  * Send message history pop over
@@ -24,7 +22,7 @@ public class SendMessagesPopOver extends PopOver {
         // Pop over settings
         setDetachable(false);
         setArrowLocation(ArrowLocation.TOP_RIGHT);
-        setOnHidden(event -> getMainController().getSendMsgHistoryBtn().setSelected(false));
+//        setOnHidden(event -> getMainController().getSendMsgHistoryBtn().setSelected(false));
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.send.messages.fxml"));

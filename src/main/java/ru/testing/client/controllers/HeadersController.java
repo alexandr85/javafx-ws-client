@@ -43,7 +43,7 @@ public class HeadersController {
         headerListView.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
-                getMainController().getLbHeadersCounter().setText(String.valueOf(size));
+//                getMainController().getLbHeadersCounter().setText(String.valueOf(size));
                 if (size > 0) {
                     setListViewVisible(true);
                 } else {
@@ -109,7 +109,7 @@ public class HeadersController {
         Platform.runLater(() -> {
             headerObservableList.clear();
             headers.forEach(header -> headerObservableList.add(new Header(header.getName(), header.getValue())));
-            getMainController().getLbHeadersCounter().setText(String.valueOf(headers.size()));
+//            getMainController().getLbHeadersCounter().setText(String.valueOf(headers.size()));
         });
     }
 

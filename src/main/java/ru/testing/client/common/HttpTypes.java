@@ -5,6 +5,6 @@ package ru.testing.client.common;
  */
 public enum HttpTypes {
     WEBSOCKET,
-    REST_GET,
-    REST_POST
+    HTTP_GET,
+    HTTP_POST
 }

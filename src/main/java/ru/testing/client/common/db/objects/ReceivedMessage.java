@@ -2,7 +2,7 @@ package ru.testing.client.common.db.objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.elements.message.ReceivedMessageType;
+import ru.testing.client.websocket.ReceivedMessageType;
 
 import java.text.ParseException;
 import java.util.Calendar;

@@ -17,9 +17,9 @@ import static java.util.Collections.singletonList;
 /**
  * WebSocket client
  */
-public class Client extends Endpoint {
+public class WsClient extends Endpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WsClient.class);
     private final ClientManager client;
     private final ClientEndpointConfig config;
     private URI endpointURI;
@@ -29,7 +29,7 @@ public class Client extends Endpoint {
     /**
      * Default client constructor
      */
-    public Client() {
+    public WsClient() {
         client = ClientManager.createClient();
         config = ClientEndpointConfig.Builder.create()
                 .decoders(singletonList(SimpleDecoder.class))

@@ -3,8 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-          stylesheets="/styles/tab.detail.msg.css" fx:controller="ru.testing.client.controllers.TabDetailController">
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
+          stylesheets="/styles/tab.detail.msg.css" fx:controller="ru.testing.client.controllers.TabWsMessageController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
     </columnConstraints>
@@ -37,12 +37,10 @@
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap text"
-                              GridPane.columnIndex="0" GridPane.rowIndex="0">
-                </ToggleButton>
+                <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
+                              GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                 <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90"
-                              text="Json pretty" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                </ToggleButton>
+                              text="Pretty" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
             </GridPane>
             <GridPane maxWidth="320.0" GridPane.columnIndex="1">
                 <columnConstraints>

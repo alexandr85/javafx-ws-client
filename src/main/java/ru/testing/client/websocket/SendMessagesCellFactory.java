@@ -1,4 +1,4 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.websocket;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,8 +26,8 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
 
     public SendMessagesCellFactory(SendMessagesController sendMessagesController) {
         this.list = sendMessagesController.getList();
-        sendMsgTextField = getMainController().getSendMsgTextField();
-        sentMsgPopOver = getMainController().getSendMessagesPopOver();
+//        sendMsgTextField = getMainController().getSendMsgTextField();
+//        sentMsgPopOver = getMainController().getSendMessagesPopOver();
         checkModel = sendMessagesController.getCheckListView().getCheckModel();
     }
 

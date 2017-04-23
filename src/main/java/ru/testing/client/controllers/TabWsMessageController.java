@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.common.db.objects.Settings;
-import ru.testing.client.elements.message.ReceivedMessageType;
+import ru.testing.client.websocket.ReceivedMessageType;
 
 /**
  * Controller for detail message tab form
  */
-public class TabDetailController {
+public class TabWsMessageController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabDetailController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TabWsMessageController.class.getName());
     private DataBase dataBase = DataBase.getInstance();
     private ReceivedMessage message;
 

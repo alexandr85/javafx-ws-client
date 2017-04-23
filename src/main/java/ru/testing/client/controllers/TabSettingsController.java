@@ -13,7 +13,7 @@ import ru.testing.client.common.db.objects.ProfileName;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.elements.message.DetailMsgTab;
+import ru.testing.client.elements.tabs.WsMessageTab;
 
 import static ru.testing.client.MainApp.getMainController;
 
@@ -106,7 +106,7 @@ public class TabSettingsController {
     private void saveSettings() {
 
         // Enable loader
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
 
         // Save new settings in database
         boolean status = dataBase.setSettings(new Settings(
@@ -123,10 +123,10 @@ public class TabSettingsController {
             Settings settings = dataBase.getSettings();
 
             // Set font size for all messages
-            main.getOutputTextView()
-                    .setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
+//            main.getOutputTextView()
+//                    .setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
             for (Tab tab : main.getTabPane().getTabs()) {
-                if (tab instanceof DetailMsgTab) {
+                if (tab instanceof WsMessageTab) {
                     Node tabNode = tab.getContent();
                     if (tabNode instanceof GridPane) {
                         for (Node node : ((GridPane) tabNode).getChildren()) {
@@ -140,13 +140,7 @@ public class TabSettingsController {
             }
 
             // Set auto scroll status
-            main.setAutoScroll(!settings.isAutoScroll());
-
-            // Set show bar status
-            main.setStatusBarVisible(settings.isBarShow());
-
-            // Set show filter status
-            main.setFilterVisible(settings.isFilterShow());
+            //main.setAutoScroll(!settings.isAutoScroll());
 
             // Show successful dialog
             new Dialogs().getInfoDialog("Settings save successful", main, false);
@@ -162,14 +156,14 @@ public class TabSettingsController {
     private void addNewProfile() {
 
         // Enable loader
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
 
         // Add new profile by name
         String profileName = tfProfileName.getText();
         if (profileName.length() > 0) {
             int profileId = dataBase.addProfile(new Profile(
                     profileName,
-                    main.getServerUrl()
+                    main.getServerUrl().getText()
             ));
             if (profileId != 0) {
 
@@ -177,13 +171,13 @@ public class TabSettingsController {
                 dataBase.addHeaders(profileId, main.getHeadersList());
 
                 // Add filters
-                dataBase.addFilters(profileId, main.getFilterList());
+                //dataBase.addFilters(profileId, main.getFilterList());
 
                 // Add send messages
-                dataBase.addSendMessages(profileId, main.getSendMessages());
+                //dataBase.addSendMessages(profileId, main.getSendMessages());
 
                 // Add received messages
-                dataBase.addReceivedMessages(profileId, main.getReceivedMessageList());
+                //dataBase.addReceivedMessages(profileId, main.getReceivedMessageList());
 
                 // Prepare profiles list
                 dataBase.setCurrentProfileId(profileId);
@@ -195,7 +189,7 @@ public class TabSettingsController {
         }
 
         // Disable loader
-        main.setProgressVisible(false);
+//        main.setProgressVisible(false);
     }
 
     /**
@@ -205,7 +199,7 @@ public class TabSettingsController {
     private void loadSelectedProfile() {
 
         // Enable loader
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
 
         // Load selected profile
         ProfileName selectedProfile = cbProfilesNames.getSelectionModel().getSelectedItem();
@@ -225,7 +219,7 @@ public class TabSettingsController {
     private void removeSelectedProfile() {
 
         // Enable loader
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
 
         // Get selected profile id
         int profileId = cbProfilesNames.getSelectionModel().getSelectedItem().getId();
@@ -257,7 +251,7 @@ public class TabSettingsController {
         selectCurrentProfile();
 
         // Disable loader
-        main.setProgressVisible(false);
+//        main.setProgressVisible(false);
     }
 
     /**
@@ -266,7 +260,7 @@ public class TabSettingsController {
     private void setSettingsValues(Settings settings) {
 
         // Enable loader
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
 
         // Set text wrap value
         chWrap.setSelected(settings.isTextWrap());
@@ -290,7 +284,7 @@ public class TabSettingsController {
         cbShowFilter.setSelected(settings.isFilterShow());
 
         // Disable loader
-        main.setProgressVisible(false);
+//        main.setProgressVisible(false);
     }
 
     /**

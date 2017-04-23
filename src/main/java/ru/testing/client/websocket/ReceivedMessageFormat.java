@@ -1,4 +1,4 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.websocket;
 
 /**
  * Enum class for constant output message string format

@@ -45,7 +45,7 @@ public class Dialogs {
      * @param progressStatus boolean
      */
     public void getInfoDialog(String info, MainController main, boolean progressStatus) {
-        main.setProgressVisible(progressStatus);
+//        main.setProgressVisible(progressStatus);
         getInfoDialog(info);
     }
 
@@ -133,7 +133,7 @@ public class Dialogs {
      * @param progressStatus boolean
      */
     public void getWarningDialog(String info, MainController main, boolean progressStatus) {
-        main.setProgressVisible(progressStatus);
+//        main.setProgressVisible(progressStatus);
         getWarningDialog(info);
     }
 }

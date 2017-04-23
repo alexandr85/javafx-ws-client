@@ -1,4 +1,4 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.websocket;
 
 /**
  * Class described constant message type

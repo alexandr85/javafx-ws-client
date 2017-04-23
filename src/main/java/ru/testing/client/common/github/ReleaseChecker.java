@@ -73,7 +73,7 @@ public class ReleaseChecker extends Thread {
     /**
      * Get rest client
      *
-     * @return com.sun.jersey.api.client.Client
+     * @return com.sun.jersey.api.client.WsClient
      */
     private Client getClient() {
         if (client == null) {

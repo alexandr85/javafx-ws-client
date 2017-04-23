@@ -1,334 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Circle?>
-<?import org.controlsfx.control.StatusBar?>
-<GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-          prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-          stylesheets="/styles/main.css" fx:controller="ru.testing.client.controllers.MainController">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+
+<?import javafx.scene.layout.Border?>
+<GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" stylesheets="/styles/main.css" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.testing.client.controllers.MainController">
     <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     </columnConstraints>
     <rowConstraints>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="NEVER"/>
-        <RowConstraints vgrow="ALWAYS"/>
-        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER" />
+        <RowConstraints vgrow="NEVER" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints prefHeight="5.0" valignment="TOP" vgrow="NEVER" />
     </rowConstraints>
 
     <!-- Application menu bar -->
     <MenuBar fx:id="menuBar" GridPane.rowIndex="0">
         <Menu text="File">
-            <MenuItem fx:id="settingsMenu" mnemonicParsing="false" text="Settings" onAction="#showSettings">
+            <MenuItem fx:id="settingsMenu" mnemonicParsing="false" onAction="#showSettings" text="Settings">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/settings.png"/>
+                        <Image url="@/images/settings.png" />
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" text="Save output" onAction="#saveOutputToFile">
+            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" onAction="#saveOutputToFile" text="Save output">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/save-output.png"/>
+                        <Image url="@/images/save-output.png" />
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <SeparatorMenuItem/>
-            <MenuItem fx:id="exitAppMenu" mnemonicParsing="false" text="Exit" onAction="#exitApplication">
+            <SeparatorMenuItem />
+            <MenuItem fx:id="exitAppMenu" mnemonicParsing="false" onAction="#exitApplication" text="Exit">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/exit.png"/>
+                        <Image url="@/images/exit.png" />
                     </ImageView>
                 </graphic>
             </MenuItem>
-        </Menu>
-        <Menu text="View">
-            <CheckMenuItem fx:id="showStatusBar" text="Show bar" selected="true" onAction="#changesStatusBarVisible"/>
-            <CheckMenuItem fx:id="autoScrollMenuItem" selected="true" text="Auto scroll"
-                           onAction="#changeAutoScrollStatus"/>
-            <CheckMenuItem fx:id="showFilter" text="Show filter" onAction="#changeFilterVisible"/>
         </Menu>
         <Menu text="Help">
-            <MenuItem text="Last version" onAction="#getLastTagVersionFromWeb">
+            <MenuItem onAction="#getLastTagVersionFromWeb" text="Last version">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/download.png"/>
+                        <Image url="@/images/download.png" />
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem text="About" onAction="#getAboutFromWeb">
+            <MenuItem onAction="#getAboutFromWeb" text="About">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/info.png"/>
+                        <Image url="@/images/info.png" />
                     </ImageView>
                 </graphic>
             </MenuItem>
         </Menu>
     </MenuBar>
 
-    <!-- Pane with url -->
-    <TilePane GridPane.rowIndex="1" alignment="CENTER">
+    <!-- Pane with url && connection type -->
+    <TilePane alignment="CENTER" GridPane.rowIndex="1">
         <GridPane hgap="5" maxWidth="680.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="110.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="430.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="110.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="430.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES" />
             </rowConstraints>
-            <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0"/>
-            <ToggleButton fx:id="tbHeaders" GridPane.columnIndex="1" prefHeight="25.0" prefWidth="25.0"
-                          minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                          contentDisplay="CENTER"
-                          onAction="#showHeadersPopOver">
+            <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0" />
+            <ToggleButton fx:id="httpSettings" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#showHeadersPopOver" prefHeight="25.0" prefWidth="25.0" GridPane.columnIndex="1">
                 <tooltip>
-                    <Tooltip text="Set headers data"/>
+                    <Tooltip text="Set headers data" />
                 </tooltip>
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/headers.png"/>
+                        <Image url="@/images/headers.png" />
                     </ImageView>
                 </graphic>
                 <cursor>
-                    <Cursor fx:constant="HAND"/>
+                    <Cursor fx:constant="HAND" />
                 </cursor>
             </ToggleButton>
-            <TextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                       minWidth="-Infinity" prefHeight="25.0" promptText="Url" GridPane.columnIndex="2">
+            <CustomTextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" promptText="Url" GridPane.columnIndex="2">
                 <padding>
-                    <Insets left="5.0"/>
+                    <Insets left="5.0" right="5.0" />
                 </padding>
-            </TextField>
-            <Button fx:id="connectBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                    minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0"
-                    text="Connect" GridPane.columnIndex="3" onAction="#connectDisconnectAction" disable="true">
+                <right>
+                <Label fx:id="serverUrlClear" onMouseClicked="#clearServerUrl" visible="false">
+                        <graphic>
+                            <ImageView rotate="45.0">
+                                <Image requestedHeight="18.0" requestedWidth="18.0" url="@/images/add.png" />
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND" />
+                        </cursor>
+                    </Label>
+                </right>
+            </CustomTextField>
+            <Button fx:id="connectionButton" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createRequest" prefHeight="25.0" prefWidth="100.0" text="Connect" GridPane.columnIndex="3">
                 <cursor>
-                    <Cursor fx:constant="HAND"/>
+                    <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
         </GridPane>
     </TilePane>
 
-    <!-- Tab pane with tabs -->
-    <TabPane fx:id="tabPane" prefHeight="400.0" GridPane.rowIndex="2" tabMinWidth="120" tabClosingPolicy="ALL_TABS">
+    <!-- Tab pane with results -->
+    <TilePane fx:id="noResults" alignment="CENTER" prefHeight="400.0" GridPane.rowIndex="2">
+        <Label disable="true" style="-fx-font-size: 1.5em; -fx-font-family: monospace;" text="NO RESULTS" />
+    </TilePane>
+    <TabPane fx:id="tabPane" managed="false" prefHeight="400.0" tabClosingPolicy="ALL_TABS" tabMinWidth="120" visible="false" GridPane.rowIndex="2">
         <padding>
-            <Insets left="4" right="4" bottom="4"/>
+            <Insets bottom="4" left="4" right="4" />
         </padding>
-
-        <!-- Output socket messages tab with send message input and filter pane -->
-        <Tab closable="false" text="WS Messages">
-            <graphic>
-                <ImageView>
-                    <Image url="@/images/messages.png"/>
-                </ImageView>
-            </graphic>
-            <GridPane styleClass="output_grid">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints vgrow="NEVER"/>
-                    <RowConstraints vgrow="SOMETIMES"/>
-                    <RowConstraints vgrow="NEVER"/>
-                </rowConstraints>
-                <GridPane.margin>
-                    <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
-                </GridPane.margin>
-                <FlowPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          prefHeight="32.0" GridPane.rowIndex="0" alignment="CENTER" visible="false" managed="false"
-                          fx:id="sendMessagePane">
-                    <padding>
-                        <Insets bottom="1"/>
-                    </padding>
-                    <GridPane hgap="5">
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="55.0"/>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="477.0"/>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="23.0"/>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
-                        </rowConstraints>
-                        <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                               prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0"
-                               styleClass="label_field"/>
-                        <TextField fx:id="sendMsgTextField" maxWidth="Infinity" minHeight="-Infinity"
-                                   minWidth="-Infinity" prefHeight="25.0" prefWidth="477.0" promptText="text message"
-                                   GridPane.columnIndex="1">
-                            <padding>
-                                <Insets left="5.0"/>
-                            </padding>
-                        </TextField>
-                        <ToggleButton fx:id="sendMsgHistoryBtn" maxHeight="-Infinity" maxWidth="-Infinity"
-                                      minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                      prefHeight="22.0"
-                                      prefWidth="22.0" GridPane.columnIndex="2" onAction="#showSendHistoryPopOver">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                            <tooltip>
-                                <Tooltip text="Send message history list"/>
-                            </tooltip>
-                            <graphic>
-                                <ImageView>
-                                    <Image url="@/images/send-message.png"/>
-                                </ImageView>
-                            </graphic>
-                        </ToggleButton>
-                        <Button fx:id="messageSendBtn" alignment="CENTER" maxHeight="-Infinity"
-                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="3"
-                                onAction="#sendWebsocketMessage">
-                            <cursor>
-                                <Cursor fx:constant="HAND"/>
-                            </cursor>
-                        </Button>
-                    </GridPane>
-                </FlowPane>
-                <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0"
-                          styleClass="output_text"/>
-                <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER"
-                          hgap="15.0"
-                          maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                          prefHeight="32.0"
-                          prefWidth="480.0" styleClass="filter_block">
-                    <padding>
-                        <Insets bottom="2" left="100"/>
-                    </padding>
-                    <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity"
-                                  mnemonicParsing="false"
-                                  prefHeight="25.0" prefWidth="25.0" textAlignment="CENTER"
-                                  onAction="#changeFilterStatus">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/images/filter-off.png"/>
-                            </ImageView>
-                        </graphic>
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </ToggleButton>
-                    <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
-                               maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                               prefHeight="25.0" prefWidth="200.0"/>
-                    <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity" minWidth="-Infinity"
-                            mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0"
-                            onMouseClicked="#addToFilterList">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
-                            </ImageView>
-                        </graphic>
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </Button>
-                    <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
-                                  minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
-                                  prefWidth="25.0" onAction="#showFilterListPopOver">
-                        <graphic>
-                            <ImageView>
-                                <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
-                            </ImageView>
-                        </graphic>
-                        <cursor>
-                            <Cursor fx:constant="HAND"/>
-                        </cursor>
-                    </ToggleButton>
-                    <Label fx:id="filterCount" minWidth="100" maxWidth="100"/>
-                </FlowPane>
-            </GridPane>
-        </Tab>
     </TabPane>
-
-    <!-- Status bar -->
-    <StatusBar maxHeight="25" GridPane.rowIndex="3" fx:id="statusBar" text="">
-        <padding>
-            <Insets bottom="3" top="4" left="15" right="15"/>
-        </padding>
-        <leftItems>
-            <Label fx:id="autoScrollLabel" maxWidth="-Infinity" text="auto scroll" contentDisplay="RIGHT"
-                   onMouseClicked="#changeAutoScrollStatus">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/turn-on.png"/>
-                    </ImageView>
-                </graphic>
-                <tooltip>
-                    <Tooltip text="Auto scroll status"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </Label>
-            <Separator orientation="VERTICAL"/>
-            <Label fx:id="filterStatusLabel" maxWidth="-Infinity" text="filter"
-                   contentDisplay="RIGHT" onMouseClicked="#changeFilterStatus">
-                <graphic>
-                    <ImageView>
-                        <Image url="@/images/turn-off.png"/>
-                    </ImageView>
-                </graphic>
-                <tooltip>
-                    <Tooltip text="Filter status"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-                <cursor>
-                    <Cursor fx:constant="HAND"/>
-                </cursor>
-            </Label>
-            <Separator orientation="VERTICAL"/>
-            <Label fx:id="timeDiffLabel" maxWidth="-Infinity">
-                <tooltip>
-                    <Tooltip text="Time difference"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-            </Label>
-        </leftItems>
-        <rightItems>
-            <TilePane alignment="CENTER" prefWidth="120">
-                <ProgressBar fx:id="progress" visible="false" prefWidth="100"/>
-                <padding>
-                    <Insets left="20" right="20"/>
-                </padding>
-            </TilePane>
-            <Separator orientation="VERTICAL"/>
-            <Label fx:id="outputMsgCount" maxWidth="-Infinity" text="0/0">
-                <tooltip>
-                    <Tooltip text="All / Selected messages"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-            </Label>
-            <Separator orientation="VERTICAL"/>
-            <Label fx:id="lbHeadersCounter" maxWidth="-Infinity" text="0">
-                <tooltip>
-                    <Tooltip text="Custom headers count"/>
-                </tooltip>
-                <padding>
-                    <Insets left="10" right="10" top="2"/>
-                </padding>
-            </Label>
-            <Separator orientation="VERTICAL"/>
-            <VBox alignment="CENTER" prefWidth="40">
-                <Circle fx:id="connectStatus" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
-                        styleClass="disconnected"/>
-            </VBox>
-        </rightItems>
-    </StatusBar>
+    <ProgressBar fx:id="progress" maxWidth="Infinity" GridPane.rowIndex="3" visible="false"/>
 </GridPane>

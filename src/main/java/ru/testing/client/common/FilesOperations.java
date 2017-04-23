@@ -24,10 +24,10 @@ public class FilesOperations {
      */
     public void saveTextToFile(String text, MainController main) {
         Dialogs dialogs = new Dialogs();
-        main.setProgressVisible(true);
+//        main.setProgressVisible(true);
         if (text == null || text.isEmpty()) {
             Platform.runLater(() -> dialogs.getWarningDialog("Nothing for save"));
-            main.setProgressVisible(false);
+//            main.setProgressVisible(false);
             return;
         }
         Writer writer = null;
@@ -48,7 +48,7 @@ public class FilesOperations {
                     LOGGER.error("Can't close writer: {}", e.getMessage());
                 }
             }
-            main.setProgressVisible(false);
+//            main.setProgressVisible(false);
         }
     }
 }

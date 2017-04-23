@@ -1,13 +1,11 @@
-package ru.testing.client.elements.message;
+package ru.testing.client.websocket;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
+import ru.testing.client.MainApp;
 import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.ContextMenuItems;
-
-import static ru.testing.client.elements.message.ReceivedMessageType.SEND;
 
 /**
  * Output message cell factory
@@ -16,11 +14,10 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
 
     private static final String SEND_MESSAGE_CSS = "message_send";
     private ObservableList<ReceivedMessage> list;
-    private MainController main;
+    private MainController mainController = MainApp.getMainController();
 
-    public ReceivedMessageCellFactory(ObservableList<ReceivedMessage> list, MainController mainController) {
+    public ReceivedMessageCellFactory(ObservableList<ReceivedMessage> list) {
         this.list = list;
-        main = mainController;
     }
 
     @Override
@@ -28,7 +25,7 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
         super.updateItem(item, empty);
         if (item != null) {
             setText(String.format(ReceivedMessageFormat.DEFAULT.getFormat(), item.getFormattedTime(), item.getMessage()));
-            if (item.getMessageType() == SEND) {
+            if (item.getMessageType() == ReceivedMessageType.SEND) {
                 getStyleClass().add(SEND_MESSAGE_CSS);
             } else {
                 getStyleClass().removeAll(SEND_MESSAGE_CSS);
@@ -43,18 +40,18 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
 
     @Override
     protected boolean isItemChanged(ReceivedMessage oldItem, ReceivedMessage newItem) {
-        MultipleSelectionModel<ReceivedMessage> selectionModel = main.getOutputTextView().getSelectionModel();
-        setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.SECONDARY)) {
-                selectionModel.clearSelection();
-                selectionModel.select(getItem());
-            }
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
-                if (event.getClickCount() >= 2) {
-                    new DetailMsgTab(getItem(), main);
-                }
-            }
-        });
+//        MultipleSelectionModel<ReceivedMessage> selectionModel = mainController.getOutputTextView().getSelectionModel();
+//        setOnMouseClicked(event -> {
+//            if (event.getButton().equals(MouseButton.SECONDARY)) {
+//                selectionModel.clearSelection();
+//                selectionModel.select(getItem());
+//            }
+//            if (event.getButton().equals(MouseButton.PRIMARY)) {
+//                if (event.getClickCount() >= 2) {
+//                    new WsMessageTab(getItem(), mainController);
+//                }
+//            }
+//        });
         return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
     }
 
@@ -72,10 +69,10 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
                 m.copyCellTime(item),
                 m.copyCellAll(item),
                 new SeparatorMenuItem(),
-                m.saveMessageToFile(item, main),
-                m.showMessage(item, main),
+                m.saveMessageToFile(item, mainController),
+                m.showMessage(item),
                 new SeparatorMenuItem(),
-                m.deselectCell(main.getOutputTextView()),
+//                m.deselectCell(mainController.getOutputTextView()),
                 m.clearListView(list)
         );
         return contextMenu;
