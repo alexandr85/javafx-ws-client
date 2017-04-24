@@ -20,10 +20,7 @@ public class DefaultProperties {
     private int msgFontSize;
     private boolean msgWrap;
     private boolean msgJsonPretty;
-    private String msgJsonPrettyReplaceRegex;
     private boolean autoScroll;
-    private boolean showFilter;
-    private boolean showBar;
 
     private DefaultProperties() {
         Properties properties = new Properties();
@@ -38,10 +35,7 @@ public class DefaultProperties {
             setMsgFontSize(Integer.parseInt(properties.getProperty("msg.font.size")));
             setMsgWrap(Boolean.parseBoolean(properties.getProperty("msg.wrap")));
             setMsgJsonPretty(Boolean.parseBoolean(properties.getProperty("msg.json.pretty")));
-            setMsgJsonPrettyReplaceRegex(properties.getProperty("msg.json.pretty.replace.regex"));
             setAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
-            setShowFilter(Boolean.parseBoolean(properties.getProperty("profile.show.filter")));
-            setShowBar(Boolean.parseBoolean(properties.getProperty("profile.show.bar")));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -67,10 +61,7 @@ public class DefaultProperties {
                 getMsgFontSize(),
                 isMsgWrap(),
                 isMsgJsonPretty(),
-                getMsgJsonPrettyReplaceRegex(),
-                isAutoScroll(),
-                isShowBar(),
-                isShowFilter()
+                isAutoScroll()
         );
     }
 
@@ -98,22 +89,6 @@ public class DefaultProperties {
         this.autoScroll = profileAutoScroll;
     }
 
-    public boolean isShowFilter() {
-        return showFilter;
-    }
-
-    private void setShowFilter(boolean profileShowFilter) {
-        this.showFilter = profileShowFilter;
-    }
-
-    public boolean isShowBar() {
-        return showBar;
-    }
-
-    private void setShowBar(boolean showBar) {
-        this.showBar = showBar;
-    }
-
     public int getMsgFontSize() {
         return msgFontSize;
     }
@@ -136,13 +111,5 @@ public class DefaultProperties {
 
     private void setMsgJsonPretty(boolean msgJsonPretty) {
         this.msgJsonPretty = msgJsonPretty;
-    }
-
-    public String getMsgJsonPrettyReplaceRegex() {
-        return msgJsonPrettyReplaceRegex;
-    }
-
-    private void setMsgJsonPrettyReplaceRegex(String msgJsonPrettyReplaceRegex) {
-        this.msgJsonPrettyReplaceRegex = msgJsonPrettyReplaceRegex;
     }
 }

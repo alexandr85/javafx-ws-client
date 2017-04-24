@@ -18,14 +18,12 @@ import ru.testing.client.MainApp;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.ReceivedMessage;
-import ru.testing.client.common.db.objects.SendMessage;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.websocket.*;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * Controller for detail message tab form
@@ -283,15 +281,6 @@ public class TabWsMessagesController {
     }
 
     /**
-     * Get send messages
-     *
-     * @return List<SendMessage>
-     */
-    List<SendMessage> getSendMessages() {
-        return getSendMessagesPopOver().getController().getSentMessages();
-    }
-
-    /**
      * Start websocket wsClient
      */
     private void startWsClient() {
@@ -338,27 +327,6 @@ public class TabWsMessagesController {
         } else {
             Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
         }
-    }
-
-    /**
-     * Method create and show message history window
-     */
-    private void showFilterListPopOver() {
-        if (filterListBtn.isSelected()) {
-            getFilterPopOver().show(filterListBtn, -10);
-        } else {
-            getFilterPopOver().hide();
-        }
-    }
-
-    /**
-     * Set auto scroll status
-     *
-     * @param status boolean
-     */
-    void setAutoScroll(boolean status) {
-        autoScroll = status;
-        changeAutoScrollStatus();
     }
 
     /**
@@ -438,7 +406,7 @@ public class TabWsMessagesController {
      *
      * @return SendMessagesPopOver
      */
-    public SendMessagesPopOver getSendMessagesPopOver() {
+    private SendMessagesPopOver getSendMessagesPopOver() {
         if (sendMessagesPopOver == null) {
             sendMessagesPopOver = new SendMessagesPopOver();
         }
@@ -489,23 +457,16 @@ public class TabWsMessagesController {
             if (isConnected) {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("connected");
-//                connectBtn.setText("Disconnect");
-//                connectBtn.setDisable(false);
                 setCircleTooltip("Connected");
                 sendMessagePane.setVisible(true);
                 sendMessagePane.setManaged(true);
-//                tbHeaders.setDisable(true);
             } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
-//                serverUrl.setEditable(true);
-//                connectBtn.setText("Connect");
-//                connectBtn.setDisable(false);
                 setCircleTooltip("Disconnected");
                 sendMessagePane.setVisible(false);
                 sendMessagePane.setManaged(false);
                 connectionStatus = false;
-//                tbHeaders.setDisable(false);
             }
         });
     }

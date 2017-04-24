@@ -52,7 +52,6 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private List<WsClient> wsClients = new ArrayList<>();
     private AppProperties properties = AppProperties.getAppProperties();
-    private DataBase dataBase = DataBase.getInstance();
     private HeadersPopOver headersPopOver;
     private SettingsTab settingsTab;
 
@@ -149,9 +148,6 @@ public class MainController {
                 serverUrlClear.setVisible(false);
             }
         });
-
-        // Load current profile
-        loadProfile(DataBase.getInstance().getCurrentProfileId());
     }
 
     /**
@@ -365,22 +361,6 @@ public class MainController {
      */
     public TextField getServerUrl() {
         return serverUrl;
-    }
-
-    /**
-     * Set data from selected session
-     *
-     * @param profileId int
-     */
-    boolean loadProfile(int profileId) {
-        Profile profile = dataBase.getProfile(profileId);
-        if (profile != null) {
-            LOGGER.debug("Load profile name: {}", profile.getName());
-            serverUrl.setText(profile.getUrl());
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

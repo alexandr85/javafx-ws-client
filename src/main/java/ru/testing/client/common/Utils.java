@@ -1,5 +1,10 @@
 package ru.testing.client.common;
 
+import com.google.gson.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.testing.client.controllers.TabRestController;
+
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
@@ -8,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Utils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TabRestController.class.getName());
     private static final String TIME_FORMAT = "HH:mm:ss.SSS";
 
     /**
@@ -41,5 +47,45 @@ public class Utils {
      */
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat(TIME_FORMAT);
+    }
+
+    /**
+     * Try pretty json string from cell message
+     *
+     * @param message String
+     * @return Map.Entry String - message, Boolean - toggle button selected status
+     */
+    public static PrettyStatus getJsonPretty(String message) {
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonParser parser = new JsonParser();
+            JsonElement jsonElement = parser.parse(message);
+            return new PrettyStatus(gson.toJson(jsonElement), true);
+        } catch (JsonIOException | JsonSyntaxException e) {
+            LOGGER.error("Error pretty json from string: {}", e.getMessage());
+            return new PrettyStatus(message, false);
+        }
+    }
+
+    /**
+     * Pretty status object
+     */
+    public static class PrettyStatus {
+
+        private String message;
+        private boolean buttonSelect;
+
+        public PrettyStatus(String message, boolean buttonSelect) {
+            this.message = message;
+            this.buttonSelect = buttonSelect;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public boolean getButtonSelect() {
+            return buttonSelect;
+        }
     }
 }

@@ -1,24 +1,23 @@
 package ru.testing.client.controllers;
 
-import com.google.gson.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.SegmentedButton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ru.testing.client.common.Utils;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.websocket.ReceivedMessageType;
+
+import static ru.testing.client.common.Utils.getJsonPretty;
 
 /**
  * Controller for detail message tab form
  */
 public class TabWsMessageController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabWsMessageController.class.getName());
     private DataBase dataBase = DataBase.getInstance();
     private ReceivedMessage message;
 
@@ -45,10 +44,13 @@ public class TabWsMessageController {
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
             if (bPrettyJson.isSelected()) {
-                txMsgArea.setText(getJsonPretty(message.getMessage()));
+                Utils.PrettyStatus status = getJsonPretty(message.getMessage());
+                txMsgArea.setText(status.getMessage());
+                bPrettyJson.setSelected(status.getButtonSelect());
             } else {
                 txMsgArea.setText(message.getMessage());
             }
+            segmentedButton.requestFocus();
         });
         if (settings.isJsonPretty()) {
             bPrettyJson.fire();
@@ -61,6 +63,7 @@ public class TabWsMessageController {
             } else {
                 txMsgArea.setWrapText(false);
             }
+            segmentedButton.requestFocus();
         });
         if (settings.isTextWrap()) {
             bWrapText.fire();
@@ -84,25 +87,5 @@ public class TabWsMessageController {
                 "time: " + message.getFormattedTime();
         msgTimeLabel.setText(sb);
         msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
-    }
-
-    /**
-     * Try pretty json string from cell message
-     *
-     * @param message String
-     * @return String
-     */
-    private String getJsonPretty(String message) {
-        try {
-            String json = message.replaceAll(dataBase.getSettings().getJsonRegex(), "");
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            JsonParser parser = new JsonParser();
-            JsonElement jsonElement = parser.parse(json);
-            return gson.toJson(jsonElement);
-        } catch (JsonIOException e) {
-            LOGGER.error("Error pretty json from string: {}", e.getMessage());
-            bPrettyJson.setSelected(false);
-            return message;
-        }
     }
 }
