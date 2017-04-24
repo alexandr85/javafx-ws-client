@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.MasterDetailPane;
+import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
@@ -18,9 +19,9 @@ import ru.testing.client.rest.RestClient;
 /**
  * Controller for detail message tab form
  */
-public class TabRestMessageController {
+public class TabRestController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabRestMessageController.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(TabRestController.class.getName());
     private DataBase dataBase = DataBase.getInstance();
     private String message;
 
@@ -38,12 +39,15 @@ public class TabRestMessageController {
     private ToggleButton showHeaders;
     @FXML
     private Label msgLengthLabel;
+    @FXML
+    private SegmentedButton segmentedButton;
 
     @FXML
     private void initialize() {
 
         // Get message settings
         Settings settings = dataBase.getSettings();
+        segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
@@ -98,6 +102,14 @@ public class TabRestMessageController {
             masterNode.setText(message);
             detailNode.setText(response.getStatusInfo().toString());
         }
+    }
+
+    TextArea getMasterNode() {
+        return masterNode;
+    }
+
+    TextArea getDetailNode() {
+        return detailNode;
     }
 
     /**

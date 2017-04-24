@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import org.controlsfx.control.SegmentedButton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.db.DataBase;
@@ -31,12 +32,15 @@ public class TabWsMessageController {
     private Label msgTimeLabel;
     @FXML
     private Label msgLengthLabel;
+    @FXML
+    private SegmentedButton segmentedButton;
 
     @FXML
     private void initialize() {
 
         // Get message settings
         Settings settings = dataBase.getSettings();
+        segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {

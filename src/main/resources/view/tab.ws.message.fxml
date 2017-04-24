@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.SegmentedButton?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
           stylesheets="/styles/tab.detail.msg.css" fx:controller="ru.testing.client.controllers.TabWsMessageController">
     <columnConstraints>
@@ -37,10 +38,14 @@
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
-                              GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90"
-                              text="Pretty" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK">
+                    <buttons>
+                        <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90"
+                                      text="Pretty" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                    </buttons>
+                </SegmentedButton>
             </GridPane>
             <GridPane maxWidth="320.0" GridPane.columnIndex="1">
                 <columnConstraints>

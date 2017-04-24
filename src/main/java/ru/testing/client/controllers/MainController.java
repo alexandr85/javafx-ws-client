@@ -122,9 +122,9 @@ public class MainController {
         httpTypesComboBox.getSelectionModel().select(0);
         httpTypesComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (httpTypesComboBox.getSelectionModel().getSelectedItem() != HttpTypes.WEBSOCKET) {
-                connectionButton.setText("Send");
+                connectionButton.setText("Send Request");
             } else {
-                connectionButton.setText("Connect");
+                connectionButton.setText("New Connect");
             }
             validateServerUrl();
         });
@@ -178,8 +178,11 @@ public class MainController {
                 setProgressVisible(true);
                 if (currentType == HttpTypes.WEBSOCKET) {
                     WsMessagesTab wsClientTab = new WsMessagesTab();
-                    wsClients.add(wsClientTab.getController().getWsClient());
-                    addNewTab(wsClientTab);
+                    WsClient wsClient = wsClientTab.getController().getWsClient();
+                    if (wsClient.isOpenConnection()) {
+                        wsClients.add(wsClient);
+                        addNewTab(wsClientTab);
+                    }
                 } else {
                     RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
                     addNewTab(restTab);
@@ -205,6 +208,10 @@ public class MainController {
                     builder.append(String.format(ReceivedMessageFormat.DEFAULT.getFormat().concat("\n"),
                             message.getFormattedTime(), message.getMessage()));
                 }
+            } else if (tab instanceof RestTab) {
+                TabRestController controller = ((RestTab) tab).getController();
+                builder.append(controller.getDetailNode().getText());
+                builder.append(controller.getMasterNode().getText());
             }
             new FilesOperations().saveTextToFile(builder.toString(), this);
         }
@@ -369,67 +376,11 @@ public class MainController {
         Profile profile = dataBase.getProfile(profileId);
         if (profile != null) {
             LOGGER.debug("Load profile name: {}", profile.getName());
-
-            // Disconnect if connected
-//            if (connectionStatus) {
-//                connectionButton.fire();
-//            }
-
-            // Set websocket server url
             serverUrl.setText(profile.getUrl());
-
-            // Get profile http header
-            List<Header> headers = dataBase.getHeaders(profileId);
-            if (headers != null) {
-                ObservableList<Header> currentHeaders = getHeadersList();
-                currentHeaders.clear();
-                currentHeaders.addAll(headers);
-            }
-
-            // Get profile filters
-            List<String> filters = dataBase.getFilters(profileId);
-//            if (filters != null) {
-//                filterList.clear();
-//                filterList.addAll(filters);
-//
-//                // Set filter status is false
-//                filtered = true;
-//                changeFilterStatus();
-//            }
-
-            // Get profile send messages
-//            List<SendMessage> sendMessages = dataBase.getSendMessages(profileId);
-//            CheckListView<String> listView = getSendMessagesPopOver().getController().getCheckListView();
-//            IndexedCheckModel<String> checkModel = listView.getCheckModel();
-//            checkModel.clearChecks();
-//            listView.getItems().clear();
-//            if (sendMessages != null) {
-//                for (int i = 0; i < sendMessages.size(); i++) {
-//                    SendMessage message = sendMessages.get(i);
-//                    listView.getItems().add(i, message.getValue());
-//                    if (message.isAutoSend()) {
-//                        checkModel.check(i);
-//                    }
-//                }
-//            }
-
-            // Get profile received messages
-            List<ReceivedMessage> receivedMessages = dataBase.getReceivedMessages(profileId);
-//            if (receivedMessages != null) {
-//                receivedMessageList.clear();
-//                receivedMessageList.addAll(receivedMessages);
-//                if (filterList.size() > 0) {
-//                    receivedMessages.forEach(message -> filterList.forEach(item -> {
-//                        if (message.getMessage().contains(item)) {
-//                            receivedFilteredMessageList.add(message);
-//                        }
-//                    }));
-//                }
-//            }
+            return true;
         } else {
             return false;
         }
-        return true;
     }
 
     /**

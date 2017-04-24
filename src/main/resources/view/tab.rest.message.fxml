@@ -4,9 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.MasterDetailPane?>
+<?import org.controlsfx.control.SegmentedButton?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
           stylesheets="/styles/tab.detail.msg.css"
-          fx:controller="ru.testing.client.controllers.TabRestMessageController">
+          fx:controller="ru.testing.client.controllers.TabRestController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
     </columnConstraints>
@@ -48,13 +49,16 @@
                 <rowConstraints>
                     <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
-                              GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Pretty"
-                              GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <ToggleButton fx:id="showHeaders" mnemonicParsing="false" prefWidth="90" text="Headers"
-                              GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-
+                <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK">
+                    <buttons>
+                        <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Pretty"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <ToggleButton fx:id="showHeaders" mnemonicParsing="false" prefWidth="90" text="Headers"
+                                      GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                    </buttons>
+                </SegmentedButton>
             </GridPane>
             <Label fx:id="msgLengthLabel" GridPane.columnIndex="1" maxWidth="130.0"/>
         </GridPane>
