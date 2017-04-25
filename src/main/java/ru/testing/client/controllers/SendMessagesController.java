@@ -38,7 +38,6 @@ public class SendMessagesController {
 
         // Setup messages list
         checkListView.setItems(list);
-        checkListView.setCellFactory(list -> new SendMessagesCellFactory(this));
         checkListView.getItems().addListener((ListChangeListener<? super String>) change -> {
             if (change.next()) {
                 int size = list.size();
@@ -59,6 +58,10 @@ public class SendMessagesController {
                 addMessage();
             }
         });
+    }
+
+    public void setCheckListViewCellFactory(TabWsMessagesController controller) {
+        checkListView.setCellFactory(list -> new SendMessagesCellFactory(this, controller));
     }
 
     /**

@@ -11,7 +11,6 @@ import ru.testing.client.MainApp;
 import ru.testing.client.common.db.objects.ReceivedMessage;
 import ru.testing.client.controllers.TabWsMessageController;
 import ru.testing.client.controllers.MainController;
-import ru.testing.client.elements.settings.SettingsTab;
 
 import java.io.IOException;
 

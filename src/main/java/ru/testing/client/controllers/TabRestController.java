@@ -1,7 +1,6 @@
 package ru.testing.client.controllers;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -36,6 +35,8 @@ public class TabRestController {
     private ToggleButton bPrettyJson;
     @FXML
     private ToggleButton showHeaders;
+    @FXML
+    private ToggleButton editBody;
     @FXML
     private Label msgLengthLabel;
     @FXML
@@ -75,6 +76,16 @@ public class TabRestController {
             bWrapText.fire();
         }
 
+        // Set enable or disable edit body message
+        editBody.setOnAction(event -> {
+            if (editBody.isSelected()) {
+                masterNode.setEditable(true);
+            } else {
+                masterNode.setEditable(false);
+            }
+            segmentedButton.requestFocus();
+        });
+
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
 
@@ -88,40 +99,24 @@ public class TabRestController {
             segmentedButton.requestFocus();
         });
 
-        RestClient restClient = new RestClient();
+        // Prepare http client
         MainController mainController = MainApp.getMainController();
         String url = mainController.getServerUrl().getText();
-        WebResource resource = restClient.getResource(url);
-        ClientResponse response = null;
-        switch (mainController.getHttpType()) {
-            case HTTP_GET:
-                response = resource.get(ClientResponse.class);
-                break;
-            case HTTP_POST:
-                response = resource.post(ClientResponse.class);
-                break;
-        }
+        RestClient restClient = new RestClient(url);
+        restClient.setHttpType(mainController.getHttpType());
+        restClient.setHeaders(mainController.getHeadersList());
+
+        // Set http action
+        ClientResponse response = restClient.execute();
         if (response != null) {
             message = response.getEntity(String.class);
 
             // Set body result to master node
             masterNode.setText(message);
+            msgLengthLabel.setText(String.valueOf(message.length()));
 
             // Set headers result to detail node
-            StringBuilder builder = new StringBuilder();
-            builder.append(response.getResponseDate())
-                    .append(" ")
-                    .append(url)
-                    .append(" ")
-                    .append(response.getStatus())
-                    .append(" ")
-                    .append(response.getStatusInfo())
-                    .append("\n");
-            response.getHeaders().forEach((k, v) -> builder.append(k)
-                    .append(": ")
-                    .append(v)
-                    .append("\n"));
-            detailNode.setText(builder.toString());
+            setHeadersDetail(restClient, response);
         }
     }
 
@@ -131,5 +126,30 @@ public class TabRestController {
 
     TextArea getDetailNode() {
         return detailNode;
+    }
+
+    /**
+     * Set headers info from response
+     *
+     * @param restClient RestClient
+     * @param response ClientResponse
+     */
+    private void setHeadersDetail(RestClient restClient, ClientResponse response) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(response.getResponseDate())
+                .append("\n")
+                .append(restClient.getHttpType().getName())
+                .append(" ")
+                .append(restClient.getUrl())
+                .append(" ")
+                .append(response.getStatus())
+                .append(" ")
+                .append(response.getStatusInfo())
+                .append("\n");
+        response.getHeaders().forEach((k, v) -> stringBuilder.append(k)
+                .append(": ")
+                .append(v)
+                .append("\n"));
+        detailNode.setText(stringBuilder.toString());
     }
 }

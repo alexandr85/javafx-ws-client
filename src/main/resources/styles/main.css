@@ -111,6 +111,10 @@
     -fx-background-color: transparent;
 }
 
+#progress {
+    -fx-indeterminate-bar-length: 300;
+}
+
 /* ========== List view scroll bar style ============ */
 
 .text-area .scroll-bar:horizontal .track,

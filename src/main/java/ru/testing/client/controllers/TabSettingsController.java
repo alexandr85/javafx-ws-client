@@ -4,13 +4,12 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import ru.testing.client.MainApp;
 import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.Settings;
 import ru.testing.client.common.properties.DefaultProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.tabs.WsMessageTab;
-
-import static ru.testing.client.MainApp.getMainController;
 
 /**
  * Controller for settings tab form
@@ -19,7 +18,7 @@ public class TabSettingsController {
 
     private static final String FONT_SIZE_FORMAT = "-fx-font-size: %spx;";
     private DataBase dataBase = DataBase.getInstance();
-    private MainController main;
+    private MainController mainController = MainApp.getMainController();
 
     @FXML
     private CheckBox chWrap;
@@ -34,9 +33,6 @@ public class TabSettingsController {
 
     @FXML
     private void initialize() {
-
-        // Init main controller
-        main = getMainController();
 
         // Slider value listener
         fontSlider.valueProperty().addListener(observable ->
@@ -64,7 +60,7 @@ public class TabSettingsController {
     private void saveSettings() {
 
         // Enable loader
-        main.setProgressVisible(true);
+        mainController.setProgressVisible(true);
 
         // Save new settings in database
         boolean status = dataBase.setSettings(new Settings(
@@ -78,7 +74,7 @@ public class TabSettingsController {
             Settings settings = dataBase.getSettings();
 
             // Set font size for all messages
-            for (Tab tab : main.getTabPane().getTabs()) {
+            for (Tab tab : mainController.getTabPane().getTabs()) {
                 if (tab instanceof WsMessageTab) {
                     Node tabNode = tab.getContent();
                     if (tabNode instanceof GridPane) {
@@ -93,13 +89,13 @@ public class TabSettingsController {
             }
 
             // Show successful dialog
-            new Dialogs().getInfoDialog("Settings save successful", main, false);
+            new Dialogs().getInfoDialog("Settings save successful");
         } else {
-            new Dialogs().getWarningDialog("Error save settings. See log.", main, false);
+            new Dialogs().getWarningDialog("Error save settings. See log.");
         }
 
         // Disable loader
-        main.setProgressVisible(false);
+        mainController.setProgressVisible(false);
     }
 
     /**
@@ -108,7 +104,7 @@ public class TabSettingsController {
     private void setSettingsValues(Settings settings) {
 
         // Enable loader
-        main.setProgressVisible(true);
+        mainController.setProgressVisible(true);
 
         // Set text wrap value
         chWrap.setSelected(settings.isTextWrap());
@@ -123,6 +119,6 @@ public class TabSettingsController {
         cbAutoScroll.setSelected(settings.isAutoScroll());
 
         // Disable loader
-        main.setProgressVisible(false);
+        mainController.setProgressVisible(false);
     }
 }

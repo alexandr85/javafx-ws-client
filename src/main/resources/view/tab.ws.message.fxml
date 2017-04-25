@@ -30,23 +30,14 @@
             <rowConstraints>
                 <RowConstraints minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <GridPane maxWidth="200.0">
-                <columnConstraints>
-                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"/>
-                    <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints valignment="CENTER" vgrow="SOMETIMES"/>
-                </rowConstraints>
-                <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK">
-                    <buttons>
-                        <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"
-                                      GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                        <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90"
-                                      text="Pretty" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                    </buttons>
-                </SegmentedButton>
-            </GridPane>
+            <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK"
+                             GridPane.columnIndex="0">
+                <buttons>
+                    <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"/>
+                    <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Json"/>
+                    <ToggleButton fx:id="editMessage" mnemonicParsing="false" prefWidth="90" text="Edit"/>
+                </buttons>
+            </SegmentedButton>
             <GridPane maxWidth="320.0" GridPane.columnIndex="1">
                 <columnConstraints>
                     <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="190.0"/>

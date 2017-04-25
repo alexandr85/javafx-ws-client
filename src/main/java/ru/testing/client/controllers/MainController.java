@@ -22,11 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
-import ru.testing.client.common.db.DataBase;
 import ru.testing.client.common.db.objects.*;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.headers.HeadersPopOver;
-import ru.testing.client.elements.settings.SettingsTab;
+import ru.testing.client.elements.tabs.SettingsTab;
 import ru.testing.client.elements.tabs.RestTab;
 import ru.testing.client.elements.tabs.WsMessagesTab;
 import ru.testing.client.websocket.ReceivedMessageFormat;
@@ -62,7 +61,7 @@ public class MainController {
     @FXML
     private CustomTextField serverUrl;
     @FXML
-    private Label serverUrlClear;
+    private Label urlCleaner;
     @FXML
     private ToggleButton httpSettings;
     @FXML
@@ -135,17 +134,17 @@ public class MainController {
 
         // Connect or disconnect with server
         serverUrl.setOnKeyPressed(keyEvent -> {
-            if (keyEvent.getCode() == KeyCode.ENTER) {
+            if (!connectionButton.isDisable() && keyEvent.getCode() == KeyCode.ENTER) {
                 createRequest();
             }
         });
         serverUrl.textProperty().addListener((observable) -> {
             if (serverUrl.getText().length() > 0) {
                 validateServerUrl();
-                serverUrlClear.setVisible(true);
+                urlCleaner.setVisible(true);
             } else {
                 connectionButton.setDisable(true);
-                serverUrlClear.setVisible(false);
+                urlCleaner.setVisible(false);
             }
         });
     }
@@ -167,6 +166,7 @@ public class MainController {
     @FXML
     private void createRequest() {
         HttpTypes currentType = httpTypesComboBox.getSelectionModel().getSelectedItem();
+        connectionButton.setDisable(true);
         Task task = new Task() {
 
             @Override
@@ -188,6 +188,7 @@ public class MainController {
             }
         };
         new Thread(task).start();
+        connectionButton.setDisable(false);
     }
 
     /**
@@ -209,7 +210,7 @@ public class MainController {
                 builder.append(controller.getDetailNode().getText());
                 builder.append(controller.getMasterNode().getText());
             }
-            new FilesOperations().saveTextToFile(builder.toString(), this);
+            new FilesOperations().saveTextToFile(builder.toString());
         }
     }
 

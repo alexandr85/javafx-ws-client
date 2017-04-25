@@ -28,6 +28,8 @@ public class TabWsMessageController {
     @FXML
     private ToggleButton bPrettyJson;
     @FXML
+    private ToggleButton editMessage;
+    @FXML
     private Label msgTimeLabel;
     @FXML
     private Label msgLengthLabel;
@@ -68,6 +70,16 @@ public class TabWsMessageController {
         if (settings.isTextWrap()) {
             bWrapText.fire();
         }
+
+        // Set enable or disable edit text message
+        editMessage.setOnAction(event -> {
+            if (editMessage.isSelected()) {
+                txMsgArea.setEditable(true);
+            } else {
+                txMsgArea.setEditable(false);
+            }
+            segmentedButton.requestFocus();
+        });
 
         // Set message font size
         txMsgArea.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));

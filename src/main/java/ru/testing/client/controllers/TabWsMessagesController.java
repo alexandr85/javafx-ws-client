@@ -223,34 +223,6 @@ public class TabWsMessagesController {
     }
 
     /**
-     * Connected to websocket server if connectionStatus = false
-     * or disconnect from websocket server if connectionStatus = true
-     */
-    @FXML
-    private void connectDisconnectAction() {
-        if (connectionStatus) {
-            wsClient.closeConnection();
-        } else {
-            if (!mainController.getServerUrl().getText().isEmpty()) {
-                Task task = new Task() {
-
-                    @Override
-                    protected Object call() throws Exception {
-                        Platform.runLater(() -> {
-//                            serverUrl.setEditable(false);
-//                            connectBtn.setDisable(true);
-//                            connectBtn.setText("Connecting");
-                        });
-//                        startClient();
-                        return null;
-                    }
-                };
-                new Thread(task).start();
-            }
-        }
-    }
-
-    /**
      * Show message history pop over
      */
     @FXML
@@ -276,7 +248,7 @@ public class TabWsMessagesController {
      *
      * @return ObservableList<ReceivedMessage>
      */
-    ObservableList<ReceivedMessage> getReceivedMessageList() {
+    public ObservableList<ReceivedMessage> getReceivedMessageList() {
         return receivedMessageList;
     }
 
@@ -382,11 +354,10 @@ public class TabWsMessagesController {
     private void outputSetList(boolean isFiltered) {
         if (isFiltered) {
             outputTextView.setItems(receivedFilteredMessageList);
-            outputTextView.setCellFactory(listView -> new ReceivedMessageCellFactory(receivedFilteredMessageList));
         } else {
             outputTextView.setItems(receivedMessageList);
-            outputTextView.setCellFactory(listView -> new ReceivedMessageCellFactory(receivedMessageList));
         }
+        outputTextView.setCellFactory(listView -> new ReceivedMessageCellFactory(this, isFiltered));
     }
 
     /**
@@ -406,9 +377,9 @@ public class TabWsMessagesController {
      *
      * @return SendMessagesPopOver
      */
-    private SendMessagesPopOver getSendMessagesPopOver() {
+    public SendMessagesPopOver getSendMessagesPopOver() {
         if (sendMessagesPopOver == null) {
-            sendMessagesPopOver = new SendMessagesPopOver();
+            sendMessagesPopOver = new SendMessagesPopOver(this);
         }
         return sendMessagesPopOver;
     }
@@ -439,12 +410,30 @@ public class TabWsMessagesController {
         new Thread(task).start();
     }
 
+    public ListView<ReceivedMessage> getOutputTextView() {
+        return outputTextView;
+    }
+
+    public ObservableList<ReceivedMessage> getReceivedFilteredMessageList() {
+        return receivedFilteredMessageList;
+    }
+
+
+
     public ObservableList<String> getFilterList() {
         return filterList;
     }
 
     public ToggleButton getFilterListBtn() {
         return filterListBtn;
+    }
+
+    public TextField getSendMsgTextField() {
+        return sendMsgTextField;
+    }
+
+    public ToggleButton getSendMsgHistoryBtn() {
+        return sendMsgHistoryBtn;
     }
 
     /**

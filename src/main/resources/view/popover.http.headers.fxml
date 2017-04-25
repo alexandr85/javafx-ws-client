@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <GridPane hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-          prefHeight="130.0" prefWidth="320.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          prefHeight="150.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
           stylesheets="/styles/popover.http.headers.css"
           fx:controller="ru.testing.client.controllers.HeadersController">
     <columnConstraints>
@@ -22,7 +22,7 @@
             <Insets top="7" bottom="7"/>
         </padding>
         <TextField fx:id="headerName" promptText="Header name" prefWidth="100"/>
-        <TextField fx:id="headerValue" promptText="Header value" prefWidth="150"/>
+        <TextField fx:id="headerValue" promptText="Header value" prefWidth="240"/>
         <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
                 prefWidth="25.0" onAction="#addHeader">
             <graphic>
@@ -45,7 +45,7 @@
         <GridPane.margin>
             <Insets bottom="2.0" left="7.0" right="7.0"/>
         </GridPane.margin>
-        <Label fx:id="lbNoHeaders" text="No custom headers" alignment="CENTER" prefHeight="70" prefWidth="300"/>
+        <Label fx:id="lbNoHeaders" text="No custom headers" alignment="CENTER" prefHeight="70" prefWidth="400"/>
         <ListView fx:id="headerListView" visible="false" managed="false" prefHeight="82.0"/>
     </GridPane>
 </GridPane>

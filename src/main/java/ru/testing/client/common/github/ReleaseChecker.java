@@ -2,7 +2,6 @@ package ru.testing.client.common.github;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,6 @@ import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.rest.RestClient;
 
-import javax.ws.rs.core.MediaType;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -75,8 +73,8 @@ public class ReleaseChecker extends Thread {
      * @throws IOException mapping TagInfo
      */
     private TagInfo[] getTagsFromApi() throws IOException {
-        WebResource resource = new RestClient().getResource(properties.getTagsUrl());
-        ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        RestClient client = new RestClient(properties.getTagsUrl());
+        ClientResponse response = client.getRequestBuilder().get(ClientResponse.class);
         return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
     }
 
@@ -93,7 +91,7 @@ public class ReleaseChecker extends Thread {
      * Compare current and latest git hub versions
      *
      * @param currentVersion String
-     * @param newVersion String from git hub
+     * @param newVersion     String from git hub
      * @return boolean compare status
      */
     public boolean isCurrentVersionOld(String currentVersion, String newVersion) {

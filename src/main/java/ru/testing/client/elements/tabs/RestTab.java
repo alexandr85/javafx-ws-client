@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.controllers.TabRestController;
-import ru.testing.client.elements.settings.SettingsTab;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Tab with detail message
@@ -23,7 +24,17 @@ public class RestTab extends Tab {
     private TabRestController controller;
 
     public RestTab(HttpTypes httpTypes) {
-        this.setText(String.format("%s response", httpTypes));
+        String urlInfo = MainApp.getMainController().getServerUrl().getText();
+
+        // Setup tab tooltip
+        this.setTooltip(new Tooltip(String.format("Response from %s", urlInfo)));
+        try {
+            URI uri = new URI(urlInfo);
+            urlInfo = uri.getPath();
+        } catch (URISyntaxException e) {
+            LOGGER.error("Error get uri", e.getMessage());
+        }
+        this.setText(String.format("%s %s", httpTypes.getName(), urlInfo));
         this.setGraphic(new ImageView("/images/message.png"));
 
         try {
@@ -34,10 +45,6 @@ public class RestTab extends Tab {
         } catch (IOException e) {
             LOGGER.error("Error load view form: {}", e.getMessage());
         }
-
-        // Setup tab tooltip
-        this.setTooltip(new Tooltip(String.format("Response from %s",
-                MainApp.getMainController().getServerUrl().getText())));
     }
 
     public TabRestController getController() {

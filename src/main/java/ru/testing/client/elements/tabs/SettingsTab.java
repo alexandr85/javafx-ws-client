@@ -1,4 +1,4 @@
-package ru.testing.client.elements.settings;
+package ru.testing.client.elements.tabs;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -99,7 +99,7 @@
                     <Insets left="5.0" right="5.0"/>
                 </padding>
                 <right>
-                    <Label fx:id="serverUrlClear" onMouseClicked="#clearServerUrl" visible="false">
+                    <Label fx:id="urlCleaner" onMouseClicked="#clearServerUrl" visible="false">
                         <graphic>
                             <ImageView rotate="45.0">
                                 <Image requestedHeight="18.0" requestedWidth="18.0" url="@/images/add.png"/>

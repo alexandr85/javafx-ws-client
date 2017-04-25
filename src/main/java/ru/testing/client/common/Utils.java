@@ -1,12 +1,15 @@
 package ru.testing.client.common;
 
 import com.google.gson.*;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.controllers.TabRestController;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class described utilities methods
@@ -57,9 +60,17 @@ public class Utils {
      */
     public static PrettyStatus getJsonPretty(String message) {
         try {
+            // For sockJs messages
+            if (message.startsWith("a[\"{")) {
+                message = message.substring(3, message.length() - 2);
+            } else if (message.startsWith("[\"{")) {
+                message = message.substring(2, message.length() - 2);
+            }
+
+            // Try parse json
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             JsonParser parser = new JsonParser();
-            JsonElement jsonElement = parser.parse(message);
+            JsonElement jsonElement = parser.parse(StringEscapeUtils.unescapeJson(message));
             return new PrettyStatus(gson.toJson(jsonElement), true);
         } catch (JsonIOException | JsonSyntaxException e) {
             LOGGER.error("Error pretty json from string: {}", e.getMessage());
@@ -75,7 +86,7 @@ public class Utils {
         private String message;
         private boolean buttonSelect;
 
-        public PrettyStatus(String message, boolean buttonSelect) {
+        PrettyStatus(String message, boolean buttonSelect) {
             this.message = message;
             this.buttonSelect = buttonSelect;
         }

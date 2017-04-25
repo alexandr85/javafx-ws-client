@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.TabWsMessagesController;
-import ru.testing.client.elements.settings.SettingsTab;
 import ru.testing.client.websocket.WsClient;
 
 import java.io.IOException;
