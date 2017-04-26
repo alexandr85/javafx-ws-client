@@ -1,9 +1,9 @@
-package ru.testing.client.common.db;
+package ru.testing.client.common;
 
 import org.h2.tools.RunScript;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.db.objects.*;
+import ru.testing.client.common.objects.*;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.DefaultProperties;
 

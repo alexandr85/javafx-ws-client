@@ -6,9 +6,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.db.DataBase;
-import ru.testing.client.common.db.objects.ReceivedMessage;
-import ru.testing.client.common.db.objects.Settings;
+import ru.testing.client.common.DataBase;
+import ru.testing.client.common.objects.ReceivedMessage;
+import ru.testing.client.common.objects.Settings;
 import ru.testing.client.websocket.ReceivedMessageType;
 
 import static ru.testing.client.common.Utils.getJsonPretty;

@@ -3,7 +3,7 @@ package ru.testing.client.websocket;
 import org.glassfish.tyrus.client.ClientManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.db.objects.Header;
+import ru.testing.client.common.objects.Header;
 import ru.testing.client.elements.Dialogs;
 
 import javax.websocket.*;

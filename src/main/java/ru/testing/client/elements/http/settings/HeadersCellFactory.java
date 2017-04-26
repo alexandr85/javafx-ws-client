@@ -1,9 +1,9 @@
-package ru.testing.client.elements.headers;
+package ru.testing.client.elements.http.settings;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
-import ru.testing.client.common.db.objects.Header;
+import ru.testing.client.common.objects.Header;
 import ru.testing.client.elements.ContextMenuItems;
 
 /**

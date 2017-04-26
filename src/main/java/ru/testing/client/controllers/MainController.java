@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
-import ru.testing.client.common.db.objects.*;
+import ru.testing.client.common.objects.*;
 import ru.testing.client.common.properties.AppProperties;
-import ru.testing.client.elements.headers.HeadersPopOver;
+import ru.testing.client.elements.http.settings.HttpSettingsPopOver;
 import ru.testing.client.elements.tabs.SettingsTab;
 import ru.testing.client.elements.tabs.RestTab;
 import ru.testing.client.elements.tabs.WsMessagesTab;
@@ -51,7 +51,7 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private List<WsClient> wsClients = new ArrayList<>();
     private AppProperties properties = AppProperties.getAppProperties();
-    private HeadersPopOver headersPopOver;
+    private HttpSettingsPopOver httpSettingsPopOver;
     private SettingsTab settingsTab;
 
     @FXML
@@ -237,9 +237,9 @@ public class MainController {
     @FXML
     private void showHeadersPopOver() {
         if (httpSettings.isSelected()) {
-            getHeadersPopOver().show(httpSettings, -4);
+            getHttpSettingsPopOver().show(httpSettings, -4);
         } else {
-            getHeadersPopOver().hide();
+            getHttpSettingsPopOver().hide();
         }
     }
 
@@ -319,13 +319,13 @@ public class MainController {
     /**
      * Get http headers pop over
      *
-     * @return HeadersPopOver
+     * @return HttpSettingsPopOver
      */
-    private HeadersPopOver getHeadersPopOver() {
-        if (headersPopOver == null) {
-            headersPopOver = new HeadersPopOver();
+    private HttpSettingsPopOver getHttpSettingsPopOver() {
+        if (httpSettingsPopOver == null) {
+            httpSettingsPopOver = new HttpSettingsPopOver();
         }
-        return headersPopOver;
+        return httpSettingsPopOver;
     }
 
     /**
@@ -370,7 +370,16 @@ public class MainController {
      * @return ObservableList<Header>
      */
     ObservableList<Header> getHeadersList() {
-        return getHeadersPopOver().getHeadersController().getHeaderObservableList();
+        return getHttpSettingsPopOver().getHttpSettingsController().getHeadersList();
+    }
+
+    /**
+     * Get http parameters list
+     *
+     * @return ObservableList<HttpParameter>
+     */
+    ObservableList<HttpParameter> getHttpParametersList() {
+        return getHttpSettingsPopOver().getHttpSettingsController().getHttpParametersList();
     }
 
     /**

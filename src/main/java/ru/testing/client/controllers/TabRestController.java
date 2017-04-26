@@ -1,6 +1,10 @@
 package ru.testing.client.controllers;
 
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.LoggingFilter;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -8,10 +12,12 @@ import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.MainApp;
+import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.db.DataBase;
-import ru.testing.client.common.db.objects.Settings;
-import ru.testing.client.rest.RestClient;
+import ru.testing.client.common.DataBase;
+import ru.testing.client.common.objects.Settings;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import static ru.testing.client.common.Utils.getJsonPretty;
 
@@ -20,7 +26,11 @@ import static ru.testing.client.common.Utils.getJsonPretty;
  */
 public class TabRestController {
 
+    private static final int TIMEOUT = 30000;
     private DataBase dataBase = DataBase.getInstance();
+    private MultivaluedMap<String, String> parameters = new MultivaluedMapImpl();
+    private String serverUrl;
+    private HttpTypes httpType;
     private String message;
 
     @FXML
@@ -99,15 +109,32 @@ public class TabRestController {
             segmentedButton.requestFocus();
         });
 
-        // Prepare http client
+        // Create http client
         MainController mainController = MainApp.getMainController();
-        String url = mainController.getServerUrl().getText();
-        RestClient restClient = new RestClient(url);
-        restClient.setHttpType(mainController.getHttpType());
-        restClient.setHeaders(mainController.getHeadersList());
+        serverUrl = mainController.getServerUrl().getText();
+        httpType = mainController.getHttpType();
+        ClientResponse response = null;
+        Client restClient = Client.create();
+        restClient.setConnectTimeout(TIMEOUT);
+        restClient.setReadTimeout(TIMEOUT);
+        restClient.addFilter(new LoggingFilter(System.out));
+        mainController.getHttpParametersList()
+                .forEach(parameter -> parameters.add(parameter.getName(), parameter.getValue()));
+
+        switch (httpType) {
+            case HTTP_GET:
+                WebResource getResource = restClient.resource(serverUrl).queryParams(parameters);
+                mainController.getHeadersList().forEach(header -> getResource.header(header.getName(), header.getValue()));
+                response = getResource.get(ClientResponse.class);
+                break;
+            case HTTP_POST:
+                WebResource portResource = restClient.resource(serverUrl);
+                mainController.getHeadersList().forEach(header -> portResource.header(header.getName(), header.getValue()));
+                response = portResource.post(ClientResponse.class, parameters);
+                break;
+        }
 
         // Set http action
-        ClientResponse response = restClient.execute();
         if (response != null) {
             message = response.getEntity(String.class);
 
@@ -116,7 +143,7 @@ public class TabRestController {
             msgLengthLabel.setText(String.valueOf(message.length()));
 
             // Set headers result to detail node
-            setHeadersDetail(restClient, response);
+            setHeadersDetail(response);
         }
     }
 
@@ -131,16 +158,15 @@ public class TabRestController {
     /**
      * Set headers info from response
      *
-     * @param restClient RestClient
      * @param response ClientResponse
      */
-    private void setHeadersDetail(RestClient restClient, ClientResponse response) {
+    private void setHeadersDetail(ClientResponse response) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(response.getResponseDate())
                 .append("\n")
-                .append(restClient.getHttpType().getName())
+                .append(httpType.getName())
                 .append(" ")
-                .append(restClient.getUrl())
+                .append(serverUrl)
                 .append(" ")
                 .append(response.getStatus())
                 .append(" ")

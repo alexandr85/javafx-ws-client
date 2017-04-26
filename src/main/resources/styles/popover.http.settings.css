@@ -7,6 +7,10 @@
     -fx-font-size: 13px;
 }
 
+.titled-pane > .title {
+    -fx-background-color: transparent;
+}
+
 .list-cell {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -61,4 +65,10 @@
     -fx-background-color: derive(black,90%);
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
+}
+
+#lbNoParameters,
+#lbNoHeaders {
+    -fx-font-size: 1.2em;
+    -fx-font-family: monospace;
 }

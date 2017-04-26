@@ -43,7 +43,7 @@ public class RestTab extends Tab {
             controller = loader.getController();
             this.setContent(root);
         } catch (IOException e) {
-            LOGGER.error("Error load view form: {}", e.getMessage());
+            LOGGER.error("Error load view form: {}", e);
         }
     }
 

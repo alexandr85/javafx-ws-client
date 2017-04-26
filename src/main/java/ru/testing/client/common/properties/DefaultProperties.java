@@ -2,7 +2,7 @@ package ru.testing.client.common.properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.db.objects.Settings;
+import ru.testing.client.common.objects.Settings;
 
 import java.io.IOException;
 import java.util.Properties;

@@ -1,4 +1,4 @@
-package ru.testing.client.common.db.objects;
+package ru.testing.client.common.objects;
 
 /**
  * Http header object

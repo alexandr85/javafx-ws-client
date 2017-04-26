@@ -3,7 +3,7 @@ package ru.testing.client.websocket;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import ru.testing.client.common.db.objects.ReceivedMessage;
+import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.controllers.TabWsMessagesController;
 import ru.testing.client.elements.ContextMenuItems;
 import ru.testing.client.elements.tabs.WsMessageTab;

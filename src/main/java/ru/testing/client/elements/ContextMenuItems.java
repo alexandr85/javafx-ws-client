@@ -6,7 +6,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.controlsfx.control.IndexedCheckModel;
 import ru.testing.client.common.FilesOperations;
-import ru.testing.client.common.db.objects.ReceivedMessage;
+import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.elements.tabs.WsMessageTab;
 
 

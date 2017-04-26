@@ -1,13 +1,13 @@
 package ru.testing.client.common.github;
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
-import ru.testing.client.rest.RestClient;
 
 import java.awt.*;
 import java.io.IOException;
@@ -73,8 +73,7 @@ public class ReleaseChecker extends Thread {
      * @throws IOException mapping TagInfo
      */
     private TagInfo[] getTagsFromApi() throws IOException {
-        RestClient client = new RestClient(properties.getTagsUrl());
-        ClientResponse response = client.getRequestBuilder().get(ClientResponse.class);
+        ClientResponse response = Client.create().resource(properties.getTagsUrl()).get(ClientResponse.class);
         return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
     }
 

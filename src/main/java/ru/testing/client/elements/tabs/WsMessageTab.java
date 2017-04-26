@@ -8,7 +8,7 @@ import javafx.scene.image.ImageView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
-import ru.testing.client.common.db.objects.ReceivedMessage;
+import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.controllers.TabWsMessageController;
 import ru.testing.client.controllers.MainController;
 
