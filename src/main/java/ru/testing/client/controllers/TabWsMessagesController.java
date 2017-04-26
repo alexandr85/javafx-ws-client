@@ -60,8 +60,6 @@ public class TabWsMessagesController {
     @FXML
     private ToggleButton filterListBtn;
     @FXML
-    private ToggleButton filterOnOffBtn;
-    @FXML
     private TextField sendMsgTextField;
     @FXML
     private TextField filterTextField;
@@ -96,7 +94,7 @@ public class TabWsMessagesController {
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputSetList(false);
         outputTextView.getItems().addListener(this::receivedMessageListener);
-        outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedActions);
+        outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedMessages);
         outputTextView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
 
         // Send message
@@ -168,8 +166,8 @@ public class TabWsMessagesController {
     private void changeFilterStatus() {
         Platform.runLater(() -> {
             if (filtered) {
-                filterOnOffBtn.setSelected(false);
-                filterOnOffBtn.setGraphic(new ImageView("/images/filter-off.png"));
+                filterBar.setVisible(false);
+                filterBar.setManaged(false);
                 filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
                 filterAddBtn.setDisable(true);
                 filterTextField.setDisable(true);
@@ -178,8 +176,8 @@ public class TabWsMessagesController {
                 outputSetList(false);
                 lbHeadersCounter.requestFocus();
             } else {
-                filterOnOffBtn.setSelected(true);
-                filterOnOffBtn.setGraphic(new ImageView("/images/filter-on.png"));
+                filterBar.setVisible(true);
+                filterBar.setManaged(true);
                 filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
                 filterAddBtn.setDisable(false);
                 filterTextField.setDisable(false);
@@ -231,6 +229,18 @@ public class TabWsMessagesController {
             getSendMessagesPopOver().show(sendMsgHistoryBtn, -7);
         } else {
             getSendMessagesPopOver().hide();
+        }
+    }
+
+    /**
+     * Method create and show message history window
+     */
+    @FXML
+    private void showFilterListPopOver() {
+        if (filterListBtn.isSelected()) {
+            getFilterPopOver().show(filterListBtn, -10);
+        } else {
+            getFilterPopOver().hide();
         }
     }
 
@@ -332,7 +342,7 @@ public class TabWsMessagesController {
      *
      * @param change ListChangeListener.Change<? extends ReceivedMessage>
      */
-    private void selectedActions(ListChangeListener.Change<? extends ReceivedMessage> change) {
+    private void selectedMessages(ListChangeListener.Change<? extends ReceivedMessage> change) {
         if (change.next()) {
             showAllMsgAndSelectedMsgCount();
             int selectedSize = change.getList().size();
@@ -417,7 +427,6 @@ public class TabWsMessagesController {
     public ObservableList<ReceivedMessage> getReceivedFilteredMessageList() {
         return receivedFilteredMessageList;
     }
-
 
 
     public ObservableList<String> getFilterList() {

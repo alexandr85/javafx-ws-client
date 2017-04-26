@@ -119,10 +119,14 @@ public class MainController {
         httpTypesComboBox.setItems(httpTypes);
         httpTypesComboBox.getSelectionModel().select(0);
         httpTypesComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            HttpSettingsController controller = getHttpSettingsPopOver().getHttpSettingsController();
             if (httpTypesComboBox.getSelectionModel().getSelectedItem() != HttpTypes.WEBSOCKET) {
-                connectionButton.setText("Send Request");
+                connectionButton.setText("New Request");
+                controller.getParametersPane().setDisable(false);
             } else {
                 connectionButton.setText("New Connect");
+                controller.getAccordion().setExpandedPane(controller.getHeadersPane());
+                controller.getParametersPane().setDisable(true);
             }
             validateServerUrl();
         });
@@ -166,11 +170,11 @@ public class MainController {
     @FXML
     private void createRequest() {
         HttpTypes currentType = httpTypesComboBox.getSelectionModel().getSelectedItem();
-        connectionButton.setDisable(true);
         Task task = new Task() {
 
             @Override
             protected Object call() throws Exception {
+                connectionButton.setDisable(true);
                 setProgressVisible(true);
                 if (currentType == HttpTypes.WEBSOCKET) {
                     WsMessagesTab wsClientTab = new WsMessagesTab();
@@ -184,11 +188,11 @@ public class MainController {
                     addNewTab(restTab);
                 }
                 setProgressVisible(false);
+                connectionButton.setDisable(false);
                 return null;
             }
         };
         new Thread(task).start();
-        connectionButton.setDisable(false);
     }
 
     /**
@@ -235,7 +239,7 @@ public class MainController {
      * Get headers pop over
      */
     @FXML
-    private void showHeadersPopOver() {
+    private void showHttpSettingsPopOver() {
         if (httpSettings.isSelected()) {
             getHttpSettingsPopOver().show(httpSettings, -4);
         } else {

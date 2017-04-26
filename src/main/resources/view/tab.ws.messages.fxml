@@ -84,19 +84,6 @@
         <padding>
             <Insets bottom="2" left="100"/>
         </padding>
-        <ToggleButton fx:id="filterOnOffBtn" minHeight="-Infinity" minWidth="-Infinity"
-                      mnemonicParsing="false"
-                      prefHeight="25.0" prefWidth="25.0" textAlignment="CENTER"
-                      onAction="#changeFilterStatus">
-            <graphic>
-                <ImageView>
-                    <Image url="@/images/filter-off.png"/>
-                </ImageView>
-            </graphic>
-            <cursor>
-                <Cursor fx:constant="HAND"/>
-            </cursor>
-        </ToggleButton>
         <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                    prefHeight="25.0" prefWidth="200.0"/>
@@ -112,7 +99,7 @@
                 <Cursor fx:constant="HAND"/>
             </cursor>
         </Button>
-        <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity"
+        <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity" onAction="#showFilterListPopOver"
                       minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
             <graphic>
                 <ImageView>

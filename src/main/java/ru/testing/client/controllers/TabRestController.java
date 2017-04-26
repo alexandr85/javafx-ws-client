@@ -3,7 +3,6 @@ package ru.testing.client.controllers;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -12,9 +11,9 @@ import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.MainApp;
+import ru.testing.client.common.DataBase;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.objects.Settings;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -117,7 +116,6 @@ public class TabRestController {
         Client restClient = Client.create();
         restClient.setConnectTimeout(TIMEOUT);
         restClient.setReadTimeout(TIMEOUT);
-        restClient.addFilter(new LoggingFilter(System.out));
         mainController.getHttpParametersList()
                 .forEach(parameter -> parameters.add(parameter.getName(), parameter.getValue()));
 
@@ -162,15 +160,15 @@ public class TabRestController {
      */
     private void setHeadersDetail(ClientResponse response) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(response.getResponseDate())
-                .append("\n")
-                .append(httpType.getName())
+        stringBuilder.append(httpType.getName())
                 .append(" ")
                 .append(serverUrl)
                 .append(" ")
                 .append(response.getStatus())
                 .append(" ")
                 .append(response.getStatusInfo())
+                .append("\n")
+                .append(response.getResponseDate())
                 .append("\n");
         response.getHeaders().forEach((k, v) -> stringBuilder.append(k)
                 .append(": ")

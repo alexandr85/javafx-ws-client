@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
+import ru.testing.client.MainApp;
+import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
 import ru.testing.client.elements.Dialogs;
@@ -22,6 +24,8 @@ public class HttpSettingsController {
     private final ObservableList<HttpParameter> httpParameterObservableList = FXCollections.observableArrayList();
 
     @FXML
+    private Accordion accordion;
+    @FXML
     private TitledPane headersPane;
     @FXML
     private TitledPane parametersPane;
@@ -34,9 +38,9 @@ public class HttpSettingsController {
     @FXML
     private TextField parameterValue;
     @FXML
-    private ListView<Header> headerListView;
+    private ListView<Header> hListView;
     @FXML
-    private ListView<HttpParameter> parametersListView;
+    private ListView<HttpParameter> pListView;
     @FXML
     private Label lbNoHeaders;
     @FXML
@@ -45,33 +49,38 @@ public class HttpSettingsController {
     @FXML
     private void initialize() {
 
+        if (MainApp.getMainController().getHttpType() == HttpTypes.WEBSOCKET) {
+            accordion.setExpandedPane(headersPane);
+            parametersPane.setDisable(true);
+        }
+
         // Prepare headers list
-        headerListView.setItems(headerObservableList);
-        headerListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        headerListView.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
-        headerListView.getItems().addListener((ListChangeListener<Header>) change -> {
+        hListView.setItems(headerObservableList);
+        hListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        hListView.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
+        hListView.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
                 int size = headerObservableList.size();
                 if (size > 0) {
-                    setListViewVisible(headerListView, lbNoHeaders, true);
+                    setListViewVisible(hListView, lbNoHeaders, true);
                 } else {
-                    setListViewVisible(headerListView, lbNoHeaders, false);
+                    setListViewVisible(hListView, lbNoHeaders, false);
                     lbNoHeaders.requestFocus();
                 }
             }
         });
 
         // Prepare parameters list
-        parametersListView.setItems(httpParameterObservableList);
-        parametersListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        parametersListView.setCellFactory(listView -> new HttpParametersCellFactory(httpParameterObservableList));
-        parametersListView.getItems().addListener((ListChangeListener<HttpParameter>) change -> {
+        pListView.setItems(httpParameterObservableList);
+        pListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        pListView.setCellFactory(listView -> new HttpParametersCellFactory(httpParameterObservableList));
+        pListView.getItems().addListener((ListChangeListener<HttpParameter>) change -> {
             if (change.next()) {
                 int size = httpParameterObservableList.size();
                 if (size > 0) {
-                    setListViewVisible(parametersListView, lbNoParameters, true);
+                    setListViewVisible(pListView, lbNoParameters, true);
                 } else {
-                    setListViewVisible(parametersListView, lbNoParameters, false);
+                    setListViewVisible(pListView, lbNoParameters, false);
                     lbNoParameters.requestFocus();
                 }
             }
@@ -145,7 +154,7 @@ public class HttpSettingsController {
                 });
                 parameterName.requestFocus();
             } else {
-                parameterName.requestFocus();
+                parameterValue.requestFocus();
             }
         } else {
             parameterName.requestFocus();
@@ -189,7 +198,7 @@ public class HttpSettingsController {
      * @return ListView<Header>
      */
     public ListView<Header> getHeadersListView() {
-        return headerListView;
+        return hListView;
     }
 
     /**
@@ -198,6 +207,33 @@ public class HttpSettingsController {
      * @return ListView<HttpParameter>
      */
     public ListView<HttpParameter> getParametersListView() {
-        return parametersListView;
+        return pListView;
+    }
+
+    /**
+     * Get parameters titled pane
+     *
+     * @return TitledPane
+     */
+    TitledPane getParametersPane() {
+        return parametersPane;
+    }
+
+    /**
+     * Get headers titled pane
+     *
+     * @return TitledPane
+     */
+    public TitledPane getHeadersPane() {
+        return headersPane;
+    }
+
+    /**
+     * Get accordion
+     *
+     * @return Accordion
+     */
+    Accordion getAccordion() {
+        return accordion;
     }
 }

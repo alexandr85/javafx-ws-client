@@ -79,14 +79,14 @@
             </rowConstraints>
             <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0"/>
             <ToggleButton fx:id="httpSettings" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity"
-                          mnemonicParsing="false" onAction="#showHeadersPopOver" prefHeight="25.0" prefWidth="25.0"
+                          mnemonicParsing="false" onAction="#showHttpSettingsPopOver" prefHeight="25.0" prefWidth="25.0"
                           GridPane.columnIndex="1">
                 <tooltip>
-                    <Tooltip text="Set headers data"/>
+                    <Tooltip text="Set http request settings"/>
                 </tooltip>
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/headers.png"/>
+                        <Image url="@/images/http.settings.png"/>
                     </ImageView>
                 </graphic>
                 <cursor>
