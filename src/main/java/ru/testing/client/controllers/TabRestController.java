@@ -60,7 +60,7 @@ public class TabRestController {
 
         // Set message as json pretty or text
         bPrettyJson.setOnAction(event -> {
-            if (bPrettyJson.isSelected()) {
+            if (message != null && bPrettyJson.isSelected()) {
                 Utils.PrettyStatus status = getJsonPretty(message);
                 masterNode.setText(status.getMessage());
                 bPrettyJson.setSelected(status.getButtonSelect());

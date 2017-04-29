@@ -27,21 +27,21 @@ public class RestTab extends Tab {
         String urlInfo = MainApp.getMainController().getServerUrl().getText();
 
         // Setup tab tooltip
-        this.setTooltip(new Tooltip(String.format("Response from %s", urlInfo)));
+        setTooltip(new Tooltip(String.format("Response from %s", urlInfo)));
         try {
             URI uri = new URI(urlInfo);
             urlInfo = uri.getPath();
         } catch (URISyntaxException e) {
             LOGGER.error("Error get uri", e.getMessage());
         }
-        this.setText(String.format("%s %s", httpTypes.getName(), urlInfo));
-        this.setGraphic(new ImageView("/images/message.png"));
+        setText(String.format("%s %s", httpTypes.getName(), urlInfo));
+        setGraphic(new ImageView("/images/message.png"));
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.rest.message.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
-            this.setContent(root);
+            setContent(root);
         } catch (IOException e) {
             LOGGER.error("Error load view form: {}", e);
         }

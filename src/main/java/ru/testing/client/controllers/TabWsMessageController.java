@@ -54,9 +54,6 @@ public class TabWsMessageController {
             }
             segmentedButton.requestFocus();
         });
-        if (settings.isJsonPretty()) {
-            bPrettyJson.fire();
-        }
 
         // Set text area wrap or not
         bWrapText.setOnAction(event -> {

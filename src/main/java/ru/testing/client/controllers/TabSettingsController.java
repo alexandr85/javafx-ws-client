@@ -50,7 +50,7 @@ public class TabSettingsController {
      */
     @FXML
     private void loadDefaultSettings() {
-        setSettingsValues(DefaultProperties.getInstance().getMessageSettings());
+        setSettingsValues(DefaultProperties.getInstance().getDefaultSettings());
     }
 
     /**
@@ -66,7 +66,6 @@ public class TabSettingsController {
         boolean status = dataBase.setSettings(new Settings(
                 ((Number) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
-                chPretty.isSelected(),
                 cbAutoScroll.isSelected()
         ));
         if (status) {
@@ -108,9 +107,6 @@ public class TabSettingsController {
 
         // Set text wrap value
         chWrap.setSelected(settings.isTextWrap());
-
-        // Set json pretty value
-        chPretty.setSelected(settings.isJsonPretty());
 
         // Set font size value
         fontSlider.setValue(settings.getFontSize());

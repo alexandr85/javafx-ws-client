@@ -8,7 +8,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.shape.Circle?>
-<GridPane styleClass="output_grid" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<GridPane styleClass="output_grid" xmlns:fx="http://javafx.com/fxml/1"
           fx:controller="ru.testing.client.controllers.TabWsMessagesController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>

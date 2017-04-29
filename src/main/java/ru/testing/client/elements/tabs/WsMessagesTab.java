@@ -21,12 +21,14 @@ public class WsMessagesTab extends Tab {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
     private TabWsMessagesController controller;
+    private String serverUrl;
 
     public WsMessagesTab() {
         MainController mainController = MainApp.getMainController();
-        this.setText("WsMessages");
-        this.setGraphic(new ImageView("/images/messages.png"));
-        this.setOnClosed(event -> {
+        serverUrl =  mainController.getServerUrl().getText();
+        setText("WsMessages");
+        setGraphic(new ImageView("/images/messages.png"));
+        setOnClosed(event -> {
             WsClient wsClient = controller.getWsClient();
             if (wsClient != null) {
                 wsClient.closeConnection();
@@ -39,16 +41,20 @@ public class WsMessagesTab extends Tab {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.ws.messages.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
-            this.setContent(root);
+            setContent(root);
         } catch (IOException e) {
             LOGGER.error("Error load view form: {}", e.getMessage());
         }
 
         // Setup tab tooltip
-        this.setTooltip(new Tooltip(String.format("Connected to %s", mainController.getServerUrl().getText())));
+        setTooltip(new Tooltip(String.format("Connected to %s", serverUrl)));
     }
 
     public TabWsMessagesController getController() {
         return controller;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
     }
 }

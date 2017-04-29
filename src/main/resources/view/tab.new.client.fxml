@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<TilePane alignment="CENTER" prefHeight="400.0">
+    <Label disable="true" style="-fx-font-size: 1.5em; -fx-font-family: monospace;" text="NO RESULTS"/>
+</TilePane>

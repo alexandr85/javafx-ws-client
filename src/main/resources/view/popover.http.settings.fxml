@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <Accordion fx:id="accordion" expandedPane="$headersPane" xmlns:fx="http://javafx.com/fxml/1"
-           stylesheets="/styles/popover.http.settings.css" xmlns="http://javafx.com/javafx/8"
+           stylesheets="/styles/popover.http.settings.css"
            fx:controller="ru.testing.client.controllers.HttpSettingsController">
     <padding>
         <Insets top="4"/>

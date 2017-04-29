@@ -27,8 +27,8 @@ public class WsMessageTab extends Tab {
         if (item != null) {
 
             // Setup tab
-            this.setText("WS Message");
-            this.setGraphic(new ImageView("/images/message.png"));
+            setText("WS Message");
+            setGraphic(new ImageView("/images/message.png"));
 
             // Load detail message view form
             try {
@@ -36,7 +36,7 @@ public class WsMessageTab extends Tab {
                 Parent root = loader.load();
                 TabWsMessageController controller = loader.getController();
                 controller.setMessage(item);
-                this.setContent(root);
+                setContent(root);
             } catch (IOException e) {
                 LOGGER.error("Error load view form: {}", e.getMessage());
             }

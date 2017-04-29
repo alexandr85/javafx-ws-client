@@ -21,6 +21,7 @@ import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.common.objects.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
+import ru.testing.client.elements.tabs.WsMessagesTab;
 import ru.testing.client.websocket.*;
 
 import java.net.URI;
@@ -41,7 +42,7 @@ public class TabWsMessagesController {
     private SendMessagesPopOver sendMessagesPopOver;
     private Tooltip statusTooltip;
     private WsClient wsClient;
-    private boolean filtered, autoScroll, connectionStatus;
+    private boolean filtered, autoScroll;
 
     @FXML
     private FlowPane sendMessagePane;
@@ -81,8 +82,9 @@ public class TabWsMessagesController {
     @FXML
     protected void initialize() {
 
-        // Get message settings
+        // Get settings
         Settings settings = dataBase.getSettings();
+        autoScroll = settings.isAutoScroll();
 
         // Set message font size
         outputTextView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
@@ -279,7 +281,6 @@ public class TabWsMessagesController {
                     addMessageToOutput(ReceivedMessageType.SEND, msgValue);
                 }
             });
-            connectionStatus = true;
         } catch (Exception e) {
             LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
             Platform.runLater(() -> new Dialogs().getExceptionDialog(e));
@@ -397,7 +398,7 @@ public class TabWsMessagesController {
     /**
      * Check connection status
      */
-    private void checkConnectionStatus() {
+    void checkConnectionStatus() {
         Task task = new Task() {
 
             @Override
@@ -405,12 +406,13 @@ public class TabWsMessagesController {
                 try {
                     do {
                         if (wsClient != null && wsClient.isOpenConnection()) {
-                            setConnectStatus(true);
+                            setConnectStat(true);
                         } else {
-                            setConnectStatus(false);
+                            setConnectStat(false);
+                            break;
                         }
                         Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
-                    } while (connectionStatus);
+                    } while (wsClient != null);
                 } catch (InterruptedException e) {
                     LOGGER.error("Thread interrupted exception{}", e.getMessage());
                 }
@@ -450,21 +452,33 @@ public class TabWsMessagesController {
      *
      * @param isConnected boolean
      */
-    private void setConnectStatus(boolean isConnected) {
+    private void setConnectStat(boolean isConnected) {
         Platform.runLater(() -> {
+            Tab currentTab = mainController.getTabPane().getSelectionModel().getSelectedItem();
+            Button connectionButton = null;
+            if (currentTab instanceof WsMessagesTab) {
+                if (((WsMessagesTab) currentTab).getController() == this) {
+                    connectionButton = mainController.getConnectionButton();
+                }
+            }
             if (isConnected) {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("connected");
                 setCircleTooltip("Connected");
                 sendMessagePane.setVisible(true);
                 sendMessagePane.setManaged(true);
+                if (connectionButton != null) {
+                    connectionButton.setText("Disconnect");
+                }
             } else {
                 connectStatus.getStyleClass().clear();
                 connectStatus.getStyleClass().add("disconnected");
                 setCircleTooltip("Disconnected");
                 sendMessagePane.setVisible(false);
                 sendMessagePane.setManaged(false);
-                connectionStatus = false;
+                if (connectionButton != null) {
+                    connectionButton.setText("Connect");
+                }
             }
         });
     }

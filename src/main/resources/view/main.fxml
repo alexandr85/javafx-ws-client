@@ -8,7 +8,7 @@
 <?import org.controlsfx.control.textfield.CustomTextField?>
 <GridPane xmlns:fx="http://javafx.com/fxml/1" hgap="10" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
           minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" stylesheets="/styles/main.css"
-          xmlns="http://javafx.com/javafx/8.0.112" fx:controller="ru.testing.client.controllers.MainController">
+          fx:controller="ru.testing.client.controllers.MainController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
     </columnConstraints>
@@ -66,7 +66,7 @@
     <ProgressBar fx:id="progress" maxWidth="Infinity" GridPane.rowIndex="1" visible="false"/>
 
     <!-- Pane with url && connection type -->
-    <TilePane alignment="CENTER" GridPane.rowIndex="2">
+    <TilePane alignment="CENTER" GridPane.rowIndex="2" fx:id="connectTilePane">
         <GridPane hgap="5" maxWidth="690.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="110.0"/>
@@ -122,13 +122,9 @@
     </TilePane>
 
     <!-- Tab pane with results -->
-    <TilePane fx:id="noResults" alignment="CENTER" prefHeight="400.0" GridPane.rowIndex="3">
-        <Label disable="true" style="-fx-font-size: 1.5em; -fx-font-family: monospace;" text="NO RESULTS"/>
-    </TilePane>
-    <TabPane fx:id="tabPane" managed="false" prefHeight="400.0" tabClosingPolicy="ALL_TABS" tabMinWidth="120"
-             visible="false" GridPane.rowIndex="3">
+    <TabPane fx:id="tabPane" prefHeight="400.0" tabClosingPolicy="ALL_TABS" tabMinWidth="120.0" GridPane.rowIndex="3">
         <padding>
-            <Insets bottom="4" left="4" right="4"/>
+            <Insets bottom="4.0" left="4.0" right="4.0"/>
         </padding>
     </TabPane>
 </GridPane>

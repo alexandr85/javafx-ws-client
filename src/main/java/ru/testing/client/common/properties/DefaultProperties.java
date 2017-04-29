@@ -15,11 +15,8 @@ public class DefaultProperties {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProperties.class);
     private static final String PROP_FILE = "default.properties";
     private static DefaultProperties properties;
-    private String profileName;
-    private String profileWsUrl;
     private int msgFontSize;
     private boolean msgWrap;
-    private boolean msgJsonPretty;
     private boolean autoScroll;
 
     private DefaultProperties() {
@@ -27,14 +24,9 @@ public class DefaultProperties {
         try {
             properties.load(DefaultProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
 
-            // Set profile default value
-            setProfileName(properties.getProperty("profile.name"));
-            setProfileWsUrl(properties.getProperty("profile.ws.url"));
-
-            // Set message default value
+            // Set default settings value
             setMsgFontSize(Integer.parseInt(properties.getProperty("msg.font.size")));
             setMsgWrap(Boolean.parseBoolean(properties.getProperty("msg.wrap")));
-            setMsgJsonPretty(Boolean.parseBoolean(properties.getProperty("msg.json.pretty")));
             setAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
@@ -56,29 +48,12 @@ public class DefaultProperties {
      * Get default message view setting as object
      * @return Settings
      */
-    public Settings getMessageSettings() {
+    public Settings getDefaultSettings() {
         return new Settings(
                 getMsgFontSize(),
                 isMsgWrap(),
-                isMsgJsonPretty(),
                 isAutoScroll()
         );
-    }
-
-    public String getProfileName() {
-        return profileName;
-    }
-
-    private void setProfileName(String profileName) {
-        this.profileName = profileName;
-    }
-
-    public String getProfileWsUrl() {
-        return profileWsUrl;
-    }
-
-    private void setProfileWsUrl(String profileWsUrl) {
-        this.profileWsUrl = profileWsUrl;
     }
 
     public boolean isAutoScroll() {
@@ -103,13 +78,5 @@ public class DefaultProperties {
 
     private void setMsgWrap(boolean msgWrap) {
         this.msgWrap = msgWrap;
-    }
-
-    public boolean isMsgJsonPretty() {
-        return msgJsonPretty;
-    }
-
-    private void setMsgJsonPretty(boolean msgJsonPretty) {
-        this.msgJsonPretty = msgJsonPretty;
     }
 }

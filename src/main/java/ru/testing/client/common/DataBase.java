@@ -75,7 +75,6 @@ public class DataBase {
                 settings = new Settings(
                         r.getInt("font_size"),
                         r.getBoolean("text_wrap"),
-                        r.getBoolean("json_pretty"),
                         r.getBoolean("auto_scroll")
                 );
             }
@@ -94,11 +93,10 @@ public class DataBase {
     public boolean setSettings(Settings settings) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement("UPDATE global_settings SET " +
-                    "font_size=?, text_wrap=?, json_pretty=?, auto_scroll=?");
+                    "font_size=?, text_wrap=?, auto_scroll=?");
             ps.setInt(1, settings.getFontSize());
             ps.setBoolean(2, settings.isTextWrap());
-            ps.setBoolean(3, settings.isJsonPretty());
-            ps.setBoolean(4, settings.isAutoScroll());
+            ps.setBoolean(3, settings.isAutoScroll());
             ps.executeUpdate();
             return true;
         }catch (SQLException e) {
@@ -138,11 +136,10 @@ public class DataBase {
             // Insert default settings values
             LOGGER.debug("Insert default settings ...");
             PreparedStatement pss = connection.prepareStatement("INSERT INTO global_settings " +
-                    "(font_size, text_wrap, json_pretty, json_regex, current_profile_id, auto_scroll, bar_show, filter_show) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    "(font_size, text_wrap, auto_scroll) " +
+                    "VALUES (?, ?, ?)");
             pss.setInt(1, properties.getMsgFontSize());
             pss.setBoolean(2, properties.isMsgWrap());
-            pss.setBoolean(3, properties.isMsgJsonPretty());
             pss.setBoolean(4, properties.isAutoScroll());
             pss.executeUpdate();
 

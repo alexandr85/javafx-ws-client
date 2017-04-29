@@ -11,26 +11,26 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Tab with application settings form
+ * Tab for create new client instance
  */
-public class SettingsTab extends Tab {
+public class NewClientTab extends Tab {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
 
-    public SettingsTab() {
-
-        // Create new tab
-        setText("Settings");
-        setTooltip(new Tooltip("Application settings"));
-        setGraphic( new ImageView("/images/settings.png"));
-
-        // Load settings view form
+    public NewClientTab() {
+        setClosable(false);
+        setTooltip(new Tooltip("Create new client instance"));
+        setText("NEW");
+        ImageView image = new ImageView("/images/add.png");
+        image.setFitHeight(20.0);
+        image.setFitWidth(20.0);
+        setGraphic(image);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.new.client.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {
-            LOGGER.error("Error load settings tab: {}", e.getMessage());
+            LOGGER.error("Error load view form: {}", e);
         }
     }
 }
