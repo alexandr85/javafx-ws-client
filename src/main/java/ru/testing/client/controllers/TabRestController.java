@@ -28,6 +28,8 @@ public class TabRestController {
     private static final int TIMEOUT = 30000;
     private DataBase dataBase = DataBase.getInstance();
     private MultivaluedMap<String, String> parameters = new MultivaluedMapImpl();
+    private MainController mainController = MainApp.getMainController();
+    private Client restClient = Client.create();
     private String serverUrl;
     private HttpTypes httpType;
     private String message;
@@ -59,41 +61,16 @@ public class TabRestController {
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
-        bPrettyJson.setOnAction(event -> {
-            if (message != null && bPrettyJson.isSelected()) {
-                Utils.PrettyStatus status = getJsonPretty(message);
-                masterNode.setText(status.getMessage());
-                bPrettyJson.setSelected(status.getButtonSelect());
-            } else {
-                masterNode.setText(message);
-            }
-            segmentedButton.requestFocus();
-        });
+        bPrettyJson.setOnAction(event -> setMasterMessage());
 
         // Set text area wrap or not
-        bWrapText.setOnAction(event -> {
-            if (bWrapText.isSelected()) {
-                masterNode.setWrapText(true);
-                detailNode.setWrapText(true);
-            } else {
-                masterNode.setWrapText(false);
-                detailNode.setWrapText(false);
-            }
-            segmentedButton.requestFocus();
-        });
+        bWrapText.setOnAction(event -> setWrapText());
         if (settings.isTextWrap()) {
             bWrapText.fire();
         }
 
         // Set enable or disable edit body message
-        editBody.setOnAction(event -> {
-            if (editBody.isSelected()) {
-                masterNode.setEditable(true);
-            } else {
-                masterNode.setEditable(false);
-            }
-            segmentedButton.requestFocus();
-        });
+        editBody.setOnAction(event -> setEditBody());
 
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
@@ -109,16 +86,17 @@ public class TabRestController {
         });
 
         // Create http client
-        MainController mainController = MainApp.getMainController();
         serverUrl = mainController.getServerUrl().getText();
         httpType = mainController.getHttpType();
-        ClientResponse response = null;
-        Client restClient = Client.create();
         restClient.setConnectTimeout(TIMEOUT);
         restClient.setReadTimeout(TIMEOUT);
         mainController.getHttpParametersList()
                 .forEach(parameter -> parameters.add(parameter.getName(), parameter.getValue()));
+        execute();
+    }
 
+    void execute() {
+        ClientResponse response = null;
         switch (httpType) {
             case HTTP_GET:
                 WebResource getResource = restClient.resource(serverUrl).queryParams(parameters);
@@ -126,9 +104,9 @@ public class TabRestController {
                 response = getResource.get(ClientResponse.class);
                 break;
             case HTTP_POST:
-                WebResource portResource = restClient.resource(serverUrl);
-                mainController.getHeadersList().forEach(header -> portResource.header(header.getName(), header.getValue()));
-                response = portResource.post(ClientResponse.class, parameters);
+                WebResource postResource = restClient.resource(serverUrl);
+                mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
+                response = postResource.post(ClientResponse.class, parameters);
                 break;
         }
 
@@ -137,7 +115,9 @@ public class TabRestController {
             message = response.getEntity(String.class);
 
             // Set body result to master node
-            masterNode.setText(message);
+            setWrapText();
+            setMasterMessage();
+            setEditBody();
             msgLengthLabel.setText(String.valueOf(message.length()));
 
             // Set headers result to detail node
@@ -175,5 +155,40 @@ public class TabRestController {
                 .append(v)
                 .append("\n"));
         detailNode.setText(stringBuilder.toString());
+    }
+
+    HttpTypes getHttpType() {
+        return httpType;
+    }
+
+    private void setMasterMessage() {
+        if (message != null && bPrettyJson.isSelected()) {
+            Utils.PrettyStatus status = getJsonPretty(message);
+            masterNode.setText(status.getMessage());
+            bPrettyJson.setSelected(status.getButtonSelect());
+        } else {
+            masterNode.setText(message);
+        }
+        segmentedButton.requestFocus();
+    }
+
+    private void setWrapText() {
+        if (bWrapText.isSelected()) {
+            masterNode.setWrapText(true);
+            detailNode.setWrapText(true);
+        } else {
+            masterNode.setWrapText(false);
+            detailNode.setWrapText(false);
+        }
+        segmentedButton.requestFocus();
+    }
+
+    private void setEditBody() {
+        if (editBody.isSelected()) {
+            masterNode.setEditable(true);
+        } else {
+            masterNode.setEditable(false);
+        }
+        segmentedButton.requestFocus();
     }
 }

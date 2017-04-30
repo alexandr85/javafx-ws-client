@@ -29,7 +29,7 @@
                     </ImageView>
                 </graphic>
             </MenuItem>
-            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" onAction="#saveOutputToFile" text="Save output">
+            <MenuItem fx:id="saveOutputMenu" mnemonicParsing="false" onAction="#saveOutputToFile" text="Save result">
                 <graphic>
                     <ImageView>
                         <Image url="@/images/save-output.png"/>
@@ -41,6 +41,37 @@
                 <graphic>
                     <ImageView>
                         <Image url="@/images/exit.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+        </Menu>
+        <Menu text="View">
+            <MenuItem fx:id="nextTab" mnemonicParsing="false" onAction="#nextTab" text="Next tab">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/next.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem fx:id="prevTab" mnemonicParsing="false" onAction="#previousTab" text="Prev tab">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/prev.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <SeparatorMenuItem/>
+            <MenuItem fx:id="closeTab" mnemonicParsing="false" onAction="#closeTab" text="Close current tab">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/close.tab.png"/>
+                    </ImageView>
+                </graphic>
+            </MenuItem>
+            <MenuItem fx:id="closeAllTabs" mnemonicParsing="false" onAction="#closeTabs" text="Close all tabs">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/close.tabs.png"/>
                     </ImageView>
                 </graphic>
             </MenuItem>
@@ -94,7 +125,8 @@
                 </cursor>
             </ToggleButton>
             <CustomTextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                             minWidth="-Infinity" prefHeight="25.0" promptText="URL" GridPane.columnIndex="2">
+                             minWidth="-Infinity" prefHeight="25.0" promptText="URL" GridPane.columnIndex="2"
+                             text="wss://echo.websocket.org">
                 <padding>
                     <Insets left="5.0" right="5.0"/>
                 </padding>

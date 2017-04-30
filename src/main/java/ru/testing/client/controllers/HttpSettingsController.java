@@ -51,7 +51,9 @@ public class HttpSettingsController {
 
         if (MainApp.getMainController().getHttpType() == HttpTypes.WEBSOCKET) {
             accordion.setExpandedPane(headersPane);
-            parametersPane.setDisable(true);
+            headersPane.setCollapsible(false);
+            parametersPane.setVisible(false);
+            parametersPane.setManaged(false);
         }
 
         // Prepare headers list
@@ -224,7 +226,7 @@ public class HttpSettingsController {
      *
      * @return TitledPane
      */
-    public TitledPane getHeadersPane() {
+    TitledPane getHeadersPane() {
         return headersPane;
     }
 

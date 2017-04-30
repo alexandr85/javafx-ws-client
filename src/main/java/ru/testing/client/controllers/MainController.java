@@ -47,6 +47,8 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
     private final ObservableList<HttpTypes> httpTypes = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
+    private final KeyCombination.Modifier keyModifier = (platform == OSX)
+            ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
     private List<WsClient> wsClients = new ArrayList<>();
     private AppProperties properties = AppProperties.getAppProperties();
     private HttpSettingsPopOver httpSettingsPopOver;
@@ -75,6 +77,14 @@ public class MainController {
     @FXML
     private MenuItem exitAppMenu;
     @FXML
+    private MenuItem nextTab;
+    @FXML
+    private MenuItem prevTab;
+    @FXML
+    private MenuItem closeTab;
+    @FXML
+    private MenuItem closeAllTabs;
+    @FXML
     private ProgressBar progress;
 
     /**
@@ -102,20 +112,24 @@ public class MainController {
         });
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue instanceof NewClientTab) {
+                httpTypesComboBox.getSelectionModel().select(HttpTypes.WEBSOCKET);
                 connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(false);
-                serverUrl.setDisable(false);
-                serverUrl.clear();
+                httpSettings.setDisable(false);
                 updateConnectionButtonName();
             } else if (newValue instanceof SettingsTab || newValue instanceof WsMessageTab) {
                 connectTilePane.setDisable(true);
             } else if (newValue instanceof WsMessagesTab) {
                 httpTypesComboBox.setDisable(true);
                 httpTypesComboBox.getSelectionModel().select(HttpTypes.WEBSOCKET);
-                serverUrl.setDisable(false);
                 serverUrl.setText(((WsMessagesTab) newValue).getServerUrl());
-                httpSettings.setDisable(true);
                 ((WsMessagesTab) newValue).getController().checkConnectionStatus();
+            } else if (newValue instanceof RestTab) {
+                TabRestController controller = ((RestTab) newValue).getController();
+                httpTypesComboBox.setDisable(true);
+                httpTypesComboBox.getSelectionModel().select(controller.getHttpType());
+                connectionButton.setDisable(false);
+                connectionButton.setText("Send");
             }
         });
 
@@ -125,18 +139,27 @@ public class MainController {
         httpTypesComboBox.getSelectionModel().select(0);
         httpTypesComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             HttpSettingsController controller = getHttpSettingsPopOver().getHttpSettingsController();
+            TitledPane paramsPane = controller.getParametersPane();
+            TitledPane headersPane = controller.getHeadersPane();
             if (newValue != HttpTypes.WEBSOCKET) {
-                controller.getParametersPane().setDisable(false);
+                paramsPane.setVisible(true);
+                paramsPane.setManaged(true);
+                headersPane.setCollapsible(true);
             } else {
-                controller.getAccordion().setExpandedPane(controller.getHeadersPane());
-                controller.getParametersPane().setDisable(true);
+                controller.getAccordion().setExpandedPane(headersPane);
+                headersPane.setCollapsible(false);
+                paramsPane.setVisible(false);
+                paramsPane.setManaged(false);
             }
             updateConnectionButtonName();
             validateServerUrl();
         });
 
         // Set hot keys
-        // TODO: Cmd/Ctrl + W (Close current tab)
+        setHotKey(closeTab, KeyCode.W);
+        setHotKey(closeAllTabs, KeyCode.W, KeyCombination.SHIFT_DOWN);
+        setHotKey(nextTab, KeyCode.RIGHT);
+        setHotKey(prevTab, KeyCode.LEFT);
         setHotKey(exitAppMenu, KeyCode.X);
         setHotKey(saveOutputMenu, KeyCode.S);
         setHotKey(settingsMenu, KeyCode.COMMA);
@@ -203,6 +226,9 @@ public class MainController {
                     } else {
                         wsClient.closeConnection();
                     }
+                } else if (currentTab instanceof RestTab) {
+                    TabRestController controller = ((RestTab) currentTab).getController();
+                    controller.execute();
                 }
                 setProgressVisible(false);
                 connectionButton.setDisable(false);
@@ -280,11 +306,43 @@ public class MainController {
         goToWebPage(properties.getAboutUrl());
     }
 
+    /**
+     * Clear server url input
+     */
     @FXML
     private void clearServerUrl() {
         if (serverUrl.getText().length() > 0) {
             serverUrl.clear();
         }
+    }
+
+    @FXML
+    private void nextTab() {
+        int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+        if (currentIndex < tabPane.getTabs().size()) {
+            tabPane.getSelectionModel().select(currentIndex + 1);
+        }
+    }
+
+    @FXML
+    private void previousTab() {
+        int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+        if (currentIndex != 0) {
+            tabPane.getSelectionModel().select(currentIndex - 1);
+        }
+    }
+
+    @FXML
+    private void closeTab() {
+        Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+        if (!(currentTab instanceof NewClientTab)) {
+            tabPane.getTabs().remove(currentTab);
+        }
+    }
+
+    @FXML
+    private void closeTabs() {
+        tabPane.getTabs().removeAll(tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab)));
     }
 
     /**
@@ -439,8 +497,17 @@ public class MainController {
      * @param keyCode KeyCode
      */
     private void setHotKey(MenuItem item, KeyCode keyCode) {
-        KeyCombination.Modifier key = (platform == OSX) ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
-        item.setAccelerator(new KeyCodeCombination(keyCode, key));
+        item.setAccelerator(new KeyCodeCombination(keyCode, keyModifier));
+    }
+
+    /**
+     * Set hot key for menu element with shift
+     *
+     * @param item    MenuItem
+     * @param keyCode KeyCode
+     */
+    private void setHotKey(MenuItem item, KeyCode keyCode, KeyCombination.Modifier keyMod) {
+        item.setAccelerator(new KeyCodeCombination(keyCode, keyMod, keyModifier));
     }
 
     /**

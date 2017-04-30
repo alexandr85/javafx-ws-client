@@ -46,6 +46,24 @@ public class MainApp extends Application {
     }
 
     /**
+     * Get primary stage
+     *
+     * @return Stage
+     */
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Get main controller instance
+     *
+     * @return MainController
+     */
+    public static MainController getMainController() {
+        return mainController;
+    }
+
+    /**
      * Start javafx application window
      *
      * @param primaryStage Stage
@@ -100,23 +118,5 @@ public class MainApp extends Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }
-    }
-
-    /**
-     * Get primary stage
-     *
-     * @return Stage
-     */
-    public static Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-    /**
-     * Get main controller instance
-     *
-     * @return MainController
-     */
-    public static MainController getMainController() {
-        return mainController;
     }
 }
