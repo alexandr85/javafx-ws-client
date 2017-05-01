@@ -51,6 +51,7 @@ public class MainController {
             ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
     private List<WsClient> wsClients = new ArrayList<>();
     private AppProperties properties = AppProperties.getAppProperties();
+    private NewClientTab newClientTab = new NewClientTab();
     private HttpSettingsPopOver httpSettingsPopOver;
     private SettingsTab settingsTab;
 
@@ -97,7 +98,7 @@ public class MainController {
         getPrimaryStage().setOnCloseRequest((event -> exitApplication()));
 
         // Tabs change listener
-        tabPane.getTabs().add(new NewClientTab());
+        tabPane.getTabs().add(newClientTab);
         tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
             if (c.next()) {
                 final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
@@ -111,24 +112,61 @@ public class MainController {
             }
         });
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            HttpSettingsController httpController = getHttpSettingsPopOver().getHttpSettingsController();
+
+            // Save inserted last values in 'new' tab
+            if (oldValue instanceof NewClientTab) {
+                newClientTab.setPrevType(httpTypesComboBox.getSelectionModel().getSelectedItem());
+                newClientTab.setPrevHeaders(httpController.getHeadersList());
+                newClientTab.setPrevHttpParams(httpController.getHttpParametersList());
+                newClientTab.setPrevUrl(serverUrl.getText());
+            }
+
+            // Set data for new tab
             if (newValue instanceof NewClientTab) {
-                httpTypesComboBox.getSelectionModel().select(HttpTypes.WEBSOCKET);
                 connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(false);
                 httpSettings.setDisable(false);
+                serverUrl.setEditable(true);
+                urlCleaner.setDisable(false);
                 updateConnectionButtonName();
+
+                // Set previous data
+                httpTypesComboBox.getSelectionModel().select(newClientTab.getPrevType());
+                httpController.getHeadersList().clear();
+                httpController.getHeadersList().addAll(newClientTab.getPrevHeaders());
+                httpController.getHttpParametersList().clear();
+                httpController.getHttpParametersList().addAll(newClientTab.getPrevHttpParams());
+                serverUrl.setText(newClientTab.getPrevUrl());
             } else if (newValue instanceof SettingsTab || newValue instanceof WsMessageTab) {
                 connectTilePane.setDisable(true);
             } else if (newValue instanceof WsMessagesTab) {
+                connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(true);
                 httpTypesComboBox.getSelectionModel().select(HttpTypes.WEBSOCKET);
-                serverUrl.setText(((WsMessagesTab) newValue).getServerUrl());
+                httpSettings.setDisable(true);
+                urlCleaner.setDisable(true);
+
+                // Set ws client data
                 ((WsMessagesTab) newValue).getController().checkConnectionStatus();
+                serverUrl.setText(((WsMessagesTab) newValue).getServerUrl());
+                serverUrl.setEditable(false);
             } else if (newValue instanceof RestTab) {
-                TabRestController controller = ((RestTab) newValue).getController();
+                connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(true);
-                httpTypesComboBox.getSelectionModel().select(controller.getHttpType());
+                httpSettings.setDisable(false);
+                serverUrl.setEditable(false);
+                urlCleaner.setDisable(true);
                 connectionButton.setDisable(false);
+
+                // Set request data
+                TabRestController restController = ((RestTab) newValue).getController();
+                serverUrl.setText(restController.getServerUrl());
+                httpTypesComboBox.getSelectionModel().select(restController.getHttpType());
+                httpController.getHeadersList().clear();
+                httpController.getHeadersList().addAll(restController.getHeaders());
+                httpController.getHttpParametersList().clear();
+                httpController.getHttpParametersList().addAll(restController.getParameters());
                 connectionButton.setText("Send");
             }
         });
@@ -318,17 +356,21 @@ public class MainController {
 
     @FXML
     private void nextTab() {
-        int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
-        if (currentIndex < tabPane.getTabs().size()) {
-            tabPane.getSelectionModel().select(currentIndex + 1);
+        if (!serverUrl.isFocused()) {
+            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            if (currentIndex < tabPane.getTabs().size()) {
+                tabPane.getSelectionModel().select(currentIndex + 1);
+            }
         }
     }
 
     @FXML
     private void previousTab() {
-        int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
-        if (currentIndex != 0) {
-            tabPane.getSelectionModel().select(currentIndex - 1);
+        if (!serverUrl.isFocused()) {
+            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            if (currentIndex != 0) {
+                tabPane.getSelectionModel().select(currentIndex - 1);
+            }
         }
     }
 

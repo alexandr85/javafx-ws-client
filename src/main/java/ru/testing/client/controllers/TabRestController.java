@@ -3,7 +3,9 @@ package ru.testing.client.controllers;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -14,9 +16,13 @@ import ru.testing.client.MainApp;
 import ru.testing.client.common.DataBase;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.Utils;
+import ru.testing.client.common.objects.Header;
+import ru.testing.client.common.objects.HttpParameter;
 import ru.testing.client.common.objects.Settings;
 
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import static ru.testing.client.common.Utils.getJsonPretty;
 
@@ -25,10 +31,11 @@ import static ru.testing.client.common.Utils.getJsonPretty;
  */
 public class TabRestController {
 
-    private static final int TIMEOUT = 30000;
+    private static final int TIMEOUT = 10000;
     private DataBase dataBase = DataBase.getInstance();
-    private MultivaluedMap<String, String> parameters = new MultivaluedMapImpl();
     private MainController mainController = MainApp.getMainController();
+    private List<Header> headers = new ArrayList<>();
+    private List<HttpParameter> parameters = new ArrayList<>();
     private Client restClient = Client.create();
     private String serverUrl;
     private HttpTypes httpType;
@@ -90,23 +97,29 @@ public class TabRestController {
         httpType = mainController.getHttpType();
         restClient.setConnectTimeout(TIMEOUT);
         restClient.setReadTimeout(TIMEOUT);
-        mainController.getHttpParametersList()
-                .forEach(parameter -> parameters.add(parameter.getName(), parameter.getValue()));
+        restClient.addFilter(new LoggingFilter(System.out));
         execute();
     }
 
     void execute() {
+        headers.clear();
+        headers.addAll(mainController.getHeadersList());
+        parameters.clear();
+        parameters.addAll(mainController.getHttpParametersList());
         ClientResponse response = null;
+        MultivaluedMap<String, String> parametersMap = new MultivaluedMapImpl();
+        parameters.forEach(p -> parametersMap.add(p.getName(), p.getValue()));
         switch (httpType) {
             case HTTP_GET:
-                WebResource getResource = restClient.resource(serverUrl).queryParams(parameters);
-                mainController.getHeadersList().forEach(header -> getResource.header(header.getName(), header.getValue()));
+                WebResource.Builder getResource = restClient.resource(serverUrl)
+                        .queryParams(parametersMap).getRequestBuilder();
+                headers.forEach(header -> getResource.header(header.getName(), header.getValue()));
                 response = getResource.get(ClientResponse.class);
                 break;
             case HTTP_POST:
-                WebResource postResource = restClient.resource(serverUrl);
+                WebResource.Builder postResource = restClient.resource(serverUrl).getRequestBuilder();
                 mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
-                response = postResource.post(ClientResponse.class, parameters);
+                response = postResource.post(ClientResponse.class, parametersMap);
                 break;
         }
 
@@ -115,10 +128,12 @@ public class TabRestController {
             message = response.getEntity(String.class);
 
             // Set body result to master node
-            setWrapText();
-            setMasterMessage();
-            setEditBody();
-            msgLengthLabel.setText(String.valueOf(message.length()));
+            Platform.runLater(() -> {
+                setWrapText();
+                setMasterMessage();
+                setEditBody();
+                msgLengthLabel.setText(String.valueOf(message.length()));
+            });
 
             // Set headers result to detail node
             setHeadersDetail(response);
@@ -159,6 +174,18 @@ public class TabRestController {
 
     HttpTypes getHttpType() {
         return httpType;
+    }
+
+    String getServerUrl() {
+        return serverUrl;
+    }
+
+    List<Header> getHeaders() {
+        return headers;
+    }
+
+    List<HttpParameter> getParameters() {
+        return parameters;
     }
 
     private void setMasterMessage() {
