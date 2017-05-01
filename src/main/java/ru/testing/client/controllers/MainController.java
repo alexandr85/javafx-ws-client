@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -378,13 +379,24 @@ public class MainController {
     private void closeTab() {
         Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
         if (!(currentTab instanceof NewClientTab)) {
+            if (currentTab instanceof WsMessagesTab) {
+                WsClient wsClient = ((WsMessagesTab) currentTab).getController().getWsClient();
+                wsClient.closeConnection();
+            }
             tabPane.getTabs().remove(currentTab);
         }
     }
 
     @FXML
     private void closeTabs() {
-        tabPane.getTabs().removeAll(tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab)));
+        FilteredList<Tab> tabs = tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab));
+        for (Tab tab: tabs) {
+            if (tab instanceof WsMessagesTab) {
+                WsClient wsClient = ((WsMessagesTab) tab).getController().getWsClient();
+                wsClient.closeConnection();
+            }
+            tabPane.getTabs().removeAll();
+        }
     }
 
     /**
