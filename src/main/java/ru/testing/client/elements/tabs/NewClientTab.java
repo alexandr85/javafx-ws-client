@@ -30,8 +30,8 @@ public class NewClientTab extends Tab {
         setTooltip(new Tooltip("Create new client instance"));
         setText("NEW");
         ImageView image = new ImageView("/images/add.png");
-        image.setFitHeight(20.0);
-        image.setFitWidth(20.0);
+        image.setFitHeight(12.0);
+        image.setFitWidth(12.0);
         setGraphic(image);
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.new.client.fxml"));

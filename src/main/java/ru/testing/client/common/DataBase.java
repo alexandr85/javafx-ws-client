@@ -140,7 +140,7 @@ public class DataBase {
                     "VALUES (?, ?, ?)");
             pss.setInt(1, properties.getMsgFontSize());
             pss.setBoolean(2, properties.isMsgWrap());
-            pss.setBoolean(4, properties.isAutoScroll());
+            pss.setBoolean(3, properties.isAutoScroll());
             pss.executeUpdate();
 
             LOGGER.debug("Database create successful");

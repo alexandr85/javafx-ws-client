@@ -267,11 +267,13 @@ public class TabWsMessagesController {
     /**
      * Start websocket wsClient
      */
-    private void startWsClient() {
+    void startWsClient() {
         try {
-            wsClient = new WsClient();
-            wsClient.setEndpointURI(new URI(mainController.getServerUrl().getText()));
-            wsClient.setHeaders(mainController.getHeadersList());
+            if (wsClient == null) {
+                wsClient = new WsClient();
+                wsClient.setEndpointURI(new URI(mainController.getServerUrl().getText()));
+                wsClient.setHeaders(mainController.getHeadersList());
+            }
             wsClient.openConnection();
             wsClient.setMessageHandler(new MessageHandler(this));
             getSendMessagesPopOver().getController().getSentMessages().forEach(sentMessage -> {

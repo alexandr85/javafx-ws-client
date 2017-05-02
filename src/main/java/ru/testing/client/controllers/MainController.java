@@ -260,7 +260,7 @@ public class MainController {
                     TabWsMessagesController controller = ((WsMessagesTab) currentTab).getController();
                     WsClient wsClient = controller.getWsClient();
                     if (!wsClient.isOpenConnection()) {
-                        wsClient.openConnection();
+                        controller.startWsClient();
                         controller.checkConnectionStatus();
                     } else {
                         wsClient.closeConnection();

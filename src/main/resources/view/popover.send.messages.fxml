@@ -30,7 +30,7 @@
                 minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0">
             <graphic>
                 <ImageView>
-                    <Image url="@/images/add.png" requestedWidth="20.0" requestedHeight="20.0"/>
+                    <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                 </ImageView>
             </graphic>
             <cursor>

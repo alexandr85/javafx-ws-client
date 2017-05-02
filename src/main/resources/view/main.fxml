@@ -133,8 +133,8 @@
                 <right>
                     <Label fx:id="urlCleaner" onMouseClicked="#clearServerUrl" visible="false">
                         <graphic>
-                            <ImageView rotate="45.0">
-                                <Image requestedHeight="18.0" requestedWidth="18.0" url="@/images/add.png"/>
+                            <ImageView rotate="45.0" opacity="0.5">
+                                <Image requestedHeight="12.0" requestedWidth="12.0" url="@/images/add.png"/>
                             </ImageView>
                         </graphic>
                         <cursor>

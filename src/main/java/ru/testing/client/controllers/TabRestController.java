@@ -97,7 +97,6 @@ public class TabRestController {
         httpType = mainController.getHttpType();
         restClient.setConnectTimeout(TIMEOUT);
         restClient.setReadTimeout(TIMEOUT);
-        restClient.addFilter(new LoggingFilter(System.out));
         execute();
     }
 

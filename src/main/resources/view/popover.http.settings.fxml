@@ -29,7 +29,7 @@
                             prefWidth="25.0" onAction="#addHeader">
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/add.png" requestedWidth="25.0" requestedHeight="25.0"/>
+                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                             </ImageView>
                         </graphic>
                         <cursor>
@@ -59,7 +59,7 @@
                             prefWidth="25.0" onAction="#addParameter">
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/add.png" requestedWidth="25.0" requestedHeight="25.0"/>
+                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                             </ImageView>
                         </graphic>
                         <cursor>
