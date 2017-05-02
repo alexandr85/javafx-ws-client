@@ -125,8 +125,7 @@
                 </cursor>
             </ToggleButton>
             <CustomTextField fx:id="serverUrl" maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity"
-                             minWidth="-Infinity" prefHeight="25.0" promptText="URL" GridPane.columnIndex="2"
-                             text="wss://echo.websocket.org">
+                             minWidth="-Infinity" prefHeight="25.0" promptText="URL" GridPane.columnIndex="2">
                 <padding>
                     <Insets left="5.0" right="5.0"/>
                 </padding>
