@@ -395,8 +395,8 @@ public class MainController {
                 WsClient wsClient = ((WsMessagesTab) tab).getController().getWsClient();
                 wsClient.closeConnection();
             }
-            tabPane.getTabs().removeAll();
         }
+        tabPane.getTabs().removeAll(tabs);
     }
 
     /**

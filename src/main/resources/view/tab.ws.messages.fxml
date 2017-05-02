@@ -92,7 +92,7 @@
                 onMouseClicked="#addToFilterList">
             <graphic>
                 <ImageView>
-                    <Image url="@/images/add.png" requestedWidth="25" requestedHeight="25"/>
+                    <Image url="@/images/add.png" requestedWidth="20.0" requestedHeight="20.0"/>
                 </ImageView>
             </graphic>
             <cursor>
