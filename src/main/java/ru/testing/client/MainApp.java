@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import org.controlsfx.tools.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.testing.client.common.db.DataBase;
+import ru.testing.client.common.DataBase;
 import ru.testing.client.common.github.ReleaseChecker;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.controllers.MainController;
@@ -46,6 +46,24 @@ public class MainApp extends Application {
     }
 
     /**
+     * Get primary stage
+     *
+     * @return Stage
+     */
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    /**
+     * Get main controller instance
+     *
+     * @return MainController
+     */
+    public static MainController getMainController() {
+        return mainController;
+    }
+
+    /**
      * Start javafx application window
      *
      * @param primaryStage Stage
@@ -60,7 +78,7 @@ public class MainApp extends Application {
             mainController = loader.getController();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, mainController);
-            primaryStage.setTitle(String.format("WebSocket & Rest Client v%s", properties.getVersion()));
+            primaryStage.setTitle(String.format("WebSocket & Rest client v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
@@ -100,23 +118,5 @@ public class MainApp extends Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon: {}", e.getMessage());
         }
-    }
-
-    /**
-     * Get primary stage
-     *
-     * @return Stage
-     */
-    public static Stage getPrimaryStage() {
-        return primaryStage;
-    }
-
-    /**
-     * Get main controller instance
-     *
-     * @return MainController
-     */
-    public static MainController getMainController() {
-        return mainController;
     }
 }

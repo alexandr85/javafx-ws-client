@@ -2,8 +2,8 @@ package ru.testing.client;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.testing.client.common.db.objects.ReceivedMessage;
-import ru.testing.client.elements.message.ReceivedMessageType;
+import ru.testing.client.common.objects.ReceivedMessage;
+import ru.testing.client.websocket.ReceivedMessageType;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

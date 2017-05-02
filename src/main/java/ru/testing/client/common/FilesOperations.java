@@ -3,6 +3,7 @@ package ru.testing.client.common;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.testing.client.MainApp;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.Dialogs;
 import java.io.*;
@@ -15,19 +16,19 @@ public class FilesOperations {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FilesOperations.class);
     private static final String TEXT_FILE_NAME = "logs/output.txt";
+    private MainController mainController = MainApp.getMainController();
 
     /**
      * Save text to file
      *
      * @param text String
-     * @param main MainController
      */
-    public void saveTextToFile(String text, MainController main) {
+    public void saveTextToFile(String text) {
         Dialogs dialogs = new Dialogs();
-        main.setProgressVisible(true);
+        mainController.setProgressVisible(true);
         if (text == null || text.isEmpty()) {
             Platform.runLater(() -> dialogs.getWarningDialog("Nothing for save"));
-            main.setProgressVisible(false);
+            mainController.setProgressVisible(false);
             return;
         }
         Writer writer = null;
@@ -48,7 +49,7 @@ public class FilesOperations {
                     LOGGER.error("Can't close writer: {}", e.getMessage());
                 }
             }
-            main.setProgressVisible(false);
+            mainController.setProgressVisible(false);
         }
     }
 }

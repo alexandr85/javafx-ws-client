@@ -9,7 +9,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.CheckListView?>
-<GridPane hgap="5" vgap="7" prefHeight="180.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8"
+<GridPane hgap="5" vgap="7" prefHeight="180.0" prefWidth="400.0"
           xmlns:fx="http://javafx.com/fxml/1" stylesheets="/styles/popover.send.messages.css"
           fx:controller="ru.testing.client.controllers.SendMessagesController">
     <padding>
@@ -30,7 +30,7 @@
                 minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="25.0">
             <graphic>
                 <ImageView>
-                    <Image url="@/images/add.png" requestedWidth="25.0" requestedHeight="25.0"/>
+                    <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                 </ImageView>
             </graphic>
             <cursor>

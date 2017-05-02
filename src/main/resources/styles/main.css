@@ -104,6 +104,17 @@
     -fx-border-insets: 0 0 0 0;
 }
 
+#progress > .track{
+    -fx-border-insets: 0 0 0 0;
+    -fx-border-radius: 0;
+    -fx-border-width: 0;
+    -fx-background-color: transparent;
+}
+
+#progress {
+    -fx-indeterminate-bar-length: 300;
+}
+
 /* ========== List view scroll bar style ============ */
 
 .text-area .scroll-bar:horizontal .track,

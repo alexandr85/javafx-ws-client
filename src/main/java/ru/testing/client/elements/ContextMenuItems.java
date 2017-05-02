@@ -6,9 +6,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.controlsfx.control.IndexedCheckModel;
 import ru.testing.client.common.FilesOperations;
-import ru.testing.client.common.db.objects.ReceivedMessage;
-import ru.testing.client.controllers.MainController;
-import ru.testing.client.elements.message.DetailMsgTab;
+import ru.testing.client.common.objects.ReceivedMessage;
+import ru.testing.client.elements.tabs.WsMessageTab;
 
 
 /**
@@ -122,12 +121,11 @@ public class ContextMenuItems {
      * Save message from cell to file
      *
      * @param item ReceivedMessage
-     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem saveMessageToFile(ReceivedMessage item, MainController main) {
+    public MenuItem saveMessageToFile(ReceivedMessage item) {
         MenuItem saveFileItem = new MenuItem("Save full message");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString(), main));
+        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString()));
         return saveFileItem;
     }
 
@@ -135,12 +133,11 @@ public class ContextMenuItems {
      * Save send selected messages to file
      *
      * @param item ReceivedMessage
-     * @param main MainController
      * @return MenuItem
      */
-    public MenuItem showMessage(final ReceivedMessage item, MainController main) {
+    public MenuItem showMessage(final ReceivedMessage item) {
         MenuItem show = new MenuItem("Show body message");
-        show.setOnAction(event -> new DetailMsgTab(item, main));
+        show.setOnAction(event -> new WsMessageTab(item));
         return show;
     }
 

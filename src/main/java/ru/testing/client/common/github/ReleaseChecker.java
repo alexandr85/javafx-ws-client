@@ -3,14 +3,12 @@ package ru.testing.client.common.github;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
-import javax.ws.rs.core.MediaType;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
@@ -24,11 +22,9 @@ import java.util.Arrays;
 public class ReleaseChecker extends Thread {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseChecker.class);
-    private static final int TIMEOUT = 30000;
     private static ReleaseChecker instance;
     private AppProperties properties = AppProperties.getAppProperties();
     private String lastVersion = "1.0";
-    private Client client;
 
     private ReleaseChecker() {
 
@@ -71,28 +67,13 @@ public class ReleaseChecker extends Thread {
     }
 
     /**
-     * Get rest client
-     *
-     * @return com.sun.jersey.api.client.Client
-     */
-    private Client getClient() {
-        if (client == null) {
-            client = Client.create();
-            client.setConnectTimeout(TIMEOUT);
-            client.setReadTimeout(TIMEOUT);
-        }
-        return client;
-    }
-
-    /**
      * Create request
      *
      * @return List<TagInfo>
      * @throws IOException mapping TagInfo
      */
     private TagInfo[] getTagsFromApi() throws IOException {
-        WebResource resource = getClient().resource(properties.getTagsUrl());
-        ClientResponse response = resource.type(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        ClientResponse response = Client.create().resource(properties.getTagsUrl()).get(ClientResponse.class);
         return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
     }
 
@@ -109,7 +90,7 @@ public class ReleaseChecker extends Thread {
      * Compare current and latest git hub versions
      *
      * @param currentVersion String
-     * @param newVersion String from git hub
+     * @param newVersion     String from git hub
      * @return boolean compare status
      */
     public boolean isCurrentVersionOld(String currentVersion, String newVersion) {

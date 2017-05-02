@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.StatusBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.shape.Circle?>
+<GridPane styleClass="output_grid" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="ru.testing.client.controllers.TabWsMessagesController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="NEVER"/>
+        <RowConstraints vgrow="NEVER"/>
+    </rowConstraints>
+    <GridPane.margin>
+        <Insets bottom="9.0" left="7.0" right="7.0" top="2.0"/>
+    </GridPane.margin>
+    <FlowPane maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+              prefHeight="32.0" GridPane.rowIndex="0" alignment="CENTER" visible="false" managed="false"
+              fx:id="sendMessagePane">
+        <padding>
+            <Insets bottom="1"/>
+        </padding>
+        <GridPane hgap="5">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="55.0" maxWidth="55.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="477.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="23.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" maxWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <Label maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                   prefHeight="25.0" prefWidth="55.0" text="Message" GridPane.columnIndex="0"
+                   styleClass="label_field"/>
+            <TextField fx:id="sendMsgTextField" maxWidth="Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" prefHeight="25.0" prefWidth="477.0" promptText="text message"
+                       GridPane.columnIndex="1">
+                <padding>
+                    <Insets left="5.0"/>
+                </padding>
+            </TextField>
+            <ToggleButton fx:id="sendMsgHistoryBtn" maxHeight="-Infinity" maxWidth="-Infinity"
+                          minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                          prefHeight="22.0"
+                          prefWidth="22.0" GridPane.columnIndex="2" onAction="#showSendHistoryPopOver">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+                <tooltip>
+                    <Tooltip text="Send message history list"/>
+                </tooltip>
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/send-message.png"/>
+                    </ImageView>
+                </graphic>
+            </ToggleButton>
+            <Button fx:id="messageSendBtn" alignment="CENTER" maxHeight="-Infinity"
+                    maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                    prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="3"
+                    onAction="#sendWebsocketMessage">
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Button>
+        </GridPane>
+    </FlowPane>
+    <ListView fx:id="outputTextView" GridPane.rowIndex="1" prefHeight="100.0" prefWidth="200.0"
+              styleClass="output_text"/>
+    <FlowPane fx:id="filterBar" GridPane.rowIndex="2" visible="false" managed="false" alignment="CENTER"
+              hgap="15.0"
+              maxHeight="-Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity"
+              prefHeight="32.0"
+              prefWidth="480.0" styleClass="filter_block">
+        <padding>
+            <Insets bottom="2" left="100"/>
+        </padding>
+        <TextField fx:id="filterTextField" disable="true" maxHeight="-Infinity"
+                   maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                   prefHeight="25.0" prefWidth="200.0"/>
+        <Button fx:id="filterAddBtn" disable="true" minHeight="-Infinity" minWidth="-Infinity"
+                mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0"
+                onMouseClicked="#addToFilterList">
+            <graphic>
+                <ImageView>
+                    <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                </ImageView>
+            </graphic>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+        <ToggleButton fx:id="filterListBtn" disable="true" minHeight="-Infinity" onAction="#showFilterListPopOver"
+                      minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
+            <graphic>
+                <ImageView>
+                    <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
+                </ImageView>
+            </graphic>
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </ToggleButton>
+        <Label fx:id="filterCount" minWidth="100" maxWidth="100"/>
+    </FlowPane>
+
+    <!-- Status bar -->
+    <StatusBar maxHeight="25" GridPane.rowIndex="3" fx:id="statusBar" text="">
+        <padding>
+            <Insets bottom="3" top="4" left="15" right="15"/>
+        </padding>
+        <leftItems>
+            <Label fx:id="autoScrollLabel" maxWidth="-Infinity" text="auto scroll" contentDisplay="RIGHT"
+                   onMouseClicked="#changeAutoScrollStatus">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/turn-on.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Auto scroll status"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="filterStatusLabel" maxWidth="-Infinity" text="filter"
+                   contentDisplay="RIGHT" onMouseClicked="#changeFilterStatus">
+                <graphic>
+                    <ImageView>
+                        <Image url="@/images/turn-off.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Filter status"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+                <cursor>
+                    <Cursor fx:constant="HAND"/>
+                </cursor>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="timeDiffLabel" maxWidth="-Infinity">
+                <tooltip>
+                    <Tooltip text="Time difference"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+            </Label>
+        </leftItems>
+        <rightItems>
+            <Label fx:id="outputMsgCount" maxWidth="-Infinity" text="0/0">
+                <tooltip>
+                    <Tooltip text="All / Selected messages"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <Label fx:id="lbHeadersCounter" maxWidth="-Infinity" text="0">
+                <tooltip>
+                    <Tooltip text="Custom headers count"/>
+                </tooltip>
+                <padding>
+                    <Insets left="10" right="10" top="2"/>
+                </padding>
+            </Label>
+            <Separator orientation="VERTICAL"/>
+            <VBox alignment="CENTER" prefWidth="40">
+                <Circle fx:id="connectStatus" radius="10.0" stroke="#fa20201f" strokeType="INSIDE"
+                        styleClass="disconnected"/>
+            </VBox>
+        </rightItems>
+    </StatusBar>
+</GridPane>

@@ -9,8 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.controlsfx.control.CheckListView;
-import ru.testing.client.common.db.objects.SendMessage;
-import ru.testing.client.elements.message.SendMessagesCellFactory;
+import ru.testing.client.common.objects.SendMessage;
+import ru.testing.client.websocket.SendMessagesCellFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,6 @@ public class SendMessagesController {
 
         // Setup messages list
         checkListView.setItems(list);
-        checkListView.setCellFactory(list -> new SendMessagesCellFactory(this));
         checkListView.getItems().addListener((ListChangeListener<? super String>) change -> {
             if (change.next()) {
                 int size = list.size();
@@ -59,6 +58,10 @@ public class SendMessagesController {
                 addMessage();
             }
         });
+    }
+
+    public void setCheckListViewCellFactory(TabWsMessagesController controller) {
+        checkListView.setCellFactory(list -> new SendMessagesCellFactory(this, controller));
     }
 
     /**

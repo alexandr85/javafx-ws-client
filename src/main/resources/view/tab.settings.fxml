@@ -2,128 +2,45 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.TextFlow?>
-<TilePane alignment="CENTER" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<TilePane alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1"
           stylesheets="/styles/tab.settings.css" fx:controller="ru.testing.client.controllers.TabSettingsController">
-    <GridPane alignment="TOP_CENTER" hgap="5.0" vgap="2.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-            <ColumnConstraints hgrow="SOMETIMES"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints prefHeight="300" valignment="TOP"/>
-        </rowConstraints>
-
-        <!-- Profiles block -->
-        <HBox maxHeight="280.0" GridPane.valignment="TOP">
-            <padding>
-                <Insets bottom="20.0" left="25.0" right="25.0" top="20.0"/>
-            </padding>
-            <GridPane hgap="15.0" vgap="15.0">
-                <columnConstraints>
-                    <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES"/>
-                    <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" maxHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" maxHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" maxHeight="80.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" maxHeight="80.0"/>
-                </rowConstraints>
-                <Label alignment="CENTER" maxHeight="Infinity" styleClass="title-label" maxWidth="Infinity"
-                       text="Profiles" GridPane.columnSpan="2">
-                </Label>
-                <TextField fx:id="tfProfileName" maxWidth="Infinity" prefHeight="25.0" promptText="name"
-                           GridPane.rowIndex="1"/>
-                <Button fx:id="bSaveProfile" maxWidth="Infinity" mnemonicParsing="false" prefHeight="25.0"
-                        text="Save" GridPane.columnIndex="1" GridPane.rowIndex="1" disable="true"
-                        onAction="#addNewProfile">
-                    <cursor>
-                        <Cursor fx:constant="HAND"/>
-                    </cursor>
-                </Button>
-                <GridPane styleClass="border-block" hgap="15.0" vgap="5.0"
-                          GridPane.columnSpan="2" GridPane.rowIndex="2">
-                    <columnConstraints>
-                        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
+    <HBox alignment="TOP_CENTER">
+        <GridPane vgap="14">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" prefWidth="400.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <Label GridPane.rowIndex="0" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
+                   maxWidth="Infinity" text="Global application settings" GridPane.halignment="CENTER"
+                   style="-fx-font-size: 1.0em; -fx-font-family: monospace;"/>
+            <CheckBox GridPane.rowIndex="1" fx:id="chWrap" mnemonicParsing="false"
+                      text="Wrap detail ws message and http response result after open"/>
+            <CheckBox GridPane.rowIndex="2" fx:id="cbAutoScroll" mnemonicParsing="false"
+                      text="Enable auto scroll ws messages list"/>
+            <HBox GridPane.rowIndex="3" maxWidth="Infinity" maxHeight="30.0">
+                <Label text="Results text font size:" wrapText="true" maxWidth="140"/>
+                <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" fx:id="fontSlider"
+                        prefWidth="150">
                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                        <Insets left="7.0" right="7.0"/>
                     </padding>
-                    <ComboBox fx:id="cbProfilesNames" maxWidth="Infinity" GridPane.columnSpan="2"/>
-                    <Button fx:id="bRemove" mnemonicParsing="false" prefWidth="80.0" text="Remove" GridPane.rowIndex="1"
-                            onAction="#removeSelectedProfile"/>
-                    <Button mnemonicParsing="false" prefWidth="80.0" text="Load" GridPane.columnIndex="1"
-                            GridPane.rowIndex="1" onAction="#loadSelectedProfile"/>
-                </GridPane>
-                <TextFlow GridPane.rowIndex="3" maxWidth="280.0" textAlignment="JUSTIFY" GridPane.columnSpan="2">
-                    <Text styleClass="profile-desc" style="-fx-font-style: normal" text="Profile data:"/>
-                    <Text styleClass="profile-desc"
-                          text=" websocket url, headers, filter list, received messages, transferred messages"/>
-                </TextFlow>
-            </GridPane>
-        </HBox>
-
-        <Separator orientation="VERTICAL" GridPane.columnIndex="1"/>
-
-        <!-- Settings block -->
-        <HBox GridPane.columnIndex="2">
-            <padding>
-                <Insets bottom="20.0" left="25.0" right="25.0" top="20.0"/>
-            </padding>
-            <GridPane GridPane.columnSpan="2" GridPane.rowIndex="1">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" prefWidth="280.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-                </rowConstraints>
-                <Label GridPane.rowIndex="0" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
-                       maxWidth="Infinity" text="Detail message" GridPane.halignment="CENTER"/>
-                <CheckBox GridPane.rowIndex="1" fx:id="chWrap" mnemonicParsing="false" text="Text wrap by default"/>
-                <CheckBox GridPane.rowIndex="2" fx:id="chPretty" mnemonicParsing="false"
-                          text="Json pretty by default (use replace regex)"/>
-                <TextField GridPane.rowIndex="3" fx:id="tfRegex" promptText="regex for json pretty message"/>
-                <Label GridPane.rowIndex="4" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
-                       maxWidth="Infinity" text="View settings" GridPane.halignment="CENTER"/>
-                <CheckBox GridPane.rowIndex="5" fx:id="cbAutoScroll" mnemonicParsing="false" text="Enable auto scroll"/>
-                <CheckBox GridPane.rowIndex="6" fx:id="cbShowBar" mnemonicParsing="false" text="Show status bar"/>
-                <CheckBox GridPane.rowIndex="7" fx:id="cbShowFilter" mnemonicParsing="false" text="Show filter"/>
-                <HBox GridPane.rowIndex="8" maxWidth="Infinity" maxHeight="30.0">
-                    <Label text="Messages font size:" wrapText="true" maxWidth="140"/>
-                    <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" fx:id="fontSlider"
-                            prefWidth="90">
-                        <padding>
-                            <Insets left="7.0" right="7.0"/>
-                        </padding>
-                    </Slider>
-                    <Label alignment="CENTER" GridPane.halignment="RIGHT" fx:id="fontLabel"/>
-                </HBox>
-                <StackPane GridPane.rowIndex="9">
-                    <Button onAction="#loadDefaultSettings" mnemonicParsing="false" prefWidth="80.0" text="Default"
-                            GridPane.rowIndex="1" alignment="CENTER" StackPane.alignment="CENTER_LEFT"/>
-                    <Button onAction="#saveSettings" mnemonicParsing="false" prefWidth="80.0" text="Save"
-                            GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER"
-                            StackPane.alignment="CENTER_RIGHT"/>
-                </StackPane>
-            </GridPane>
-        </HBox>
-    </GridPane>
+                </Slider>
+                <Label alignment="CENTER" GridPane.halignment="RIGHT" fx:id="fontLabel"/>
+            </HBox>
+            <StackPane GridPane.rowIndex="4">
+                <Button onAction="#loadDefaultSettings" mnemonicParsing="false" prefWidth="80.0" text="Default"
+                        GridPane.rowIndex="1" alignment="CENTER" StackPane.alignment="CENTER_LEFT"/>
+                <Button onAction="#saveSettings" mnemonicParsing="false" prefWidth="80.0" text="Save"
+                        GridPane.columnIndex="1" GridPane.rowIndex="1" alignment="CENTER"
+                        StackPane.alignment="CENTER_RIGHT"/>
+            </StackPane>
+        </GridPane>
+    </HBox>
 </TilePane>

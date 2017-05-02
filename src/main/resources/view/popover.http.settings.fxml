@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<Accordion fx:id="accordion" expandedPane="$headersPane" xmlns:fx="http://javafx.com/fxml/1"
+           stylesheets="/styles/popover.http.settings.css"
+           fx:controller="ru.testing.client.controllers.HttpSettingsController">
+    <padding>
+        <Insets top="4"/>
+    </padding>
+    <panes>
+        <TitledPane text="Headers" fx:id="headersPane">
+            <GridPane vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
+                    <TextField fx:id="headerName" promptText="Header name" prefWidth="120"/>
+                    <TextField fx:id="headerValue" promptText="Header value" prefWidth="240.0"/>
+                    <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                            prefWidth="25.0" onAction="#addHeader">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                </FlowPane>
+                <TilePane GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="400.0" alignment="CENTER">
+                    <Label fx:id="lbNoHeaders" text="No custom headers" alignment="CENTER" prefHeight="80.0"/>
+                    <ListView fx:id="hListView" visible="false" managed="false" prefHeight="80.0" prefWidth="400"/>
+                </TilePane>
+            </GridPane>
+        </TitledPane>
+        <TitledPane text="Parameters" fx:id="parametersPane">
+            <GridPane vgap="8">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+                    <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
+                    <TextField fx:id="parameterName" promptText="Parameter name" prefWidth="120.0"/>
+                    <TextField fx:id="parameterValue" promptText="Parameter value" prefWidth="240.0"/>
+                    <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
+                            prefWidth="25.0" onAction="#addParameter">
+                        <graphic>
+                            <ImageView>
+                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                            </ImageView>
+                        </graphic>
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
+                </FlowPane>
+                <TilePane GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="400.0" alignment="CENTER">
+                    <Label fx:id="lbNoParameters" text="No parameters" alignment="CENTER" prefHeight="80.0"/>
+                    <ListView fx:id="pListView" visible="false" managed="false" prefHeight="80.0" prefWidth="400"/>
+                </TilePane>
+            </GridPane>
+        </TitledPane>
+    </panes>
+</Accordion>

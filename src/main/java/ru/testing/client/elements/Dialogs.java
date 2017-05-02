@@ -6,7 +6,6 @@ import javafx.scene.layout.Priority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
-import ru.testing.client.controllers.MainController;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,18 +34,6 @@ public class Dialogs {
         alert.setContentText(info);
         alert.initOwner(MainApp.getPrimaryStage());
         alert.showAndWait();
-    }
-
-    /**
-     * Show info message with change progress loader status
-     *
-     * @param info String message
-     * @param main MainController
-     * @param progressStatus boolean
-     */
-    public void getInfoDialog(String info, MainController main, boolean progressStatus) {
-        main.setProgressVisible(progressStatus);
-        getInfoDialog(info);
     }
 
     /**
@@ -123,17 +110,5 @@ public class Dialogs {
         alert.setContentText(message);
         alert.initOwner(MainApp.getPrimaryStage());
         alert.showAndWait();
-    }
-
-    /**
-     * Show warning message with change progress loader status
-     *
-     * @param info String message
-     * @param main MainController
-     * @param progressStatus boolean
-     */
-    public void getWarningDialog(String info, MainController main, boolean progressStatus) {
-        main.setProgressVisible(progressStatus);
-        getWarningDialog(info);
     }
 }
