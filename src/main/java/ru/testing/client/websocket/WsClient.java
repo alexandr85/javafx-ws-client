@@ -29,6 +29,7 @@ public class WsClient extends Endpoint {
     private URI endpointURI;
     private List<Header> headerList;
     private Session session;
+    private boolean sslValidate;
 
     /**
      * Default client constructor
@@ -87,6 +88,15 @@ public class WsClient extends Endpoint {
     }
 
     /**
+     * Set ssl validate for connection
+     *
+     * @param sslValidate boolean
+     */
+    public void setSslValidate(boolean sslValidate) {
+        this.sslValidate = sslValidate;
+    }
+
+    /**
      * Open websocket connection
      *
      * @throws Exception connect to server
@@ -96,7 +106,7 @@ public class WsClient extends Endpoint {
             LOGGER.warn("Profile already connected!");
         } else {
             LOGGER.info("Connecting to {} ...", endpointURI.getHost());
-            if (endpointURI.getScheme().equals("wss")) {
+            if (endpointURI.getScheme().equals("wss") && !sslValidate) {
                 client.getProperties().put(ClientProperties.SSL_ENGINE_CONFIGURATOR, sslEngineConfigurator);
             }
             client.connectToServer(this, config, endpointURI);

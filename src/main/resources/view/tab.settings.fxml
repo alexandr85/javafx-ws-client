@@ -16,6 +16,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label GridPane.rowIndex="0" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
                    maxWidth="Infinity" text="Global application settings" GridPane.halignment="CENTER"
@@ -24,7 +25,9 @@
                       text="Wrap detail ws message and http response result after open"/>
             <CheckBox GridPane.rowIndex="2" fx:id="cbAutoScroll" mnemonicParsing="false"
                       text="Enable auto scroll ws messages list"/>
-            <HBox GridPane.rowIndex="3" maxWidth="Infinity" maxHeight="30.0">
+            <CheckBox GridPane.rowIndex="3" fx:id="cbWsSslValidate" mnemonicParsing="false"
+                      text="Enable validate ssl for websocket connections"/>
+            <HBox GridPane.rowIndex="4" maxWidth="Infinity" maxHeight="30.0">
                 <Label text="Results text font size:" wrapText="true" maxWidth="140"/>
                 <Slider blockIncrement="1.0" max="17.0" min="10.0" value="13.0" fx:id="fontSlider"
                         prefWidth="150">
@@ -34,7 +37,7 @@
                 </Slider>
                 <Label alignment="CENTER" GridPane.halignment="RIGHT" fx:id="fontLabel"/>
             </HBox>
-            <StackPane GridPane.rowIndex="4">
+            <StackPane GridPane.rowIndex="5">
                 <Button onAction="#loadDefaultSettings" mnemonicParsing="false" prefWidth="80.0" text="Default"
                         GridPane.rowIndex="1" alignment="CENTER" StackPane.alignment="CENTER_LEFT"/>
                 <Button onAction="#saveSettings" mnemonicParsing="false" prefWidth="80.0" text="Save"

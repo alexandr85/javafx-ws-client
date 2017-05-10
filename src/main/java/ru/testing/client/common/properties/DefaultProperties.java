@@ -18,6 +18,7 @@ public class DefaultProperties {
     private int msgFontSize;
     private boolean msgWrap;
     private boolean autoScroll;
+    private boolean wsSslValidate;
 
     private DefaultProperties() {
         Properties properties = new Properties();
@@ -27,7 +28,8 @@ public class DefaultProperties {
             // Set default settings value
             setMsgFontSize(Integer.parseInt(properties.getProperty("msg.font.size")));
             setMsgWrap(Boolean.parseBoolean(properties.getProperty("msg.wrap")));
-            setAutoScroll(Boolean.parseBoolean(properties.getProperty("profile.auto.scroll")));
+            setAutoScroll(Boolean.parseBoolean(properties.getProperty("ws.auto.scroll")));
+            setWsSslValidate(Boolean.parseBoolean(properties.getProperty("ws.ssl.validate")));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -52,7 +54,8 @@ public class DefaultProperties {
         return new Settings(
                 getMsgFontSize(),
                 isMsgWrap(),
-                isAutoScroll()
+                isAutoScroll(),
+                isWsSslValidate()
         );
     }
 
@@ -78,5 +81,13 @@ public class DefaultProperties {
 
     private void setMsgWrap(boolean msgWrap) {
         this.msgWrap = msgWrap;
+    }
+
+    public boolean isWsSslValidate() {
+        return wsSslValidate;
+    }
+
+    public void setWsSslValidate(boolean wsSslValidate) {
+        this.wsSslValidate = wsSslValidate;
     }
 }

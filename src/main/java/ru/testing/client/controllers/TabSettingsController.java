@@ -30,6 +30,8 @@ public class TabSettingsController {
     private Slider fontSlider;
     @FXML
     private CheckBox cbAutoScroll;
+    @FXML
+    private CheckBox cbWsSslValidate;
 
     @FXML
     private void initialize() {
@@ -66,7 +68,8 @@ public class TabSettingsController {
         boolean status = dataBase.setSettings(new Settings(
                 ((Number) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
-                cbAutoScroll.isSelected()
+                cbAutoScroll.isSelected(),
+                cbWsSslValidate.isSelected()
         ));
         if (status) {
 
@@ -113,6 +116,9 @@ public class TabSettingsController {
 
         // Set auto scroll status
         cbAutoScroll.setSelected(settings.isAutoScroll());
+
+        // Set ws ssl validate status
+        cbWsSslValidate.setSelected(settings.isWsSslValidate());
 
         // Disable loader
         mainController.setProgressVisible(false);

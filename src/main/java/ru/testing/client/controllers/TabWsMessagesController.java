@@ -38,6 +38,7 @@ public class TabWsMessagesController {
     private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private MainController mainController = MainApp.getMainController();
+    private Settings settings;
     private FilterListPopOver filterPopOver;
     private SendMessagesPopOver sendMessagesPopOver;
     private Tooltip statusTooltip;
@@ -83,7 +84,7 @@ public class TabWsMessagesController {
     protected void initialize() {
 
         // Get settings
-        Settings settings = dataBase.getSettings();
+        settings = dataBase.getSettings();
         autoScroll = settings.isAutoScroll();
 
         // Set message font size
@@ -273,6 +274,7 @@ public class TabWsMessagesController {
                 wsClient = new WsClient();
                 wsClient.setEndpointURI(new URI(mainController.getServerUrl().getText()));
                 wsClient.setHeaders(mainController.getHeadersList());
+                wsClient.setSslValidate(settings.isWsSslValidate());
             }
             wsClient.openConnection();
             wsClient.setMessageHandler(new MessageHandler(this));
