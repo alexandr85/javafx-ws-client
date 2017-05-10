@@ -1,6 +1,9 @@
 package ru.testing.client.websocket;
 
 import org.glassfish.tyrus.client.ClientManager;
+import org.glassfish.tyrus.client.ClientProperties;
+import org.glassfish.tyrus.client.SslContextConfigurator;
+import org.glassfish.tyrus.client.SslEngineConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.objects.Header;
@@ -22,6 +25,7 @@ public class WsClient extends Endpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsClient.class);
     private final ClientManager client;
     private final ClientEndpointConfig config;
+    private SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(new SslContextConfigurator());
     private URI endpointURI;
     private List<Header> headerList;
     private Session session;
@@ -30,6 +34,11 @@ public class WsClient extends Endpoint {
      * Default client constructor
      */
     public WsClient() {
+
+        // SSL configuration
+        sslEngineConfigurator.setHostnameVerifier((host, sslSession) -> true);
+
+        // Create ws client
         client = ClientManager.createClient();
         config = ClientEndpointConfig.Builder.create()
                 .decoders(singletonList(SimpleDecoder.class))
@@ -87,6 +96,9 @@ public class WsClient extends Endpoint {
             LOGGER.warn("Profile already connected!");
         } else {
             LOGGER.info("Connecting to {} ...", endpointURI.getHost());
+            if (endpointURI.getScheme().equals("wss")) {
+                client.getProperties().put(ClientProperties.SSL_ENGINE_CONFIGURATOR, sslEngineConfigurator);
+            }
             client.connectToServer(this, config, endpointURI);
         }
     }
