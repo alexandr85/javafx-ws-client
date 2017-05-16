@@ -170,6 +170,7 @@ public class MainController {
                 httpController.getHttpParametersList().addAll(restController.getParameters());
                 connectionButton.setText("Send");
             }
+            tabPane.getSelectionModel().select(newValue);
         });
 
         // Http clients types

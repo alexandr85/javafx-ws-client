@@ -8,8 +8,6 @@ import ru.testing.client.controllers.TabRestController;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Class described utilities methods

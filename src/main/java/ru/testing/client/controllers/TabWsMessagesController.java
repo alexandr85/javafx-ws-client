@@ -21,6 +21,7 @@ import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.common.objects.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
+import ru.testing.client.elements.tabs.WsMessageTab;
 import ru.testing.client.elements.tabs.WsMessagesTab;
 import ru.testing.client.websocket.*;
 
@@ -99,6 +100,11 @@ public class TabWsMessagesController {
         outputTextView.getItems().addListener(this::receivedMessageListener);
         outputTextView.getSelectionModel().getSelectedItems().addListener(this::selectedMessages);
         outputTextView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
+        outputTextView.setOnKeyPressed(key -> {
+            if (key.getCode() == KeyCode.ENTER) {
+                outputTextView.getSelectionModel().getSelectedItems().forEach(WsMessageTab::new);
+            }
+        });
 
         // Send message
         sendMsgTextField.setOnKeyPressed(keyEvent -> {
