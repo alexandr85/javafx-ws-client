@@ -21,7 +21,7 @@ apply plugin: 'edu.sc.seis.macAppBundle'
 apply plugin: "edu.sc.seis.launch4j"
 
 group = 'ru.testing'
-version = '2.0'
+version = '2.2'
 description = """JavaFX application for testing websocket"""
 def appFileName = 'WsClient'
 def mainClass = 'ru.testing.client.MainApp'
@@ -38,7 +38,7 @@ dependencies {
     compile 'com.h2database:h2:1.3.148'
     compile 'org.slf4j:slf4j-log4j12:1.7.12'
     compile 'com.yuvimasory:orange-extensions:1.3.0'
-    compile 'org.controlsfx:controlsfx:8.40.12'
+    compile 'org.controlsfx:controlsfx:8.40.13'
     compile 'org.apache.commons:commons-lang3:3.5'
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'

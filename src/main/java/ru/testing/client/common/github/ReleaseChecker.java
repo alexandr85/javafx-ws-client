@@ -50,7 +50,7 @@ public class ReleaseChecker extends Thread {
             if (isCurrentVersionOld(properties.getVersion(), lastVersion)) {
                 Platform.runLater(() -> {
                     boolean goToPage = new Dialogs().getConfirmationDialog("Great news!",
-                            String.format("New version `%s` is available! Go to new release page?", lastVersion));
+                            String.format("New version %s is available!\nGo to new release page?", lastVersion));
                     if (goToPage && Desktop.isDesktopSupported()) {
                         try {
                             Desktop.getDesktop().browse(new URI(properties.getLastReleaseUrl()));
