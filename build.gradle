@@ -21,7 +21,7 @@ apply plugin: 'edu.sc.seis.macAppBundle'
 apply plugin: "edu.sc.seis.launch4j"
 
 group = 'ru.testing'
-version = '2.0'
+version = '2.2'
 description = """JavaFX application for testing websocket"""
 def appFileName = 'WsClient'
 def mainClass = 'ru.testing.client.MainApp'

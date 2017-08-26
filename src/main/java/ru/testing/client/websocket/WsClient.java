@@ -36,7 +36,7 @@ public class WsClient extends Endpoint {
      */
     public WsClient() {
 
-        // SSL configuration TODO: set in application settings
+        // SSL configuration
         sslEngineConfigurator.setHostnameVerifier((host, sslSession) -> true);
 
         // Create ws client
