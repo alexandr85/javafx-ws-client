@@ -19,7 +19,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
             </rowConstraints>
             <Label GridPane.rowIndex="0" alignment="CENTER" maxHeight="Infinity" styleClass="title-label"
-                   maxWidth="Infinity" text="Global application settings" GridPane.halignment="CENTER"
+                   maxWidth="Infinity" text="Application settings" GridPane.halignment="CENTER"
                    style="-fx-font-size: 1.0em; -fx-font-family: monospace;"/>
             <CheckBox GridPane.rowIndex="1" fx:id="chWrap" mnemonicParsing="false"
                       text="Wrap detail ws message and http response result after open"/>

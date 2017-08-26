@@ -87,7 +87,7 @@ public class DefaultProperties {
         return wsSslValidate;
     }
 
-    public void setWsSslValidate(boolean wsSslValidate) {
+    private void setWsSslValidate(boolean wsSslValidate) {
         this.wsSslValidate = wsSslValidate;
     }
 }
