@@ -23,8 +23,6 @@ public class TabSettingsController {
     @FXML
     private CheckBox chWrap;
     @FXML
-    private CheckBox chPretty;
-    @FXML
     private Label fontLabel;
     @FXML
     private Slider fontSlider;
@@ -32,6 +30,8 @@ public class TabSettingsController {
     private CheckBox cbAutoScroll;
     @FXML
     private CheckBox cbWsSslValidate;
+    @FXML
+    private CheckBox chWsCompression;
 
     @FXML
     private void initialize() {
@@ -69,7 +69,8 @@ public class TabSettingsController {
                 ((Number) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
                 cbAutoScroll.isSelected(),
-                cbWsSslValidate.isSelected()
+                cbWsSslValidate.isSelected(),
+                chWsCompression.isSelected()
         ));
         if (status) {
 
@@ -119,6 +120,9 @@ public class TabSettingsController {
 
         // Set ws ssl validate status
         cbWsSslValidate.setSelected(settings.isWsSslValidate());
+
+        // Set ws compression status
+        chWsCompression.setSelected(settings.isWithCompression());
 
         // Disable loader
         mainController.setProgressVisible(false);

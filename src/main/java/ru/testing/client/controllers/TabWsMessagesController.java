@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
-import org.controlsfx.control.StatusBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.MainApp;
@@ -55,8 +54,6 @@ public class TabWsMessagesController {
     @FXML
     private FlowPane filterBar;
     @FXML
-    private Button messageSendBtn;
-    @FXML
     private ToggleButton sendMsgHistoryBtn;
     @FXML
     private Button filterAddBtn;
@@ -76,8 +73,6 @@ public class TabWsMessagesController {
     private Label outputMsgCount;
     @FXML
     private Label lbHeadersCounter;
-    @FXML
-    private StatusBar statusBar;
     @FXML
     private Circle connectStatus;
 
@@ -281,6 +276,7 @@ public class TabWsMessagesController {
                 wsClient.setEndpointURI(new URI(mainController.getServerUrl().getText()));
                 wsClient.setHeaders(mainController.getHeadersList());
                 wsClient.setSslValidate(settings.isWsSslValidate());
+                wsClient.setWithCompression(settings.isWithCompression());
             }
             wsClient.openConnection();
             wsClient.setMessageHandler(new MessageHandler(this));
@@ -412,7 +408,7 @@ public class TabWsMessagesController {
         Task task = new Task() {
 
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 try {
                     do {
                         if (wsClient != null && wsClient.isOpenConnection()) {

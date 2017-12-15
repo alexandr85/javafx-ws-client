@@ -108,7 +108,11 @@
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="40.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0">
+                <tooltip>
+                    <Tooltip text="Select client type"/>
+                </tooltip>
+            </ComboBox>
             <ToggleButton fx:id="httpSettings" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity"
                           mnemonicParsing="false" onAction="#showHttpSettingsPopOver" prefHeight="25.0" prefWidth="25.0"
                           GridPane.columnIndex="1">

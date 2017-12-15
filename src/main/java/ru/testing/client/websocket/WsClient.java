@@ -4,6 +4,7 @@ import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.client.ClientProperties;
 import org.glassfish.tyrus.client.SslContextConfigurator;
 import org.glassfish.tyrus.client.SslEngineConfigurator;
+import org.glassfish.tyrus.ext.extension.deflate.PerMessageDeflateExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.testing.client.common.objects.Header;
@@ -12,6 +13,7 @@ import ru.testing.client.elements.Dialogs;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ public class WsClient extends Endpoint {
     private final ClientManager client;
     private final ClientEndpointConfig config;
     private SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(new SslContextConfigurator());
+    private List<Extension> extensions = new ArrayList<>();
     private URI endpointURI;
     private List<Header> headerList;
     private Session session;
@@ -41,6 +44,8 @@ public class WsClient extends Endpoint {
 
         // Create ws client
         client = ClientManager.createClient();
+
+        // Create client configuration
         config = ClientEndpointConfig.Builder.create()
                 .decoders(singletonList(SimpleDecoder.class))
                 .encoders(singletonList(SimpleEncoder.class))
@@ -64,8 +69,24 @@ public class WsClient extends Endpoint {
                         } catch (Exception e) {
                             LOGGER.error("Error add headers: {}", e);
                         }
+
+                        // Logging request headers
+                        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                            LOGGER.debug(String.format("<- %s", entry));
+                        }
+                    }
+
+                    @Override
+                    public void afterResponse(HandshakeResponse hr) {
+
+                        // Logging response headers
+                        Map<String, List<String>> headers = hr.getHeaders();
+                        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                            LOGGER.debug(String.format("-> %s", entry));
+                        }
                     }
                 })
+                .extensions(extensions)
                 .build();
     }
 
@@ -97,6 +118,17 @@ public class WsClient extends Endpoint {
     }
 
     /**
+     * Set compression websocket extension
+     *
+     * @param withCompression boolean
+     */
+    public void setWithCompression(boolean withCompression) {
+        if (withCompression) {
+            extensions.add(new PerMessageDeflateExtension());
+        }
+    }
+
+    /**
      * Open websocket connection
      *
      * @throws Exception connect to server
@@ -109,7 +141,7 @@ public class WsClient extends Endpoint {
             if (endpointURI.getScheme().equals("wss") && !sslValidate) {
                 client.getProperties().put(ClientProperties.SSL_ENGINE_CONFIGURATOR, sslEngineConfigurator);
             }
-            client.connectToServer(this, config, endpointURI);
+            session = client.connectToServer(this, config, endpointURI);
         }
     }
 

@@ -76,7 +76,8 @@ public class DataBase {
                         r.getInt("font_size"),
                         r.getBoolean("text_wrap"),
                         r.getBoolean("auto_scroll"),
-                        r.getBoolean("ws_ssl_validate")
+                        r.getBoolean("ws_ssl_validate"),
+                        r.getBoolean("ws_compression")
                 );
             }
         } catch (SQLException e) {
@@ -94,11 +95,12 @@ public class DataBase {
     public boolean setSettings(Settings settings) {
         try (Connection connection = getConnection()) {
             PreparedStatement ps = connection.prepareStatement("UPDATE global_settings SET " +
-                    "font_size=?, text_wrap=?, auto_scroll=?, ws_ssl_validate=?");
+                    "font_size=?, text_wrap=?, auto_scroll=?, ws_ssl_validate=?, ws_compression=?");
             ps.setInt(1, settings.getFontSize());
             ps.setBoolean(2, settings.isTextWrap());
             ps.setBoolean(3, settings.isAutoScroll());
             ps.setBoolean(4, settings.isWsSslValidate());
+            ps.setBoolean(5, settings.isWithCompression());
             ps.executeUpdate();
             return true;
         }catch (SQLException e) {
@@ -138,12 +140,13 @@ public class DataBase {
             // Insert default settings values
             LOGGER.debug("Insert default settings ...");
             PreparedStatement pss = connection.prepareStatement("INSERT INTO global_settings " +
-                    "(font_size, text_wrap, auto_scroll, ws_ssl_validate) " +
-                    "VALUES (?, ?, ?, ?)");
+                    "(font_size, text_wrap, auto_scroll, ws_ssl_validate, ws_compression) " +
+                    "VALUES (?, ?, ?, ?, ?)");
             pss.setInt(1, properties.getMsgFontSize());
             pss.setBoolean(2, properties.isMsgWrap());
             pss.setBoolean(3, properties.isAutoScroll());
             pss.setBoolean(4, properties.isWsSslValidate());
+            pss.setBoolean(5, properties.isWithCompression());
             pss.executeUpdate();
 
             LOGGER.debug("Database create successful");

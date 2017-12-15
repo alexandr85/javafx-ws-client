@@ -64,7 +64,7 @@
                     </ImageView>
                 </graphic>
             </ToggleButton>
-            <Button fx:id="messageSendBtn" alignment="CENTER" maxHeight="-Infinity"
+            <Button alignment="CENTER" maxHeight="-Infinity"
                     maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                     prefHeight="25.0" prefWidth="100.0" text="Send" GridPane.columnIndex="3"
                     onAction="#sendWebsocketMessage">
@@ -114,7 +114,7 @@
     </FlowPane>
 
     <!-- Status bar -->
-    <StatusBar maxHeight="25" GridPane.rowIndex="3" fx:id="statusBar" text="">
+    <StatusBar maxHeight="25" GridPane.rowIndex="3" text="">
         <padding>
             <Insets bottom="3" top="4" left="15" right="15"/>
         </padding>

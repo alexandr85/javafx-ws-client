@@ -19,6 +19,7 @@ public class DefaultProperties {
     private boolean msgWrap;
     private boolean autoScroll;
     private boolean wsSslValidate;
+    private boolean withCompression;
 
     private DefaultProperties() {
         Properties properties = new Properties();
@@ -30,6 +31,7 @@ public class DefaultProperties {
             setMsgWrap(Boolean.parseBoolean(properties.getProperty("msg.wrap")));
             setAutoScroll(Boolean.parseBoolean(properties.getProperty("ws.auto.scroll")));
             setWsSslValidate(Boolean.parseBoolean(properties.getProperty("ws.ssl.validate")));
+            setWithCompression(Boolean.parseBoolean(properties.getProperty("ws.compression")));
         } catch (IOException e) {
             LOGGER.error("Error load properties: {}", e.getMessage());
         }
@@ -55,7 +57,8 @@ public class DefaultProperties {
                 getMsgFontSize(),
                 isMsgWrap(),
                 isAutoScroll(),
-                isWsSslValidate()
+                isWsSslValidate(),
+                isWithCompression()
         );
     }
 
@@ -89,5 +92,13 @@ public class DefaultProperties {
 
     private void setWsSslValidate(boolean wsSslValidate) {
         this.wsSslValidate = wsSslValidate;
+    }
+
+    public boolean isWithCompression() {
+        return withCompression;
+    }
+
+    private void setWithCompression(boolean withCompression) {
+        this.withCompression = withCompression;
     }
 }
