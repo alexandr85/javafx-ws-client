@@ -18,9 +18,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import org.apache.log4j.Logger;
 import org.controlsfx.control.textfield.CustomTextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.*;
@@ -45,7 +44,7 @@ import static ru.testing.client.MainApp.getPrimaryStage;
  */
 public class MainController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final Logger LOGGER = Logger.getLogger(MainController.class);
     private final ObservableList<HttpTypes> httpTypes = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private final KeyCombination.Modifier keyModifier = (platform == OSX)
@@ -241,21 +240,27 @@ public class MainController {
         Task task = new Task() {
 
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 connectionButton.setDisable(true);
                 setProgressVisible(true);
                 Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+
                 if (currentTab instanceof NewClientTab) {
-                    if (currentType == HttpTypes.WEBSOCKET) {
-                        WsMessagesTab wsClientTab = new WsMessagesTab();
-                        WsClient wsClient = wsClientTab.getController().getWsClient();
-                        if (wsClient.isOpenConnection()) {
-                            wsClients.add(wsClient);
-                            addNewTab(wsClientTab);
-                        }
-                    } else {
-                        RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
-                        addNewTab(restTab);
+                    switch (currentType) {
+                        case WEBSOCKET:
+                            LOGGER.debug("Create websocket connection");
+                            WsMessagesTab wsClientTab = new WsMessagesTab();
+                            WsClient wsClient = wsClientTab.getController().getWsClient();
+                            if (wsClient.isOpenConnection()) {
+                                wsClients.add(wsClient);
+                                addNewTab(wsClientTab);
+                            }
+                            break;
+                        case HTTP_GET:
+                        case HTTP_POST:
+                            LOGGER.debug("Create rest request");
+                            RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
+                            addNewTab(restTab);
                     }
                 } else if (currentTab instanceof WsMessagesTab) {
                     TabWsMessagesController controller = ((WsMessagesTab) currentTab).getController();
@@ -270,6 +275,7 @@ public class MainController {
                     TabRestController controller = ((RestTab) currentTab).getController();
                     controller.execute();
                 }
+
                 setProgressVisible(false);
                 connectionButton.setDisable(false);
                 return null;
@@ -576,7 +582,7 @@ public class MainController {
             try {
                 desktop.browse(new URL(url).toURI());
             } catch (IOException | URISyntaxException e) {
-                LOGGER.error("Error go to web page: {}", e.getMessage());
+                LOGGER.error("Error go to web page", e);
             }
         }
     }

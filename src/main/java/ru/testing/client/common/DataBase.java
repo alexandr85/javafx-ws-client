@@ -1,13 +1,14 @@
 package ru.testing.client.common;
 
+import org.apache.log4j.Logger;
 import org.h2.tools.RunScript;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.common.objects.*;
+import ru.testing.client.common.objects.Settings;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.DefaultProperties;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.*;
 
 /**
@@ -15,14 +16,13 @@ import java.sql.*;
  */
 public class DataBase {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataBase.class);
+    private static final Logger LOGGER = Logger.getLogger(DataBase.class);
     private static final String APP_FOLDER = ".ws.client";
     private static final String DB_TYPE = "jdbc:h2";
     private static final String DB_NAME = "data.v%s";
     private static final String CREATE_SQL_SCRIPT = "create.db.sql";
     private static String dbPath;
     private static DataBase instance;
-    private Connection connection;
 
     static {
 
@@ -30,7 +30,7 @@ public class DataBase {
         try {
             Class.forName("org.h2.Driver");
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Error load sqlite jdbc driver: {}", e.getMessage());
+            LOGGER.error("Error load h2 jdbc driver", e);
             System.exit(1);
         }
 
@@ -48,6 +48,8 @@ public class DataBase {
             getInstance().createTables();
         }
     }
+
+    private Connection connection;
 
     /**
      * Get database class instance
@@ -81,7 +83,7 @@ public class DataBase {
                 );
             }
         } catch (SQLException e) {
-            LOGGER.error("Error get global settings: {}", e.getMessage());
+            LOGGER.error("Error get global settings", e);
         }
         return settings;
     }
@@ -103,8 +105,8 @@ public class DataBase {
             ps.setBoolean(5, settings.isWithCompression());
             ps.executeUpdate();
             return true;
-        }catch (SQLException e) {
-            LOGGER.error("Error set current settings state: {}", e.getMessage());
+        } catch (SQLException e) {
+            LOGGER.error("Error set current settings state", e);
             return false;
         }
     }
@@ -135,23 +137,28 @@ public class DataBase {
             LOGGER.debug("Create tables in database ...");
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream is = classloader.getResourceAsStream(CREATE_SQL_SCRIPT);
-            RunScript.execute(connection, new InputStreamReader(is));
 
-            // Insert default settings values
-            LOGGER.debug("Insert default settings ...");
-            PreparedStatement pss = connection.prepareStatement("INSERT INTO global_settings " +
-                    "(font_size, text_wrap, auto_scroll, ws_ssl_validate, ws_compression) " +
-                    "VALUES (?, ?, ?, ?, ?)");
-            pss.setInt(1, properties.getMsgFontSize());
-            pss.setBoolean(2, properties.isMsgWrap());
-            pss.setBoolean(3, properties.isAutoScroll());
-            pss.setBoolean(4, properties.isWsSslValidate());
-            pss.setBoolean(5, properties.isWithCompression());
-            pss.executeUpdate();
+            if (is != null) {
+                RunScript.execute(connection, new InputStreamReader(is));
 
-            LOGGER.debug("Database create successful");
+                // Insert default settings values
+                LOGGER.debug("Insert default settings ...");
+                PreparedStatement pss = connection.prepareStatement("INSERT INTO global_settings " +
+                        "(font_size, text_wrap, auto_scroll, ws_ssl_validate, ws_compression) " +
+                        "VALUES (?, ?, ?, ?, ?)");
+                pss.setInt(1, properties.getMsgFontSize());
+                pss.setBoolean(2, properties.isMsgWrap());
+                pss.setBoolean(3, properties.isAutoScroll());
+                pss.setBoolean(4, properties.isWsSslValidate());
+                pss.setBoolean(5, properties.isWithCompression());
+                pss.executeUpdate();
+
+                LOGGER.debug("Database create successful");
+            } else {
+                LOGGER.error(String.format("SQL script %s is not found", CREATE_SQL_SCRIPT));
+            }
         } catch (SQLException e) {
-            LOGGER.error("Error create default tables: {}", e.getMessage());
+            LOGGER.error("Error create default tables", e);
         }
     }
 }

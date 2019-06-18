@@ -21,7 +21,7 @@ public class FilterListPopOver extends PopOver {
     }
 
     /**
-     * Get filter list view
+     * Get filter list views
      *
      * @return ListView<String>
      */

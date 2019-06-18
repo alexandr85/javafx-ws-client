@@ -5,8 +5,9 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'gradle.plugin.edu.sc.seis:macAppBundle:2.1.6'
         classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
+        classpath 'edu.sc.seis:macAppBundle:2.3.0'
+        classpath 'org.openjfx:javafx-plugin:0.0.7'
     }
 }
 
@@ -17,38 +18,54 @@ repositories {
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'application'
+apply plugin: 'org.openjfx.javafxplugin'
 apply plugin: 'edu.sc.seis.macAppBundle'
-apply plugin: "edu.sc.seis.launch4j"
+apply plugin: 'edu.sc.seis.launch4j'
 
-group = 'ru.testing'
-version = '2.2'
-description = """JavaFX application for testing websocket"""
+allprojects {
+    idea {
+        module {
+            inheritOutputDirs = true
+        }
+    }
+}
+
+javafx {
+    version = "12"
+    modules = [ 'javafx.fxml', 'javafx.controls' ]
+}
+
 def appFileName = 'WsClient'
 def mainClass = 'ru.testing.client.MainApp'
-mainClassName = mainClass
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
+
+application {
+    group = 'ru.testing'
+    version = '3.0'
+    description = """JavaFX application for testing websocket"""
+    mainClassName = "$moduleName/$mainClass"
+}
 
 dependencies {
     compile 'org.glassfish.tyrus:tyrus-client:1.12'
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
     compile 'com.sun.jersey:jersey-client:1.19'
-    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.code.gson:gson:2.8.5'
     compile 'com.h2database:h2:1.3.148'
-    compile 'org.slf4j:slf4j-log4j12:1.7.12'
-    compile 'com.yuvimasory:orange-extensions:1.3.0'
-    compile 'org.controlsfx:controlsfx:8.40.13'
+    compile 'org.controlsfx:controlsfx:11.0.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.glassfish.tyrus.ext:tyrus-extension-deflate:1.13.1'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    compile 'log4j:log4j:1.2.17'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }
 
-task execute(type:JavaExec) {
-    main = mainClass
-    classpath = sourceSets.main.runtimeClasspath
+jar {
+    manifest {
+        attributes 'Main-Class': mainClass
+    }
+    archivesBaseName = 'test'
 }
+
 
 // Create mac bundle with tasks `createApp` or `createDmg`
 macAppBundle {
@@ -70,13 +87,13 @@ launch4j {
 
 // Create a single Jar with all dependencies
 task fullJar(type: Jar) {
-    archiveName = "${appFileName}.jar"
+    jar.archiveFileName = "${appFileName}.jar"
     manifest { attributes "Implementation-Version": version, "Main-Class": mainClass }
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
     doLast {
         copy {
-            from "build/libs/${archiveName}"
+            from "build/libs/${jar.archiveFileName}"
             into "build/distributions"
         }
     }
@@ -85,8 +102,16 @@ task fullJar(type: Jar) {
 // Create application distributions for all os
 task create(dependsOn: [clean, createExe, createDmg, fullJar], type: Zip) {
     from 'build/winApp'
-    archiveName = "${appFileName}.zip"
+    jar.archiveFileName = "${appFileName}.zip"
     doLast {
         delete "build/libs/${appFileName}.jar"
+    }
+}
+
+test {
+    reports.html.enabled = false
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }

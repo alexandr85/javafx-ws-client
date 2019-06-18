@@ -1,12 +1,17 @@
 package ru.testing.client.websocket;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseButton;
 import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.controllers.TabWsMessagesController;
 import ru.testing.client.elements.ContextMenuItems;
 import ru.testing.client.elements.tabs.WsMessageTab;
+
+import java.util.Objects;
 
 /**
  * Output message cell factory
@@ -58,11 +63,11 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
                 }
             }
         });
-        return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
+        return !Objects.equals(oldItem, newItem);
     }
 
     /**
-     * Context menu for output message view
+     * Context menu for output message views
      *
      * @param item ReceivedMessage
      * @return ContextMenu

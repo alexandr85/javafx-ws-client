@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.SegmentedButton?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/styles/tab.detail.msg.css"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../styles/tab.detail.msg.css"
           fx:controller="ru.testing.client.controllers.TabWsMessageController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>

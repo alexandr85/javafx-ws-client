@@ -31,7 +31,7 @@
     -fx-padding: 2px 0;
 }
 
-/* Scroll bar style for all list view */
+/* Scroll bar style for all list views */
 .list-view .scroll-bar:horizontal .track,
 .list-view .scroll-bar:vertical .track {
     -fx-background-color: transparent;

@@ -7,7 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <Accordion fx:id="accordion" expandedPane="$headersPane" xmlns:fx="http://javafx.com/fxml/1"
-           stylesheets="/styles/popover.http.settings.css"
+           stylesheets="@../styles/popover.http.settings.css"
            fx:controller="ru.testing.client.controllers.HttpSettingsController">
     <padding>
         <Insets top="4"/>
@@ -29,7 +29,7 @@
                             prefWidth="25.0" onAction="#addHeader">
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                                <Image url="@../images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                             </ImageView>
                         </graphic>
                         <cursor>
@@ -59,7 +59,7 @@
                             prefWidth="25.0" onAction="#addParameter">
                         <graphic>
                             <ImageView>
-                                <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                                <Image url="@../images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                             </ImageView>
                         </graphic>
                         <cursor>

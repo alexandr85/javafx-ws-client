@@ -1,9 +1,9 @@
 package ru.testing.client.common.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class AppProperties {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppProperties.class);
+    private static final Logger LOGGER = Logger.getLogger(AppProperties.class);
     private static final String PROP_FILE = "app.properties";
     private static AppProperties properties;
     private String version;
@@ -23,14 +23,22 @@ public class AppProperties {
     private AppProperties() {
         Properties properties = new Properties();
         try {
-            properties.load(AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
+
+            InputStream is = AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE);
+
+            if (is != null) {
+                properties.load(is);
+            } else {
+                throw new IOException("Not found app properties");
+            }
+
             setVersion(properties.getProperty("version"));
             setDbVersion(properties.getProperty("db.version"));
             setTagsUrl(properties.getProperty("tags.url"));
             setLastReleaseUrl(properties.getProperty("last.release.url"));
             setAboutUrl(properties.getProperty("about.url"));
         } catch (IOException e) {
-            LOGGER.error("Error load properties: {}", e.getMessage());
+            LOGGER.error("Error load properties", e);
         }
     }
 

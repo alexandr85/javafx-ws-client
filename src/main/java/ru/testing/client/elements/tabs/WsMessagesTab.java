@@ -5,8 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.TabWsMessagesController;
@@ -19,15 +18,15 @@ import java.io.IOException;
  */
 public class WsMessagesTab extends Tab {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
     private TabWsMessagesController controller;
     private String serverUrl;
 
     public WsMessagesTab() {
         MainController mainController = MainApp.getMainController();
-        serverUrl =  mainController.getServerUrl().getText();
+        serverUrl = mainController.getServerUrl().getText();
+
         setText("WsMessages");
-        setGraphic(new ImageView("/images/messages.png"));
         setOnClosed(event -> {
             WsClient wsClient = controller.getWsClient();
             if (wsClient != null) {
@@ -36,14 +35,20 @@ public class WsMessagesTab extends Tab {
             }
         });
 
-        // Load detail message view form
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.ws.messages.fxml"));
+            setGraphic(new ImageView(getClass().getResource("/images/messages.png").toExternalForm()));
+        } catch (Exception e) {
+            LOGGER.error("Image not found", e);
+        }
+
+        // Load detail message views form
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.ws.messages.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
             setContent(root);
         } catch (IOException e) {
-            LOGGER.error("Error load view form: {}", e.getMessage());
+            LOGGER.error("Error load views form", e);
         }
 
         // Setup tab tooltip

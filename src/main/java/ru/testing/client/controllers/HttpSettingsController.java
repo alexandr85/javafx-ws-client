@@ -182,7 +182,7 @@ public class HttpSettingsController {
     }
 
     /**
-     * Show or hide list view
+     * Show or hide list views
      *
      * @param listView ListView
      * @param visible  boolean visible status
@@ -195,7 +195,7 @@ public class HttpSettingsController {
     }
 
     /**
-     * Get header list view
+     * Get header list views
      *
      * @return ListView<Header>
      */
@@ -204,7 +204,7 @@ public class HttpSettingsController {
     }
 
     /**
-     * Get http parameters list view
+     * Get http parameters list views
      *
      * @return ListView<HttpParameter>
      */

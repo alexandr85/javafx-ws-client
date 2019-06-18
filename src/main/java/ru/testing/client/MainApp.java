@@ -1,14 +1,13 @@
 package ru.testing.client;
 
-import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import org.apache.log4j.Logger;
 import org.controlsfx.tools.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.testing.client.common.DataBase;
 import ru.testing.client.common.github.ReleaseChecker;
 import ru.testing.client.common.properties.AppProperties;
@@ -16,34 +15,20 @@ import ru.testing.client.controllers.MainController;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.URL;
 
 import static org.controlsfx.tools.Platform.OSX;
 
 /**
  * Main application class
  */
-public class MainApp extends Application {
+public class MainApp extends javafx.application.Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
+    private static final Logger LOGGER = Logger.getLogger(MainApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
     private static Stage primaryStage;
     private static MainController mainController;
-
-    /**
-     * Entry point to application
-     *
-     * @param args String[]
-     */
-    public static void main(String[] args) {
-        try {
-            DataBase.getInstance();
-            launch(args);
-        } catch (Exception e) {
-            LOGGER.error("Running exception: {}", e.getMessage());
-            System.exit(1);
-        }
-    }
 
     /**
      * Get primary stage
@@ -72,8 +57,18 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         MainApp.primaryStage = primaryStage;
         try {
+
+            // Init database
+            DataBase.getInstance();
+
             AppProperties properties = AppProperties.getAppProperties();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
+            URL viewMainUrl = getClass().getResource("/views/main.fxml");
+
+            if (viewMainUrl == null) {
+                throw new IOException("Not found main views fxml resource");
+            }
+
+            FXMLLoader loader = new FXMLLoader(viewMainUrl);
             Parent root = loader.load();
             mainController = loader.getController();
             Scene scene = new Scene(root);
@@ -85,10 +80,9 @@ public class MainApp extends Application {
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            ReleaseChecker.getInstance().start();
+            new ReleaseChecker().start();
         } catch (IOException e) {
-            LOGGER.error("Error load main fxml view");
-            e.printStackTrace();
+            LOGGER.error("Error start application", e);
             System.exit(1);
         }
     }
@@ -102,7 +96,7 @@ public class MainApp extends Application {
         try {
             if (Platform.getCurrent() == OSX) {
                 java.awt.Image imageForMac = new ImageIcon(getClass().getResource("/images/icon-512.png")).getImage();
-                com.apple.eawt.Application.getApplication().setDockIconImage(imageForMac);
+                java.awt.Taskbar.getTaskbar().setIconImage(imageForMac);
 
                 // Menu bar position for mac os
                 controller.getMenuBar().setUseSystemMenuBar(true);
@@ -116,7 +110,11 @@ public class MainApp extends Application {
                 stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
             }
         } catch (Exception e) {
-            LOGGER.error("Error load application icon: {}", e.getMessage());
+            LOGGER.error("Error load application icon", e);
         }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }

@@ -65,7 +65,7 @@ public class SendMessagesController {
     }
 
     /**
-     * Add message to check view list
+     * Add message to check views list
      */
     @FXML
     public void addMessage() {
@@ -102,7 +102,7 @@ public class SendMessagesController {
     }
 
     /**
-     * Get check list view
+     * Get check list views
      *
      * @return CheckListView<String>
      */

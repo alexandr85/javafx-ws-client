@@ -1,12 +1,11 @@
 package ru.testing.client.websocket;
 
+import org.apache.log4j.Logger;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.client.ClientProperties;
 import org.glassfish.tyrus.client.SslContextConfigurator;
 import org.glassfish.tyrus.client.SslEngineConfigurator;
 import org.glassfish.tyrus.ext.extension.deflate.PerMessageDeflateExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.elements.Dialogs;
 
@@ -24,7 +23,7 @@ import static java.util.Collections.singletonList;
  */
 public class WsClient extends Endpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsClient.class);
+    private static final Logger LOGGER = Logger.getLogger(WsClient.class.getName());
     private final ClientManager client;
     private final ClientEndpointConfig config;
     private SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(new SslContextConfigurator());
@@ -67,12 +66,12 @@ public class WsClient extends Endpoint {
                                 }
                             }
                         } catch (Exception e) {
-                            LOGGER.error("Error add headers: {}", e);
+                            LOGGER.error("Error add headers", e);
                         }
 
                         // Logging request headers
                         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-                            LOGGER.debug(String.format("<- %s", entry));
+                            System.out.println(String.format("<- %s", entry));
                         }
                     }
 
@@ -82,7 +81,7 @@ public class WsClient extends Endpoint {
                         // Logging response headers
                         Map<String, List<String>> headers = hr.getHeaders();
                         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-                            LOGGER.debug(String.format("-> %s", entry));
+                            System.out.println(String.format("-> %s", entry));
                         }
                     }
                 })
@@ -135,9 +134,9 @@ public class WsClient extends Endpoint {
      */
     public void openConnection() throws Exception {
         if (session != null && session.isOpen()) {
-            LOGGER.warn("Profile already connected!");
+            LOGGER.warn("Already connected!");
         } else {
-            LOGGER.info("Connecting to {} ...", endpointURI.getHost());
+            LOGGER.debug(String.format("Connecting to %s ...", endpointURI.getHost()));
             if (endpointURI.getScheme().equals("wss") && !sslValidate) {
                 client.getProperties().put(ClientProperties.SSL_ENGINE_CONFIGURATOR, sslEngineConfigurator);
             }
@@ -148,7 +147,7 @@ public class WsClient extends Endpoint {
     @Override
     public void onOpen(Session session, EndpointConfig config) {
         if (session.isOpen()) {
-            LOGGER.info("Connection open with server {}", session.getRequestURI());
+            LOGGER.debug(String.format("Connection open with server %s", session.getRequestURI()));
             this.session = session;
         }
     }
@@ -156,7 +155,7 @@ public class WsClient extends Endpoint {
     @OnClose
     public void onClose(final Session session, final CloseReason reason) {
         if (!session.isOpen()) {
-            LOGGER.info("Connection closed: {}", reason);
+            LOGGER.debug(String.format("Connection closed with reason %s", reason));
             this.session = null;
         }
     }
@@ -204,7 +203,7 @@ public class WsClient extends Endpoint {
             try {
                 session.close();
             } catch (IOException e) {
-                LOGGER.error("Close connection error: {}", e.getCause());
+                LOGGER.error("Close connection error", e.getCause());
             }
         }
     }

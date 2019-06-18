@@ -1,10 +1,10 @@
 package ru.testing.client.common.properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.common.objects.Settings;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -12,7 +12,7 @@ import java.util.Properties;
  */
 public class DefaultProperties {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProperties.class);
+    private static final Logger LOGGER = Logger.getLogger(DefaultProperties.class);
     private static final String PROP_FILE = "default.properties";
     private static DefaultProperties properties;
     private int msgFontSize;
@@ -24,7 +24,13 @@ public class DefaultProperties {
     private DefaultProperties() {
         Properties properties = new Properties();
         try {
-            properties.load(DefaultProperties.class.getClassLoader().getResourceAsStream(PROP_FILE));
+            InputStream is = DefaultProperties.class.getClassLoader().getResourceAsStream(PROP_FILE);
+
+            if (is != null) {
+                properties.load(is);
+            } else {
+                throw new IOException("Not found default properties");
+            }
 
             // Set default settings value
             setMsgFontSize(Integer.parseInt(properties.getProperty("msg.font.size")));
@@ -33,12 +39,13 @@ public class DefaultProperties {
             setWsSslValidate(Boolean.parseBoolean(properties.getProperty("ws.ssl.validate")));
             setWithCompression(Boolean.parseBoolean(properties.getProperty("ws.compression")));
         } catch (IOException e) {
-            LOGGER.error("Error load properties: {}", e.getMessage());
+            LOGGER.error("Error load properties", e);
         }
     }
 
     /**
      * Get default properties
+     *
      * @return DefaultProperties
      */
     public static DefaultProperties getInstance() {
@@ -50,6 +57,7 @@ public class DefaultProperties {
 
     /**
      * Get default message view setting as object
+     *
      * @return Settings
      */
     public Settings getDefaultSettings() {

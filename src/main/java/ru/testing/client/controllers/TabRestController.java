@@ -3,13 +3,13 @@ package ru.testing.client.controllers;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import org.apache.log4j.Logger;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.MainApp;
@@ -31,6 +31,7 @@ import static ru.testing.client.common.Utils.getJsonPretty;
  */
 public class TabRestController {
 
+    private static final Logger LOGGER = Logger.getLogger(TabRestController.class);
     private static final int TIMEOUT = 10000;
     private DataBase dataBase = DataBase.getInstance();
     private MainController mainController = MainApp.getMainController();
@@ -93,6 +94,7 @@ public class TabRestController {
         });
 
         // Create http client
+        LOGGER.debug("Initializing http client ...");
         serverUrl = mainController.getServerUrl().getText();
         httpType = mainController.getHttpType();
         restClient.setConnectTimeout(TIMEOUT);
@@ -108,22 +110,25 @@ public class TabRestController {
         ClientResponse response = null;
         MultivaluedMap<String, String> parametersMap = new MultivaluedMapImpl();
         parameters.forEach(p -> parametersMap.add(p.getName(), p.getValue()));
+
         switch (httpType) {
             case HTTP_GET:
+                LOGGER.debug("Execute http GET request");
                 WebResource.Builder getResource = restClient.resource(serverUrl)
                         .queryParams(parametersMap).getRequestBuilder();
                 headers.forEach(header -> getResource.header(header.getName(), header.getValue()));
                 response = getResource.get(ClientResponse.class);
                 break;
             case HTTP_POST:
+                LOGGER.debug("Execute http POST request");
                 WebResource.Builder postResource = restClient.resource(serverUrl).getRequestBuilder();
                 mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
                 response = postResource.post(ClientResponse.class, parametersMap);
-                break;
         }
 
         // Set http action
         if (response != null) {
+            LOGGER.debug("Get response");
             message = response.getEntity(String.class);
 
             // Set body result to master node
@@ -136,6 +141,8 @@ public class TabRestController {
 
             // Set headers result to detail node
             setHeadersDetail(response);
+        } else {
+            LOGGER.warn("Response is null");
         }
     }
 

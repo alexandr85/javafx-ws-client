@@ -30,7 +30,7 @@ public class HeadersCellFactory extends ListCell<Header> {
     }
 
     /**
-     * Context menu for headers view
+     * Context menu for headers views
      *
      * @return ContextMenu
      */

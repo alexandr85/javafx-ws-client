@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <TilePane alignment="CENTER" xmlns:fx="http://javafx.com/fxml/1"
-          stylesheets="/styles/tab.settings.css" fx:controller="ru.testing.client.controllers.TabSettingsController">
+          stylesheets="@../styles/tab.settings.css" fx:controller="ru.testing.client.controllers.TabSettingsController">
     <HBox alignment="TOP_CENTER">
         <GridPane vgap="14">
             <columnConstraints>

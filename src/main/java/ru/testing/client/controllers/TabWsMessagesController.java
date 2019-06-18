@@ -11,8 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.DataBase;
@@ -31,7 +30,7 @@ import java.net.URI;
  */
 public class TabWsMessagesController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabWsMessagesController.class);
+    private static final Logger LOGGER = Logger.getLogger(TabWsMessagesController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
     private DataBase dataBase = DataBase.getInstance();
     private final ObservableList<ReceivedMessage> receivedMessageList = FXCollections.observableArrayList();
@@ -89,7 +88,7 @@ public class TabWsMessagesController {
         // Default focus request
         Platform.runLater(() -> outputTextView.requestFocus());
 
-        // Update output message list view
+        // Update output message list views
         outputTextView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         outputSetList(false);
         outputTextView.getItems().addListener(this::receivedMessageListener);
@@ -288,7 +287,7 @@ public class TabWsMessagesController {
                 }
             });
         } catch (Exception e) {
-            LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
+            LOGGER.error("Error open connection", e);
             Platform.runLater(() -> new Dialogs().getExceptionDialog(e));
         } finally {
             checkConnectionStatus();
@@ -302,19 +301,20 @@ public class TabWsMessagesController {
      * @param message String message
      */
     public void addMessageToOutput(ReceivedMessageType type, String message) {
+        ReceivedMessage receivedMessage = new ReceivedMessage(type, message);
         if (filtered && filterList.size() > 0) {
             for (String filterItem : filterList) {
                 if (message.contains(filterItem)) {
                     Platform.runLater(() -> {
-                        receivedMessageList.add(new ReceivedMessage(type, message));
-                        receivedFilteredMessageList.add(new ReceivedMessage(type, message));
+                        receivedMessageList.add(receivedMessage);
+                        receivedFilteredMessageList.add(receivedMessage);
                     });
                     return;
                 }
             }
-            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
+            Platform.runLater(() -> receivedMessageList.add(receivedMessage));
         } else {
-            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
+            Platform.runLater(() -> receivedMessageList.add(receivedMessage));
         }
     }
 
@@ -420,7 +420,7 @@ public class TabWsMessagesController {
                         Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
                     } while (wsClient != null);
                 } catch (InterruptedException e) {
-                    LOGGER.error("Thread interrupted exception{}", e.getMessage());
+                    System.out.println("Thread interrupted exception: " + e.getMessage());
                 }
                 return null;
             }

@@ -30,7 +30,7 @@ public class HttpParametersCellFactory extends ListCell<HttpParameter> {
     }
 
     /**
-     * Context menu for http parameters view
+     * Context menu for http parameters views
      *
      * @return ContextMenu
      */

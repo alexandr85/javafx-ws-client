@@ -1,10 +1,12 @@
 package ru.testing.client.elements;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
 
 import java.io.PrintWriter;
@@ -19,7 +21,7 @@ import static javafx.scene.control.Alert.AlertType.*;
  */
 public class Dialogs {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Dialogs.class);
+    private static final Logger LOGGER = Logger.getLogger(Dialogs.class);
     private static final double DIALOG_WEIGHT = 420;
 
     /**
@@ -77,7 +79,7 @@ public class Dialogs {
             alert.initOwner(MainApp.getPrimaryStage());
             alert.showAndWait();
         } catch (IllegalStateException se) {
-            LOGGER.error("Error show exception dialog message: {}", se.getLocalizedMessage());
+            LOGGER.error("Error show exception dialog message", se);
         }
     }
 

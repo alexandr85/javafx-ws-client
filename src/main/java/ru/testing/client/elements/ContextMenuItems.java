@@ -1,7 +1,9 @@
 package ru.testing.client.elements;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.controlsfx.control.IndexedCheckModel;
@@ -16,7 +18,7 @@ import ru.testing.client.elements.tabs.WsMessageTab;
 public class ContextMenuItems {
 
     /**
-     * Menu item for clear all cell in list view
+     * Menu item for clear all cell in list views
      *
      * @param list ObservableList
      * @return MenuItem
@@ -28,7 +30,7 @@ public class ContextMenuItems {
     }
 
     /**
-     * Menu item for clear all cell in check list view
+     * Menu item for clear all cell in check list views
      *
      * @param list ObservableList
      * @return MenuItem

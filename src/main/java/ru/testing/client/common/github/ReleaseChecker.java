@@ -4,12 +4,11 @@ import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,21 +20,9 @@ import java.util.Arrays;
  */
 public class ReleaseChecker extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseChecker.class);
-    private static ReleaseChecker instance;
+    private static final Logger LOGGER = Logger.getLogger(ReleaseChecker.class);
     private AppProperties properties = AppProperties.getAppProperties();
     private String lastVersion = "1.0";
-
-    private ReleaseChecker() {
-
-    }
-
-    public static ReleaseChecker getInstance() {
-        if (instance == null) {
-            instance = new ReleaseChecker();
-        }
-        return instance;
-    }
 
     /**
      * Run get git hub info
@@ -60,8 +47,8 @@ public class ReleaseChecker extends Thread {
                     }
                 });
             }
-            LOGGER.debug("Last release version on git hub: {}", getLastVersion());
-        } catch (IOException | NumberFormatException e) {
+            LOGGER.info(String.format("Last release version on git hub v%s ", getLastVersion()));
+        } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage());
         }
     }
@@ -69,10 +56,9 @@ public class ReleaseChecker extends Thread {
     /**
      * Create request
      *
-     * @return List<TagInfo>
-     * @throws IOException mapping TagInfo
+     * @return List<TagInfo> github tags info data
      */
-    private TagInfo[] getTagsFromApi() throws IOException {
+    private TagInfo[] getTagsFromApi() {
         ClientResponse response = Client.create().resource(properties.getTagsUrl()).get(ClientResponse.class);
         return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
     }
@@ -82,7 +68,7 @@ public class ReleaseChecker extends Thread {
      *
      * @return String
      */
-    public String getLastVersion() {
+    private String getLastVersion() {
         return lastVersion;
     }
 
@@ -93,16 +79,13 @@ public class ReleaseChecker extends Thread {
      * @param newVersion     String from git hub
      * @return boolean compare status
      */
-    public boolean isCurrentVersionOld(String currentVersion, String newVersion) {
+    private boolean isCurrentVersionOld(String currentVersion, String newVersion) {
         int[] cvt = Arrays.stream(currentVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
         int[] nvt = Arrays.stream(newVersion.split("\\.")).mapToInt(Integer::parseInt).toArray();
         if (cvt[0] > nvt[0]) {
             return false;
         } else if (cvt[0] < nvt[0]) {
             return true;
-        } else if (cvt[1] < nvt[1]) {
-            return true;
-        }
-        return false;
+        } else return cvt[1] < nvt[1];
     }
 }

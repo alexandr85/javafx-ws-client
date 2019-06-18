@@ -60,7 +60,7 @@
                 </tooltip>
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/send-message.png"/>
+                        <Image url="@../images/send-message.png"/>
                     </ImageView>
                 </graphic>
             </ToggleButton>
@@ -92,7 +92,7 @@
                 onMouseClicked="#addToFilterList">
             <graphic>
                 <ImageView>
-                    <Image url="@/images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
+                    <Image url="@../images/add.png" requestedWidth="16.0" requestedHeight="16.0"/>
                 </ImageView>
             </graphic>
             <cursor>
@@ -103,7 +103,7 @@
                       minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0">
             <graphic>
                 <ImageView>
-                    <Image url="@/images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
+                    <Image url="@../images/filter-list.png" requestedWidth="25" requestedHeight="25"/>
                 </ImageView>
             </graphic>
             <cursor>
@@ -123,7 +123,7 @@
                    onMouseClicked="#changeAutoScrollStatus">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/turn-on.png"/>
+                        <Image url="@../images/turn-on.png"/>
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -141,7 +141,7 @@
                    contentDisplay="RIGHT" onMouseClicked="#changeFilterStatus">
                 <graphic>
                     <ImageView>
-                        <Image url="@/images/turn-off.png"/>
+                        <Image url="@../images/turn-off.png"/>
                     </ImageView>
                 </graphic>
                 <tooltip>
