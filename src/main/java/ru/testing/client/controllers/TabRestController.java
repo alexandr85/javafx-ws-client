@@ -69,16 +69,16 @@ public class TabRestController {
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
-        bPrettyJson.setOnAction(event -> setMasterMessage());
+        bPrettyJson.setOnAction(event -> toggleJsonPrettyMessage());
 
         // Set text area wrap or not
-        bWrapText.setOnAction(event -> setWrapText());
+        bWrapText.setOnAction(event -> toggleWrapText());
         if (settings.isTextWrap()) {
             bWrapText.fire();
         }
 
         // Set enable or disable edit body message
-        editBody.setOnAction(event -> setEditBody());
+        editBody.setOnAction(event -> toggleEditBody());
 
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
@@ -133,9 +133,9 @@ public class TabRestController {
 
             // Set body result to master node
             Platform.runLater(() -> {
-                setWrapText();
-                setMasterMessage();
-                setEditBody();
+                toggleWrapText();
+                toggleJsonPrettyMessage();
+                toggleEditBody();
                 msgLengthLabel.setText(String.valueOf(message.length()));
             });
 
@@ -194,7 +194,7 @@ public class TabRestController {
         return parameters;
     }
 
-    private void setMasterMessage() {
+    private void toggleJsonPrettyMessage() {
         if (message != null && bPrettyJson.isSelected()) {
             Utils.PrettyStatus status = getJsonPretty(message);
             masterNode.setText(status.getMessage());
@@ -205,7 +205,7 @@ public class TabRestController {
         segmentedButton.requestFocus();
     }
 
-    private void setWrapText() {
+    private void toggleWrapText() {
         if (bWrapText.isSelected()) {
             masterNode.setWrapText(true);
             detailNode.setWrapText(true);
@@ -216,7 +216,7 @@ public class TabRestController {
         segmentedButton.requestFocus();
     }
 
-    private void setEditBody() {
+    private void toggleEditBody() {
         if (editBody.isSelected()) {
             masterNode.setEditable(true);
         } else {

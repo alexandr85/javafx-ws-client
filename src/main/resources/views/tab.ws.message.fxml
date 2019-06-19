@@ -16,6 +16,7 @@
 
     <!-- Message text area -->
     <TextArea fx:id="txMsgArea" editable="false" styleClass="output_text" GridPane.rowIndex="0"/>
+    <TreeView fx:id="jsonView" visible="false" managed="false" styleClass="output_text" GridPane.rowIndex="0"/>
 
     <!-- View settings and info block -->
     <VBox alignment="CENTER" GridPane.rowIndex="1">
@@ -33,9 +34,8 @@
             <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK"
                              GridPane.columnIndex="0">
                 <buttons>
-                    <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"/>
-                    <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Json"/>
-                    <ToggleButton fx:id="editMessage" mnemonicParsing="false" prefWidth="90" text="Edit"/>
+                    <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap text"/>
+                    <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Json tree"/>
                 </buttons>
             </SegmentedButton>
             <GridPane maxWidth="320.0" GridPane.columnIndex="1">
