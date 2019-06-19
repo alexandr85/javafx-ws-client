@@ -74,10 +74,9 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
      */
     private ContextMenu getSendHistoryContextMenu(ListCell<String> cell, IndexedCheckModel<String> checkModel) {
         ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.copySendMsg(cell),
-                m.clearCheckListView(list, checkModel)
+                ContextMenuItems.copySendMsg(cell),
+                ContextMenuItems.clearCheckListView(list, checkModel)
         );
         return contextMenu;
     }

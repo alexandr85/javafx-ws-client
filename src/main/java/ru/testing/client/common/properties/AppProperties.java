@@ -16,6 +16,7 @@ public class AppProperties {
     private static AppProperties properties;
     private String version;
     private String dbVersion;
+    private String homeFolder;
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
@@ -34,6 +35,7 @@ public class AppProperties {
 
             setVersion(properties.getProperty("version"));
             setDbVersion(properties.getProperty("db.version"));
+            setHomeFolder(properties.getProperty("home.folder"));
             setTagsUrl(properties.getProperty("tags.url"));
             setLastReleaseUrl(properties.getProperty("last.release.url"));
             setAboutUrl(properties.getProperty("about.url"));
@@ -67,6 +69,14 @@ public class AppProperties {
 
     private void setDbVersion(String dbVersion) {
         this.dbVersion = dbVersion;
+    }
+
+    public String getHomeFolder() {
+        return homeFolder;
+    }
+
+    private void setHomeFolder(String homeFolder) {
+        this.homeFolder = homeFolder;
     }
 
     public String getTagsUrl() {

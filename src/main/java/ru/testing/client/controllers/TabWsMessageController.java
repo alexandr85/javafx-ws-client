@@ -40,6 +40,7 @@ public class TabWsMessageController {
         segmentedButton.setToggleGroup(null);
 
         jsonView.setCellFactory(JsonView::cellFactory);
+        jsonView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         // Set message as json pretty or text
         bJsonPretty.setOnAction(event -> toggleJsonPretty(bJsonPretty.isSelected()));

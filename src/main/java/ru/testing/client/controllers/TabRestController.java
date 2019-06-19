@@ -6,10 +6,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
@@ -78,6 +75,7 @@ public class TabRestController {
         }
 
         jsonView.setCellFactory(JsonView::cellFactory);
+        jsonView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 
         // Hide or show response headers
         showHeaders.setOnAction(event -> toggleShowHeaders(showHeaders.isSelected()));

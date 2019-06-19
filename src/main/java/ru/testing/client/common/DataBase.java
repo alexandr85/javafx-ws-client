@@ -17,7 +17,7 @@ import java.sql.*;
 public class DataBase {
 
     private static final Logger LOGGER = Logger.getLogger(DataBase.class);
-    private static final String APP_FOLDER = ".ws.client";
+
     private static final String DB_TYPE = "jdbc:h2";
     private static final String DB_NAME = "data.v%s";
     private static final String CREATE_SQL_SCRIPT = "create.db.sql";
@@ -36,7 +36,7 @@ public class DataBase {
 
         // Setup paths
         AppProperties properties = AppProperties.getAppProperties();
-        String appFolder = String.format("%s/%s/", System.getProperty("user.home"), APP_FOLDER);
+        String appFolder = String.format("%s/%s/", System.getProperty("user.home"), properties.getHomeFolder());
         dbPath = String.format("%s/%s", appFolder, String.format(DB_NAME, properties.getDbVersion()));
 
         // Check app folder exist

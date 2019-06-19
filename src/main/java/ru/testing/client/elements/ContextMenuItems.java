@@ -1,9 +1,7 @@
 package ru.testing.client.elements;
 
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.controlsfx.control.IndexedCheckModel;
@@ -11,11 +9,19 @@ import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.elements.tabs.WsMessageTab;
 
+import java.util.*;
+
 
 /**
  * Class collected other menu items
  */
-public class ContextMenuItems {
+public abstract class ContextMenuItems {
+
+    private static final Clipboard CLIPBOARD = Clipboard.getSystemClipboard();
+    private static final ClipboardContent CLIPBOARD_CONTENT = new ClipboardContent();
+
+    private ContextMenuItems() {
+    }
 
     /**
      * Menu item for clear all cell in list views
@@ -23,10 +29,10 @@ public class ContextMenuItems {
      * @param list ObservableList
      * @return MenuItem
      */
-    public MenuItem clearListView(ObservableList list) {
-        MenuItem deleteAll = new MenuItem("Delete all");
-        deleteAll.setOnAction(event -> list.clear());
-        return deleteAll;
+    public static MenuItem clearListView(ObservableList list) {
+        MenuItem menu = new MenuItem("Delete all");
+        menu.setOnAction(event -> list.clear());
+        return menu;
     }
 
     /**
@@ -35,13 +41,13 @@ public class ContextMenuItems {
      * @param list ObservableList
      * @return MenuItem
      */
-    public MenuItem clearCheckListView(ObservableList list, IndexedCheckModel<String> checkModel) {
-        MenuItem deleteAll = new MenuItem("Delete all");
-        deleteAll.setOnAction(event -> {
+    public static MenuItem clearCheckListView(ObservableList list, IndexedCheckModel<String> checkModel) {
+        MenuItem menu = new MenuItem("Delete all");
+        menu.setOnAction(event -> {
             checkModel.clearChecks();
             list.clear();
         });
-        return deleteAll;
+        return menu;
     }
 
     /**
@@ -50,10 +56,10 @@ public class ContextMenuItems {
      * @param cell ListCell
      * @return MenuItem
      */
-    public MenuItem removeCell(ListCell cell) {
-        MenuItem deleteCell = new MenuItem("Delete item");
-        deleteCell.setOnAction(event -> cell.getListView().getItems().remove(cell.getIndex()));
-        return deleteCell;
+    public static MenuItem removeCell(ListCell cell) {
+        MenuItem menu = new MenuItem("Delete item");
+        menu.setOnAction(event -> cell.getListView().getItems().remove(cell.getIndex()));
+        return menu;
     }
 
     /**
@@ -62,10 +68,10 @@ public class ContextMenuItems {
      * @param list ListView<ReceivedMessage>
      * @return MenuItem
      */
-    public MenuItem deselectCell(ListView<ReceivedMessage> list) {
-        MenuItem deselect = new MenuItem("Deselect item");
-        deselect.setOnAction(event -> list.getSelectionModel().clearSelection());
-        return deselect;
+    public static MenuItem deselectCell(ListView<ReceivedMessage> list) {
+        MenuItem menu = new MenuItem("Deselect item");
+        menu.setOnAction(event -> list.getSelectionModel().clearSelection());
+        return menu;
     }
 
     /**
@@ -74,15 +80,13 @@ public class ContextMenuItems {
      * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellAll(ReceivedMessage item) {
-        MenuItem copyItem = new MenuItem("Copy full message");
-        copyItem.setOnAction(event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(item.toString());
-            clipboard.setContent(content);
+    public static MenuItem copyCellAll(ReceivedMessage item) {
+        MenuItem menu = new MenuItem("Copy full message");
+        menu.setOnAction(event -> {
+            CLIPBOARD_CONTENT.putString(item.toString());
+            CLIPBOARD.setContent(CLIPBOARD_CONTENT);
         });
-        return copyItem;
+        return menu;
     }
 
     /**
@@ -91,15 +95,13 @@ public class ContextMenuItems {
      * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellMessage(ReceivedMessage item) {
-        MenuItem copyItem = new MenuItem("Copy body message");
-        copyItem.setOnAction(event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(item.getMessage());
-            clipboard.setContent(content);
+    public static MenuItem copyCellMessage(ReceivedMessage item) {
+        MenuItem menu = new MenuItem("Copy body message");
+        menu.setOnAction(event -> {
+            CLIPBOARD_CONTENT.putString(item.getMessage());
+            CLIPBOARD.setContent(CLIPBOARD_CONTENT);
         });
-        return copyItem;
+        return menu;
     }
 
     /**
@@ -108,15 +110,13 @@ public class ContextMenuItems {
      * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem copyCellTime(ReceivedMessage item) {
-        MenuItem copyItem = new MenuItem("Copy time message");
-        copyItem.setOnAction(event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(item.getFormattedTime());
-            clipboard.setContent(content);
+    public static MenuItem copyCellTime(ReceivedMessage item) {
+        MenuItem menu = new MenuItem("Copy time message");
+        menu.setOnAction(event -> {
+            CLIPBOARD_CONTENT.putString(item.getFormattedTime());
+            CLIPBOARD.setContent(CLIPBOARD_CONTENT);
         });
-        return copyItem;
+        return menu;
     }
 
     /**
@@ -125,10 +125,10 @@ public class ContextMenuItems {
      * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem saveMessageToFile(ReceivedMessage item) {
-        MenuItem saveFileItem = new MenuItem("Save full message");
-        saveFileItem.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString()));
-        return saveFileItem;
+    public static MenuItem saveMessageToFile(ReceivedMessage item) {
+        MenuItem menu = new MenuItem("Save full message");
+        menu.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString()));
+        return menu;
     }
 
     /**
@@ -137,26 +137,74 @@ public class ContextMenuItems {
      * @param item ReceivedMessage
      * @return MenuItem
      */
-    public MenuItem showMessage(final ReceivedMessage item) {
-        MenuItem show = new MenuItem("Show body message");
-        show.setOnAction(event -> new WsMessageTab(item));
-        return show;
+    public static MenuItem showMessage(final ReceivedMessage item) {
+        MenuItem menu = new MenuItem("Show body message");
+        menu.setOnAction(event -> new WsMessageTab(item));
+        return menu;
     }
 
     /**
-     * Menu item 'copy' for copy cell string to clipboard
+     * Menu item for copy cell string to clipboard
      *
      * @param cell ListCell<String>
      * @return MenuItem
      */
-    public MenuItem copySendMsg(ListCell<String> cell) {
-        MenuItem copyItem = new MenuItem("Copy message");
-        copyItem.setOnAction(event -> {
-            final Clipboard clipboard = Clipboard.getSystemClipboard();
-            final ClipboardContent content = new ClipboardContent();
-            content.putString(cell.getText());
-            clipboard.setContent(content);
+    public static MenuItem copySendMsg(ListCell<String> cell) {
+        MenuItem menu = new MenuItem("Copy message");
+        menu.setOnAction(event -> {
+            CLIPBOARD_CONTENT.putString(cell.getText());
+            CLIPBOARD.setContent(CLIPBOARD_CONTENT);
         });
-        return copyItem;
+        return menu;
+    }
+
+    /**
+     * Menu item for copy cell string from json tree view
+     *
+     * @param tv json tree view
+     * @return MenuItem
+     */
+    public static MenuItem copyTreeCellValue(TreeView<String> tv) {
+        MenuItem menu = new MenuItem("Copy key:value");
+        menu.setOnAction(event -> {
+            Optional<TreeItem<String>> find = tv.getSelectionModel().getSelectedItems().stream().findFirst();
+            if (find.isPresent()) {
+                CLIPBOARD_CONTENT.putString(find.get().getValue());
+                CLIPBOARD.setContent(CLIPBOARD_CONTENT);
+            }
+        });
+        return menu;
+    }
+
+    /**
+     * Menu item for copy tree cells strings from json tree view
+     *
+     * @param tv json tree view
+     * @return MenuItem
+     */
+    public static MenuItem copyTreeValues(TreeView<String> tv) {
+        MenuItem menu = new MenuItem("Copy tree keys:values");
+        menu.setOnAction(event -> {
+            Optional<TreeItem<String>> find = tv.getSelectionModel().getSelectedItems().stream().findFirst();
+            if (find.isPresent()) {
+                TreeItem<String> item = find.get();
+                StringBuffer buffer = new StringBuffer();
+                getChildrenValues(buffer, item);
+                CLIPBOARD_CONTENT.putString(buffer.toString());
+                CLIPBOARD.setContent(CLIPBOARD_CONTENT);
+            }
+        });
+        return menu;
+    }
+
+    private static void getChildrenValues(StringBuffer buffer, TreeItem<String> item) {
+        buffer.append(String.format("%s\n", item.getValue()));
+        item.getChildren().forEach( i -> {
+            if (i.getChildren().size() > 0) {
+                i.getChildren().forEach( c -> getChildrenValues(buffer, c));
+            } else {
+                buffer.append(String.format("%s\n", i.getValue()));
+            }
+        });
     }
 }

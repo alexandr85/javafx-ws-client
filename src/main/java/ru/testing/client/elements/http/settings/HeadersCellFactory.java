@@ -36,10 +36,9 @@ public class HeadersCellFactory extends ListCell<Header> {
      */
     private ContextMenu getHeaderContextMenu(ListCell<Header> cell) {
         ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.removeCell(cell),
-                m.clearListView(list)
+                ContextMenuItems.removeCell(cell),
+                ContextMenuItems.clearListView(list)
         );
         return contextMenu;
     }

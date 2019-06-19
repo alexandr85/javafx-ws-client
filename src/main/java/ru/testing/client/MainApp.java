@@ -73,7 +73,7 @@ public class MainApp extends javafx.application.Application {
             mainController = loader.getController();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, mainController);
-            primaryStage.setTitle(String.format("WebSocket & Rest client v%s", properties.getVersion()));
+            primaryStage.setTitle(String.format("WSR Inspector v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);

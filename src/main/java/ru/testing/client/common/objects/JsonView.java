@@ -4,6 +4,7 @@ import com.google.gson.*;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 import org.controlsfx.control.SegmentedButton;
+import ru.testing.client.elements.ContextMenuItems;
 
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class JsonView {
                     setText("");
                 } else {
                     setText(item);
+                    final ContextMenu cm = new ContextMenu();
+                    cm.getItems().addAll(
+                            ContextMenuItems.copyTreeCellValue(tv),
+                            ContextMenuItems.copyTreeValues(tv)
+                    );
+                    tv.setContextMenu(cm);
                 }
             }
         };

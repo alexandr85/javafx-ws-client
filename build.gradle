@@ -35,14 +35,14 @@ javafx {
     modules = [ 'javafx.fxml', 'javafx.controls' ]
 }
 
-def appFileName = 'WsClient'
+def appFileName = 'WsrInspector'
 def mainClass = 'ru.testing.client.MainApp'
 compileJava.options.encoding = 'UTF-8'
 
 application {
     group = 'ru.testing'
     version = '3.0'
-    description = """JavaFX application for testing websocket"""
+    description = """UI application for testing websocket & rest requests"""
     mainClassName = "$moduleName/$mainClass"
 }
 
