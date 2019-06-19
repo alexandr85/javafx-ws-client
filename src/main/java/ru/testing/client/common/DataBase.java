@@ -106,7 +106,7 @@ public class DataBase {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
-            LOGGER.error("Error set current settings state", e);
+            LOGGER.error("Error apply current settings state", e);
             return false;
         }
     }

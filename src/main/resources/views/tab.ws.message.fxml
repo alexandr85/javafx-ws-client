@@ -16,7 +16,7 @@
 
     <!-- Message text area -->
     <TextArea fx:id="txMsgArea" editable="false" styleClass="output_text" GridPane.rowIndex="0"/>
-    <TreeView fx:id="jsonView" visible="false" managed="false" styleClass="output_text" GridPane.rowIndex="0"/>
+    <TreeView fx:id="jsonView" visible="false" managed="false" GridPane.rowIndex="0"/>
 
     <!-- View settings and info block -->
     <VBox alignment="CENTER" GridPane.rowIndex="1">
@@ -31,11 +31,10 @@
             <rowConstraints>
                 <RowConstraints minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK"
-                             GridPane.columnIndex="0">
+            <SegmentedButton fx:id="segmentedButton" GridPane.columnIndex="0">
                 <buttons>
                     <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap text"/>
-                    <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Json tree"/>
+                    <ToggleButton fx:id="bJsonPretty" mnemonicParsing="false" prefWidth="90" text="Json tree"/>
                 </buttons>
             </SegmentedButton>
             <GridPane maxWidth="320.0" GridPane.columnIndex="1">

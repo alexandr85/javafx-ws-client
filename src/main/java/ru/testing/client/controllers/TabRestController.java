@@ -9,22 +9,22 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.TreeView;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.MainApp;
 import ru.testing.client.common.DataBase;
 import ru.testing.client.common.HttpTypes;
-import ru.testing.client.common.Utils;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
+import ru.testing.client.common.objects.JsonView;
 import ru.testing.client.common.objects.Settings;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.testing.client.common.Utils.getJsonPretty;
 
 /**
  * Controller for detail message tab form
@@ -33,11 +33,11 @@ public class TabRestController {
 
     private static final Logger LOGGER = Logger.getLogger(TabRestController.class);
     private static final int TIMEOUT = 10000;
+
     private DataBase dataBase = DataBase.getInstance();
     private MainController mainController = MainApp.getMainController();
     private List<Header> headers = new ArrayList<>();
     private List<HttpParameter> parameters = new ArrayList<>();
-    private Client restClient = Client.create();
     private String serverUrl;
     private HttpTypes httpType;
     private String message;
@@ -47,15 +47,15 @@ public class TabRestController {
     @FXML
     private TextArea masterNode;
     @FXML
+    private TreeView<String> jsonView;
+    @FXML
     private TextArea detailNode;
     @FXML
     private ToggleButton bWrapText;
     @FXML
-    private ToggleButton bPrettyJson;
+    private ToggleButton bJsonPretty;
     @FXML
     private ToggleButton showHeaders;
-    @FXML
-    private ToggleButton editBody;
     @FXML
     private Label msgLengthLabel;
     @FXML
@@ -69,59 +69,54 @@ public class TabRestController {
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
-        bPrettyJson.setOnAction(event -> toggleJsonPrettyMessage());
+        bJsonPretty.setOnAction(event -> toggleJsonPrettyMessage(bJsonPretty.isSelected()));
 
         // Set text area wrap or not
-        bWrapText.setOnAction(event -> toggleWrapText());
+        bWrapText.setOnAction(event -> toggleWrapText(bWrapText.isSelected()));
         if (settings.isTextWrap()) {
             bWrapText.fire();
         }
 
-        // Set enable or disable edit body message
-        editBody.setOnAction(event -> toggleEditBody());
+        jsonView.setCellFactory(JsonView::cellFactory);
+
+        // Hide or show response headers
+        showHeaders.setOnAction(event -> toggleShowHeaders(showHeaders.isSelected()));
 
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
 
-        // Hide or show response headers
-        showHeaders.setOnAction(event -> {
-            if (showHeaders.isSelected()) {
-                masterDetailPane.setShowDetailNode(true);
-            } else {
-                masterDetailPane.setShowDetailNode(false);
-            }
-            segmentedButton.requestFocus();
-        });
-
-        // Create http client
-        LOGGER.debug("Initializing http client ...");
-        serverUrl = mainController.getServerUrl().getText();
-        httpType = mainController.getHttpType();
-        restClient.setConnectTimeout(TIMEOUT);
-        restClient.setReadTimeout(TIMEOUT);
+        // Execute http request
         execute();
     }
 
     void execute() {
+        LOGGER.debug("Initializing http client ...");
+        Client client = Client.create();
+        serverUrl = mainController.getServerUrl().getText();
+        httpType = mainController.getHttpType();
+        client.setConnectTimeout(TIMEOUT);
+        client.setReadTimeout(TIMEOUT);
+
+        // prepare http headers & parameters
         headers.clear();
         headers.addAll(mainController.getHeadersList());
         parameters.clear();
         parameters.addAll(mainController.getHttpParametersList());
-        ClientResponse response = null;
         MultivaluedMap<String, String> parametersMap = new MultivaluedMapImpl();
         parameters.forEach(p -> parametersMap.add(p.getName(), p.getValue()));
 
+        ClientResponse response = null;
         switch (httpType) {
             case HTTP_GET:
                 LOGGER.debug("Execute http GET request");
-                WebResource.Builder getResource = restClient.resource(serverUrl)
+                WebResource.Builder getResource = client.resource(serverUrl)
                         .queryParams(parametersMap).getRequestBuilder();
                 headers.forEach(header -> getResource.header(header.getName(), header.getValue()));
                 response = getResource.get(ClientResponse.class);
                 break;
             case HTTP_POST:
                 LOGGER.debug("Execute http POST request");
-                WebResource.Builder postResource = restClient.resource(serverUrl).getRequestBuilder();
+                WebResource.Builder postResource = client.resource(serverUrl).getRequestBuilder();
                 mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
                 response = postResource.post(ClientResponse.class, parametersMap);
         }
@@ -133,10 +128,17 @@ public class TabRestController {
 
             // Set body result to master node
             Platform.runLater(() -> {
-                toggleWrapText();
-                toggleJsonPrettyMessage();
-                toggleEditBody();
-                msgLengthLabel.setText(String.valueOf(message.length()));
+                if (message != null) {
+
+                    // apply json tree to view
+                    JsonView view = new JsonView(message);
+                    view.apply(jsonView, bJsonPretty, segmentedButton);
+
+                    masterNode.setText(message);
+                    toggleWrapText(bWrapText.isSelected());
+                    toggleJsonPrettyMessage(bJsonPretty.isSelected());
+                    msgLengthLabel.setText(String.valueOf(message.length()));
+                }
             });
 
             // Set headers result to detail node
@@ -152,6 +154,22 @@ public class TabRestController {
 
     TextArea getDetailNode() {
         return detailNode;
+    }
+
+    HttpTypes getHttpType() {
+        return httpType;
+    }
+
+    String getServerUrl() {
+        return serverUrl;
+    }
+
+    List<Header> getHeaders() {
+        return headers;
+    }
+
+    List<HttpParameter> getParameters() {
+        return parameters;
     }
 
     /**
@@ -178,50 +196,23 @@ public class TabRestController {
         detailNode.setText(stringBuilder.toString());
     }
 
-    HttpTypes getHttpType() {
-        return httpType;
-    }
-
-    String getServerUrl() {
-        return serverUrl;
-    }
-
-    List<Header> getHeaders() {
-        return headers;
-    }
-
-    List<HttpParameter> getParameters() {
-        return parameters;
-    }
-
-    private void toggleJsonPrettyMessage() {
-        if (message != null && bPrettyJson.isSelected()) {
-            Utils.PrettyStatus status = getJsonPretty(message);
-            masterNode.setText(status.getMessage());
-            bPrettyJson.setSelected(status.getButtonSelect());
-        } else {
-            masterNode.setText(message);
-        }
+    private void toggleJsonPrettyMessage(boolean state) {
+        masterNode.setVisible(!state);
+        masterNode.setManaged(!state);
+        jsonView.setVisible(state);
+        jsonView.setManaged(state);
+        bJsonPretty.setSelected(state);
         segmentedButton.requestFocus();
     }
 
-    private void toggleWrapText() {
-        if (bWrapText.isSelected()) {
-            masterNode.setWrapText(true);
-            detailNode.setWrapText(true);
-        } else {
-            masterNode.setWrapText(false);
-            detailNode.setWrapText(false);
-        }
+    private void toggleShowHeaders(boolean state) {
+        masterDetailPane.setShowDetailNode(state);
         segmentedButton.requestFocus();
     }
 
-    private void toggleEditBody() {
-        if (editBody.isSelected()) {
-            masterNode.setEditable(true);
-        } else {
-            masterNode.setEditable(false);
-        }
+    private void toggleWrapText(boolean state) {
+        masterNode.setWrapText(state);
+        detailNode.setWrapText(state);
         segmentedButton.requestFocus();
     }
 }
