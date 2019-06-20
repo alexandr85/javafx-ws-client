@@ -4,7 +4,6 @@ module wsr.inspector {
     requires org.controlsfx.controls;
     requires java.desktop;
     requires java.sql;
-    requires h2;
     requires tyrus.client;
     requires tyrus.extension.deflate;
     requires javax.websocket.api;
@@ -22,4 +21,5 @@ module wsr.inspector {
 
     opens ru.testing.client.common.github to gson;
     opens ru.testing.client.controllers to javafx.graphics, javafx.fxml;
+    opens ru.testing.client.common.properties to gson;
 }

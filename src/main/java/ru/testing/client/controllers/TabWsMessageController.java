@@ -3,16 +3,18 @@ package ru.testing.client.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.common.DataBase;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.objects.JsonView;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.objects.Settings;
+import ru.testing.client.common.properties.Settings;
 import ru.testing.client.websocket.ReceivedMessageType;
 
 /**
  * Controller for detail message tab form
  */
 public class TabWsMessageController {
+
+    private AppProperties props = AppProperties.getInstance();
 
     @FXML
     private TextArea txMsgArea;
@@ -29,14 +31,11 @@ public class TabWsMessageController {
     @FXML
     private SegmentedButton segmentedButton;
 
-    private DataBase dataBase = DataBase.getInstance();
-
-
     @FXML
     private void initialize() {
 
         // Get message settings
-        Settings settings = dataBase.getSettings();
+        Settings settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
         jsonView.setCellFactory(JsonView::cellFactory);

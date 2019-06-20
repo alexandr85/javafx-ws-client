@@ -21,7 +21,7 @@ import java.util.Arrays;
 public class ReleaseChecker extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(ReleaseChecker.class);
-    private AppProperties properties = AppProperties.getAppProperties();
+    private AppProperties properties = AppProperties.getInstance();
     private String lastVersion = "1.0";
 
     /**

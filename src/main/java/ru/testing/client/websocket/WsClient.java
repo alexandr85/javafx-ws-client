@@ -34,7 +34,7 @@ public class WsClient extends Endpoint {
     private boolean sslValidate;
 
     /**
-     * Default client constructor
+     * DefaultProperties client constructor
      */
     public WsClient() {
 

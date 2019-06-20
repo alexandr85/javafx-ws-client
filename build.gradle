@@ -51,7 +51,6 @@ dependencies {
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
     compile 'com.sun.jersey:jersey-client:1.19'
     compile 'com.google.code.gson:gson:2.8.5'
-    compile 'com.h2database:h2:1.3.148'
     compile 'org.controlsfx:controlsfx:11.0.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.glassfish.tyrus.ext:tyrus-extension-deflate:1.13.1'

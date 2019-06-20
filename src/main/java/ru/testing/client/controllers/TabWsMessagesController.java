@@ -13,10 +13,10 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
 import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.objects.Settings;
+import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.tabs.WsMessageTab;
@@ -32,10 +32,10 @@ public class TabWsMessagesController {
 
     private static final Logger LOGGER = Logger.getLogger(TabWsMessagesController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
-    private DataBase dataBase = DataBase.getInstance();
     private final ObservableList<ReceivedMessage> receivedMessageList = FXCollections.observableArrayList();
     private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
+    private AppProperties props = AppProperties.getInstance();
     private MainController mainController = MainApp.getMainController();
     private Settings settings;
     private FilterListPopOver filterPopOver;
@@ -79,13 +79,13 @@ public class TabWsMessagesController {
     protected void initialize() {
 
         // Get settings
-        settings = dataBase.getSettings();
+        settings = props.getSettings();
         autoScroll = settings.isAutoScroll();
 
         // Set message font size
         outputTextView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
 
-        // Default focus request
+        // DefaultProperties focus request
         Platform.runLater(() -> outputTextView.requestFocus());
 
         // Update output message list views

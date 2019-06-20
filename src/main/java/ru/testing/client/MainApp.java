@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 
 import org.apache.log4j.Logger;
 import org.controlsfx.tools.Platform;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.github.ReleaseChecker;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.controllers.MainController;
@@ -57,11 +56,7 @@ public class MainApp extends javafx.application.Application {
     public void start(Stage primaryStage) {
         MainApp.primaryStage = primaryStage;
         try {
-
-            // Init database
-            DataBase.getInstance();
-
-            AppProperties properties = AppProperties.getAppProperties();
+            AppProperties properties = AppProperties.getInstance();
             URL viewMainUrl = getClass().getResource("/views/main.fxml");
 
             if (viewMainUrl == null) {

@@ -50,7 +50,7 @@ public class MainController {
     private final KeyCombination.Modifier keyModifier = (platform == OSX)
             ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
     private List<WsClient> wsClients = new ArrayList<>();
-    private AppProperties properties = AppProperties.getAppProperties();
+    private AppProperties properties = AppProperties.getInstance();
     private NewClientTab newClientTab = new NewClientTab();
     private HttpSettingsPopOver httpSettingsPopOver;
     private SettingsTab settingsTab;

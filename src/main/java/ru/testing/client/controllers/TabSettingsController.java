@@ -5,11 +5,11 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import ru.testing.client.MainApp;
-import ru.testing.client.common.DataBase;
-import ru.testing.client.common.objects.Settings;
-import ru.testing.client.common.properties.DefaultProperties;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.tabs.WsMessageTab;
+
 
 /**
  * Controller for settings tab form
@@ -17,7 +17,7 @@ import ru.testing.client.elements.tabs.WsMessageTab;
 public class TabSettingsController {
 
     private static final String FONT_SIZE_FORMAT = "-fx-font-size: %spx;";
-    private DataBase dataBase = DataBase.getInstance();
+    private AppProperties props = AppProperties.getInstance();
     private MainController mainController = MainApp.getMainController();
 
     @FXML
@@ -43,8 +43,9 @@ public class TabSettingsController {
                 )
         );
 
-        // Set value from database
-        setSettingsValues(dataBase.getSettings());
+        // Set settings
+        AppProperties props = AppProperties.getInstance();
+        setSettingsValues(props.getSettings());
     }
 
     /**
@@ -52,7 +53,7 @@ public class TabSettingsController {
      */
     @FXML
     private void loadDefaultSettings() {
-        setSettingsValues(DefaultProperties.getInstance().getDefaultSettings());
+        setSettingsValues(props.getSettings(true));
     }
 
     /**
@@ -65,16 +66,16 @@ public class TabSettingsController {
         mainController.setProgressVisible(true);
 
         // Save new settings in database
-        boolean status = dataBase.setSettings(new Settings(
+        Settings newSettings = new Settings(
                 ((Number) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
                 cbAutoScroll.isSelected(),
                 cbWsSslValidate.isSelected(),
                 chWsCompression.isSelected()
-        ));
-        if (status) {
+        );
+        boolean status = newSettings.save();
 
-            Settings settings = dataBase.getSettings();
+        if (status) {
 
             // Set font size for all messages
             for (Tab tab : mainController.getTabPane().getTabs()) {
@@ -83,7 +84,7 @@ public class TabSettingsController {
                     if (tabNode instanceof GridPane) {
                         for (Node node : ((GridPane) tabNode).getChildren()) {
                             if (node instanceof TextArea || node instanceof ListView) {
-                                node.setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
+                                node.setStyle(String.format(FONT_SIZE_FORMAT, newSettings.getFontSize()));
                                 node.applyCss();
                             }
                         }
