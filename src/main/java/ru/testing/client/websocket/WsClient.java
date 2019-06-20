@@ -24,8 +24,10 @@ import static java.util.Collections.singletonList;
 public class WsClient extends Endpoint {
 
     private static final Logger LOGGER = Logger.getLogger(WsClient.class.getName());
+
     private final ClientManager client;
     private final ClientEndpointConfig config;
+
     private SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(new SslContextConfigurator());
     private List<Extension> extensions = new ArrayList<>();
     private URI endpointURI;
@@ -54,10 +56,10 @@ public class WsClient extends Endpoint {
                     public void beforeRequest(Map<String, List<String>> headers) {
                         try {
                             if (headerList != null && headerList.size() > 0) {
-                                for (Header header : headerList) {
-                                    String headerName = header.getName();
+                                for (var header : headerList) {
+                                    var headerName = header.getName();
                                     if (headers.containsKey(headerName)) {
-                                        String value = headers.get(headerName).get(0)
+                                        var value = headers.get(headerName).get(0)
                                                 .concat(String.format(";%s", header.getValue()));
                                         headers.put(headerName, singletonList(value));
                                     } else {

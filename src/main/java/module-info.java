@@ -1,17 +1,14 @@
 module wsr.inspector {
+    requires java.desktop;
+    requires java.sql;
+    requires java.net.http;
+    requires javax.websocket.api;
     requires javafx.controls;
     requires javafx.fxml;
     requires org.controlsfx.controls;
-    requires java.desktop;
-    requires java.sql;
     requires tyrus.client;
     requires tyrus.extension.deflate;
-    requires javax.websocket.api;
     requires gson;
-    requires commons.lang3;
-    requires jersey.client;
-    requires jersey.core;
-    requires jsr311.api;
     requires log4j;
 
     exports ru.testing.client.controllers;

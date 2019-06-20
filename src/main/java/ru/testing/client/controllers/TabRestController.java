@@ -1,24 +1,23 @@
 package ru.testing.client.controllers;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.MainApp;
-import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
-import ru.testing.client.common.objects.JsonView;
-import ru.testing.client.common.properties.Settings;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.elements.JsonView;
 
-import javax.ws.rs.core.MultivaluedMap;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,6 @@ public class TabRestController {
     private List<HttpParameter> parameters = new ArrayList<>();
     private String serverUrl;
     private HttpTypes httpType;
-    private String message;
 
     @FXML
     private MasterDetailPane masterDetailPane;
@@ -62,7 +60,7 @@ public class TabRestController {
     private void initialize() {
 
         // Get message settings
-        Settings settings = props.getSettings();
+        var settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
@@ -82,62 +80,75 @@ public class TabRestController {
 
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
-
-        // Execute http request
-        execute();
     }
 
     void execute() {
         LOGGER.debug("Initializing http client ...");
-        Client client = Client.create();
+
+        var client = HttpClient
+                .newBuilder()
+                .connectTimeout(Duration.ofSeconds(TIMEOUT))
+                .build();
+
         serverUrl = mainController.getServerUrl().getText();
         httpType = mainController.getHttpType();
-        client.setConnectTimeout(TIMEOUT);
-        client.setReadTimeout(TIMEOUT);
+
 
         // prepare http headers & parameters
         headers.clear();
         headers.addAll(mainController.getHeadersList());
         parameters.clear();
         parameters.addAll(mainController.getHttpParametersList());
-        MultivaluedMap<String, String> parametersMap = new MultivaluedMapImpl();
-        parameters.forEach(p -> parametersMap.add(p.getName(), p.getValue()));
 
-        ClientResponse response = null;
-        switch (httpType) {
-            case HTTP_GET:
-                LOGGER.debug("Execute http GET request");
-                WebResource.Builder getResource = client.resource(serverUrl)
-                        .queryParams(parametersMap).getRequestBuilder();
-                headers.forEach(header -> getResource.header(header.getName(), header.getValue()));
-                response = getResource.get(ClientResponse.class);
-                break;
-            case HTTP_POST:
-                LOGGER.debug("Execute http POST request");
-                WebResource.Builder postResource = client.resource(serverUrl).getRequestBuilder();
-                mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
-                response = postResource.post(ClientResponse.class, parametersMap);
+        var params = new StringBuilder();
+        parameters.forEach(p -> params.append(String.format("%s=%s&", p.getName(), p.getValue())));
+
+        HttpResponse response = null;
+        try {
+            switch (httpType) {
+                case HTTP_GET:
+
+                    // create get request builder
+                    var getRequest = HttpRequest.newBuilder()
+                            .GET()
+                            .timeout(Duration.ofSeconds(TIMEOUT))
+                            .uri(URI.create(String.format("%s?%s", serverUrl, params.toString())));
+
+                    headers.forEach(h -> getRequest.header(h.getName(), h.getValue()));
+
+                    LOGGER.debug("Execute http GET request");
+                    response = client.send(getRequest.build(), HttpResponse.BodyHandlers.ofString());
+                    break;
+                case HTTP_POST:
+
+                    // create get request builder
+                    var postRequest = HttpRequest.newBuilder()
+                            .POST(HttpRequest.BodyPublishers.noBody())
+                            .timeout(Duration.ofSeconds(TIMEOUT))
+                            .uri(URI.create(String.format("%s?%s", serverUrl, params.toString())));
+
+                    headers.forEach(h -> postRequest.header(h.getName(), h.getValue()));
+
+                    LOGGER.debug("Execute http POST request");
+                    response = client.send(postRequest.build(), HttpResponse.BodyHandlers.ofString());
+            }
+        } catch (IOException | InterruptedException e) {
+            LOGGER.warn(e);
         }
 
         // Set http action
         if (response != null) {
             LOGGER.debug("Get response");
-            message = response.getEntity(String.class);
+            String message = response.body().toString();
 
-            // Set body result to master node
-            Platform.runLater(() -> {
-                if (message != null) {
+            // apply json tree to view
+            var view = new JsonView(message);
+            view.apply(jsonView, bJsonPretty, segmentedButton);
 
-                    // apply json tree to view
-                    JsonView view = new JsonView(message);
-                    view.apply(jsonView, bJsonPretty, segmentedButton);
-
-                    masterNode.setText(message);
-                    toggleWrapText(bWrapText.isSelected());
-                    toggleJsonPrettyMessage(bJsonPretty.isSelected());
-                    msgLengthLabel.setText(String.valueOf(message.length()));
-                }
-            });
+            masterNode.setText(message);
+            toggleWrapText(bWrapText.isSelected());
+            toggleJsonPrettyMessage(bJsonPretty.isSelected());
+            msgLengthLabel.setText(String.valueOf(message.length()));
 
             // Set headers result to detail node
             setHeadersDetail(response);
@@ -175,19 +186,20 @@ public class TabRestController {
      *
      * @param response ClientResponse
      */
-    private void setHeadersDetail(ClientResponse response) {
-        StringBuilder stringBuilder = new StringBuilder();
+    private void setHeadersDetail(HttpResponse response) {
+        var stringBuilder = new StringBuilder();
         stringBuilder.append(httpType.getName())
                 .append(" ")
                 .append(serverUrl)
                 .append(" ")
-                .append(response.getStatus())
+                .append(response.headers())
                 .append(" ")
-                .append(response.getStatusInfo())
+                .append(response.statusCode())
                 .append("\n")
-                .append(response.getResponseDate())
+                .append(response.version())
                 .append("\n");
-        response.getHeaders().forEach((k, v) -> stringBuilder.append(k)
+
+        response.headers().map().forEach((k, v) -> stringBuilder.append(k)
                 .append(": ")
                 .append(v)
                 .append("\n"));

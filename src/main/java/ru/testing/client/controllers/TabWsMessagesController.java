@@ -11,11 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
-import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.objects.ReceivedMessage;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
@@ -110,7 +111,7 @@ public class TabWsMessagesController {
         // Filters
         filterList.addListener((ListChangeListener<String>) c -> {
             if (c.next()) {
-                int size = filterList.size();
+                var size = filterList.size();
                 if (size > 0) {
                     filterListBtn.setDisable(false);
                     filterCount.setText(String.valueOf(size));
@@ -150,7 +151,7 @@ public class TabWsMessagesController {
      */
     @FXML
     private void sendWebsocketMessage() {
-        String text = sendMsgTextField.getText().trim();
+        var text = sendMsgTextField.getText().trim();
         if (!text.isEmpty()) {
             ObservableList<String> sendList = getSendMessagesPopOver().getController().getList();
             if (!sendList.contains(text)) {
@@ -171,7 +172,9 @@ public class TabWsMessagesController {
             if (filtered) {
                 filterBar.setVisible(false);
                 filterBar.setManaged(false);
-                filterStatusLabel.setGraphic(new ImageView("/images/turn-off.png"));
+                filterStatusLabel.setGraphic(
+                        new ImageView(getClass().getResource("/images/turn-off.png").toExternalForm())
+                );
                 filterAddBtn.setDisable(true);
                 filterTextField.setDisable(true);
                 filterListBtn.setDisable(true);
@@ -181,7 +184,9 @@ public class TabWsMessagesController {
             } else {
                 filterBar.setVisible(true);
                 filterBar.setManaged(true);
-                filterStatusLabel.setGraphic(new ImageView("/images/turn-on.png"));
+                filterStatusLabel.setGraphic(
+                        new ImageView(getClass().getResource("/images/turn-on.png").toExternalForm())
+                );
                 filterAddBtn.setDisable(false);
                 filterTextField.setDisable(false);
                 filterTextField.requestFocus();
@@ -201,10 +206,14 @@ public class TabWsMessagesController {
     private void changeAutoScrollStatus() {
         Platform.runLater(() -> {
             if (autoScroll) {
-                autoScrollLabel.setGraphic(new ImageView("/images/turn-off.png"));
+                autoScrollLabel.setGraphic(
+                        new ImageView(getClass().getResource("/images/turn-off.png").toExternalForm())
+                );
                 autoScroll = false;
             } else {
-                autoScrollLabel.setGraphic(new ImageView("/images/turn-on.png"));
+                autoScrollLabel.setGraphic(
+                        new ImageView(getClass().getResource("/images/turn-on.png").toExternalForm())
+                );
                 autoScroll = true;
             }
         });
@@ -215,7 +224,7 @@ public class TabWsMessagesController {
      */
     @FXML
     private void addToFilterList() {
-        String text = filterTextField.getText().trim();
+        var text = filterTextField.getText().trim();
         if (!text.isEmpty()) {
             filterList.add(text);
             filterTextField.clear();
@@ -272,7 +281,7 @@ public class TabWsMessagesController {
         try {
             if (wsClient == null) {
                 wsClient = new WsClient();
-                wsClient.setEndpointURI(new URI(mainController.getServerUrl().getText()));
+                wsClient.setEndpointURI(URI.create(mainController.getServerUrl().getText()));
                 wsClient.setHeaders(mainController.getHeadersList());
                 wsClient.setSslValidate(settings.isWsSslValidate());
                 wsClient.setWithCompression(settings.isWithCompression());
@@ -301,9 +310,9 @@ public class TabWsMessagesController {
      * @param message String message
      */
     public void addMessageToOutput(ReceivedMessageType type, String message) {
-        ReceivedMessage receivedMessage = new ReceivedMessage(type, message);
+        var receivedMessage = new ReceivedMessage(type, message);
         if (filtered && filterList.size() > 0) {
-            for (String filterItem : filterList) {
+            for (var filterItem : filterList) {
                 if (message.contains(filterItem)) {
                     Platform.runLater(() -> {
                         receivedMessageList.add(receivedMessage);
@@ -327,7 +336,7 @@ public class TabWsMessagesController {
         if (change.next()) {
             Platform.runLater(() -> {
                 showAllMsgAndSelectedMsgCount();
-                final int size = receivedMessageList.size();
+                final var size = receivedMessageList.size();
                 if (size > 0 && autoScroll) {
                     outputTextView.scrollTo(size - 1);
                 }
@@ -352,10 +361,10 @@ public class TabWsMessagesController {
     private void selectedMessages(ListChangeListener.Change<? extends ReceivedMessage> change) {
         if (change.next()) {
             showAllMsgAndSelectedMsgCount();
-            int selectedSize = change.getList().size();
+            var selectedSize = change.getList().size();
             if (selectedSize > 1 && change.wasAdded()) {
-                long timeFirst = change.getList().get(0).getMilliseconds();
-                long timeLast = change.getList().get(selectedSize - 1).getMilliseconds();
+                var timeFirst = change.getList().get(0).getMilliseconds();
+                var timeLast = change.getList().get(selectedSize - 1).getMilliseconds();
                 timeDiffLabel.setText(Utils.getFormattedDiffTime(timeFirst, timeLast));
             } else {
                 timeDiffLabel.setText("");
@@ -460,33 +469,25 @@ public class TabWsMessagesController {
      */
     private void setConnectStat(boolean isConnected) {
         Platform.runLater(() -> {
-            Tab currentTab = mainController.getTabPane().getSelectionModel().getSelectedItem();
-            Button connectionButton = null;
+            var currentTab = mainController.getTabPane().getSelectionModel().getSelectedItem();
             if (currentTab instanceof WsMessagesTab) {
                 if (((WsMessagesTab) currentTab).getController() == this) {
-                    connectionButton = mainController.getConnectionButton();
-                }
-            }
-            if (isConnected) {
-                connectStatus.getStyleClass().clear();
-                connectStatus.getStyleClass().add("connected");
-                setCircleTooltip("Connected");
-                sendMessagePane.setVisible(true);
-                sendMessagePane.setManaged(true);
-                if (connectionButton != null) {
-                    connectionButton.setText("Disconnect");
-                }
-            } else {
-                connectStatus.getStyleClass().clear();
-                connectStatus.getStyleClass().add("disconnected");
-                setCircleTooltip("Disconnected");
-                sendMessagePane.setVisible(false);
-                sendMessagePane.setManaged(false);
-                if (connectionButton != null) {
-                    connectionButton.setText("Connect");
+                    var connectionButton = mainController.getConnectionButton();
+                    setCircleStatus(isConnected, connectionButton);
                 }
             }
         });
+    }
+
+    private void setCircleStatus(boolean status, Button connectionButton) {
+        connectStatus.getStyleClass().clear();
+        connectStatus.getStyleClass().add(status ? "connected" : "disconnected");
+        setCircleTooltip(status ? "Connected" : "Disconnected");
+        sendMessagePane.setVisible(status);
+        sendMessagePane.setManaged(status);
+        if (connectionButton != null) {
+            connectionButton.setText(status ? "Disconnect" : "Connect");
+        }
     }
 
     /**
@@ -497,6 +498,7 @@ public class TabWsMessagesController {
     private void setCircleTooltip(String message) {
         if (statusTooltip == null) {
             statusTooltip = new Tooltip(message);
+            statusTooltip.setShowDelay(new Duration(10));
             Tooltip.install(connectStatus, statusTooltip);
         } else {
             statusTooltip.setText(message);

@@ -3,16 +3,12 @@ package ru.testing.client.elements.tabs;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Tab;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.controllers.TabRestController;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Tab with detail message
@@ -23,19 +19,8 @@ public class RestTab extends Tab {
     private TabRestController controller;
 
     public RestTab(HttpTypes httpTypes) {
-        String urlInfo = MainApp.getMainController().getServerUrl().getText();
 
-        // Setup tab tooltip
-        setTooltip(new Tooltip(String.format("Response from %s", urlInfo)));
-
-        try {
-            URI uri = new URI(urlInfo);
-            urlInfo = uri.getPath();
-        } catch (URISyntaxException e) {
-            LOGGER.error("Error get uri", e);
-        }
-
-        setText(String.format("%s %s", httpTypes.getName(), urlInfo));
+        setText(String.format("%s result", httpTypes.getName()));
 
         try {
             setGraphic(new ImageView(getClass().getResource("/images/message.png").toExternalForm()));
@@ -44,7 +29,7 @@ public class RestTab extends Tab {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.rest.message.fxml"));
+            var loader = new FXMLLoader(getClass().getResource("/views/tab.rest.message.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
             setContent(root);

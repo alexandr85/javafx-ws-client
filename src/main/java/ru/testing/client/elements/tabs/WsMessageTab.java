@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
 import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.TabWsMessageController;
 
 import java.io.IOException;
@@ -22,7 +21,7 @@ public class WsMessageTab extends Tab {
     private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
 
     public WsMessageTab(final ReceivedMessage item) {
-        MainController mainController = MainApp.getMainController();
+        var mainController = MainApp.getMainController();
         ObservableList<Tab> tabsList = mainController.getTabPane().getTabs();
         if (item != null) {
 
@@ -37,7 +36,7 @@ public class WsMessageTab extends Tab {
 
             // Load detail message views form
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.ws.message.fxml"));
+                var loader = new FXMLLoader(getClass().getResource("/views/tab.ws.message.fxml"));
                 Parent root = loader.load();
                 TabWsMessageController controller = loader.getController();
                 controller.setMessage(item);

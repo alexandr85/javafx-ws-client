@@ -30,7 +30,7 @@ public class Dialogs {
      * @param info String message
      */
     public void getInfoDialog(String info) {
-        Alert alert = new Alert(INFORMATION);
+        var alert = new Alert(INFORMATION);
         alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setContentText(info);
@@ -43,7 +43,7 @@ public class Dialogs {
      */
     public void getExceptionDialog(Exception e) {
         try {
-            Alert alert = new Alert(ERROR);
+            var alert = new Alert(ERROR);
             alert.setTitle("Oops! Catch some error");
             alert.setHeaderText(null);
             if (e.getLocalizedMessage() != null && !e.getLocalizedMessage().isEmpty()) {
@@ -53,14 +53,14 @@ public class Dialogs {
             }
 
             // Create expandable Exception.
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
+            var sw = new StringWriter();
+            var pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String exceptionText = sw.toString();
 
-            Label label = new Label("The exception stacktrace was:");
+            var label = new Label("The exception stacktrace was:");
 
-            TextArea textArea = new TextArea(exceptionText);
+            var textArea = new TextArea(exceptionText);
             textArea.setEditable(false);
             textArea.setWrapText(true);
 
@@ -69,7 +69,7 @@ public class Dialogs {
             GridPane.setVgrow(textArea, Priority.ALWAYS);
             GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-            GridPane expContent = new GridPane();
+            var expContent = new GridPane();
             expContent.setMaxWidth(Double.MAX_VALUE);
             expContent.add(label, 0, 0);
             expContent.add(textArea, 0, 1);
@@ -90,7 +90,7 @@ public class Dialogs {
      * @return boolean
      */
     public boolean getConfirmationDialog(String title, String message) {
-        Alert alert = new Alert(CONFIRMATION);
+        var alert = new Alert(CONFIRMATION);
         alert.setWidth(DIALOG_WEIGHT);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -106,7 +106,7 @@ public class Dialogs {
      * @param message String
      */
     public void getWarningDialog(String message) {
-        Alert alert = new Alert(WARNING);
+        var alert = new Alert(WARNING);
         alert.setTitle("Warning");
         alert.setHeaderText(null);
         alert.setContentText(message);

@@ -62,7 +62,7 @@ public class HttpSettingsController {
         hListView.setCellFactory(listView -> new HeadersCellFactory(headerObservableList));
         hListView.getItems().addListener((ListChangeListener<Header>) change -> {
             if (change.next()) {
-                int size = headerObservableList.size();
+                var size = headerObservableList.size();
                 if (size > 0) {
                     setListViewVisible(hListView, lbNoHeaders, true);
                 } else {
@@ -78,7 +78,7 @@ public class HttpSettingsController {
         pListView.setCellFactory(listView -> new HttpParametersCellFactory(httpParameterObservableList));
         pListView.getItems().addListener((ListChangeListener<HttpParameter>) change -> {
             if (change.next()) {
-                int size = httpParameterObservableList.size();
+                var size = httpParameterObservableList.size();
                 if (size > 0) {
                     setListViewVisible(pListView, lbNoParameters, true);
                 } else {
@@ -118,8 +118,8 @@ public class HttpSettingsController {
      */
     @FXML
     private void addHeader() {
-        final String name = headerName.getText();
-        final String value = headerValue.getText();
+        final var name = headerName.getText();
+        final var value = headerValue.getText();
         if (!name.isEmpty()) {
             if (!value.isEmpty()) {
                 if (headerObservableList.size() < 9) {
@@ -145,8 +145,8 @@ public class HttpSettingsController {
      */
     @FXML
     private void addParameter() {
-        final String name = parameterName.getText();
-        final String value = parameterValue.getText();
+        final var name = parameterName.getText();
+        final var value = parameterValue.getText();
         if (!name.isEmpty()) {
             if (!value.isEmpty()) {
                 Platform.runLater(() -> {

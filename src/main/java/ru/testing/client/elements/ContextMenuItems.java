@@ -30,7 +30,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem clearListView(ObservableList list) {
-        MenuItem menu = new MenuItem("Delete all");
+        var menu = new MenuItem("Delete all");
         menu.setOnAction(event -> list.clear());
         return menu;
     }
@@ -42,7 +42,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem clearCheckListView(ObservableList list, IndexedCheckModel<String> checkModel) {
-        MenuItem menu = new MenuItem("Delete all");
+        var menu = new MenuItem("Delete all");
         menu.setOnAction(event -> {
             checkModel.clearChecks();
             list.clear();
@@ -57,7 +57,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem removeCell(ListCell cell) {
-        MenuItem menu = new MenuItem("Delete item");
+        var menu = new MenuItem("Delete item");
         menu.setOnAction(event -> cell.getListView().getItems().remove(cell.getIndex()));
         return menu;
     }
@@ -69,7 +69,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem deselectCell(ListView<ReceivedMessage> list) {
-        MenuItem menu = new MenuItem("Deselect item");
+        var menu = new MenuItem("Deselect item");
         menu.setOnAction(event -> list.getSelectionModel().clearSelection());
         return menu;
     }
@@ -81,7 +81,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem copyCellAll(ReceivedMessage item) {
-        MenuItem menu = new MenuItem("Copy full message");
+        var menu = new MenuItem("Copy full message");
         menu.setOnAction(event -> {
             CLIPBOARD_CONTENT.putString(item.toString());
             CLIPBOARD.setContent(CLIPBOARD_CONTENT);
@@ -96,7 +96,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem copyCellMessage(ReceivedMessage item) {
-        MenuItem menu = new MenuItem("Copy body message");
+        var menu = new MenuItem("Copy body message");
         menu.setOnAction(event -> {
             CLIPBOARD_CONTENT.putString(item.getMessage());
             CLIPBOARD.setContent(CLIPBOARD_CONTENT);
@@ -111,7 +111,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem copyCellTime(ReceivedMessage item) {
-        MenuItem menu = new MenuItem("Copy time message");
+        var menu = new MenuItem("Copy time message");
         menu.setOnAction(event -> {
             CLIPBOARD_CONTENT.putString(item.getFormattedTime());
             CLIPBOARD.setContent(CLIPBOARD_CONTENT);
@@ -126,7 +126,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem saveMessageToFile(ReceivedMessage item) {
-        MenuItem menu = new MenuItem("Save full message");
+        var menu = new MenuItem("Save full message");
         menu.setOnAction(event -> new FilesOperations().saveTextToFile(item.toString()));
         return menu;
     }
@@ -138,7 +138,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem showMessage(final ReceivedMessage item) {
-        MenuItem menu = new MenuItem("Show body message");
+        var menu = new MenuItem("Show body message");
         menu.setOnAction(event -> new WsMessageTab(item));
         return menu;
     }
@@ -150,7 +150,7 @@ public abstract class ContextMenuItems {
      * @return MenuItem
      */
     public static MenuItem copySendMsg(ListCell<String> cell) {
-        MenuItem menu = new MenuItem("Copy message");
+        var menu = new MenuItem("Copy message");
         menu.setOnAction(event -> {
             CLIPBOARD_CONTENT.putString(cell.getText());
             CLIPBOARD.setContent(CLIPBOARD_CONTENT);
@@ -164,8 +164,8 @@ public abstract class ContextMenuItems {
      * @param tv json tree view
      * @return MenuItem
      */
-    public static MenuItem copyTreeCellValue(TreeView<String> tv) {
-        MenuItem menu = new MenuItem("Copy key:value");
+    static MenuItem copyTreeCellValue(TreeView<String> tv) {
+        var menu = new MenuItem("Copy key:value");
         menu.setOnAction(event -> {
             Optional<TreeItem<String>> find = tv.getSelectionModel().getSelectedItems().stream().findFirst();
             if (find.isPresent()) {
@@ -182,13 +182,13 @@ public abstract class ContextMenuItems {
      * @param tv json tree view
      * @return MenuItem
      */
-    public static MenuItem copyTreeValues(TreeView<String> tv) {
-        MenuItem menu = new MenuItem("Copy tree keys:values");
+    static MenuItem copyTreeValues(TreeView<String> tv) {
+        var menu = new MenuItem("Copy tree keys:values");
         menu.setOnAction(event -> {
             Optional<TreeItem<String>> find = tv.getSelectionModel().getSelectedItems().stream().findFirst();
             if (find.isPresent()) {
                 TreeItem<String> item = find.get();
-                StringBuffer buffer = new StringBuffer();
+                var buffer = new StringBuffer();
                 getChildrenValues(buffer, item);
                 CLIPBOARD_CONTENT.putString(buffer.toString());
                 CLIPBOARD.setContent(CLIPBOARD_CONTENT);

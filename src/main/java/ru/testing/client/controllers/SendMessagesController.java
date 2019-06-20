@@ -40,7 +40,7 @@ public class SendMessagesController {
         checkListView.setItems(list);
         checkListView.getItems().addListener((ListChangeListener<? super String>) change -> {
             if (change.next()) {
-                int size = list.size();
+                var size = list.size();
                 if (size > 0) {
                     setListViewVisible(true);
                 } else {
@@ -69,7 +69,7 @@ public class SendMessagesController {
      */
     @FXML
     public void addMessage() {
-        String text = tfMsgValue.getText().trim();
+        var text = tfMsgValue.getText().trim();
         if (!text.isEmpty()) {
             if (!list.contains(text)) {
                 list.add(text);
@@ -128,7 +128,7 @@ public class SendMessagesController {
      * Check text field message value
      */
     private void checkTextFieldMessage() {
-        String text = tfMsgValue.getText().trim();
+        var text = tfMsgValue.getText().trim();
         btAddMsg.setDisable(text.length() <= 0);
     }
 }

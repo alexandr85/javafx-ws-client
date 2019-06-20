@@ -37,14 +37,14 @@ public class TabSettingsController {
     private void initialize() {
 
         // Slider value listener
-        fontSlider.valueProperty().addListener(observable ->
-                fontLabel.setText(
-                        String.format("%spx", ((Number) fontSlider.getValue()).intValue())
-                )
-        );
+        fontSlider
+                .valueProperty()
+                .addListener(observable ->
+                        fontLabel.setText(String.format("%dpx", ((Double) fontSlider.getValue()).intValue()))
+                );
 
         // Set settings
-        AppProperties props = AppProperties.getInstance();
+        var props = AppProperties.getInstance();
         setSettingsValues(props.getSettings());
     }
 
@@ -66,14 +66,15 @@ public class TabSettingsController {
         mainController.setProgressVisible(true);
 
         // Save new settings in database
-        Settings newSettings = new Settings(
-                ((Number) fontSlider.getValue()).intValue(),
+        var newSettings = new Settings(
+                ((Double) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
                 cbAutoScroll.isSelected(),
                 cbWsSslValidate.isSelected(),
                 chWsCompression.isSelected()
         );
-        boolean status = newSettings.save();
+
+        var status = newSettings.save();
 
         if (status) {
 
@@ -103,7 +104,7 @@ public class TabSettingsController {
     }
 
     /**
-     * Set settings value from database
+     * Set settings values
      */
     private void setSettingsValues(Settings settings) {
 

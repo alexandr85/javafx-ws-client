@@ -1,14 +1,14 @@
 package ru.testing.client.common.properties;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Properties;
 
 /**
@@ -27,8 +27,8 @@ public class AppProperties {
     private String aboutUrl;
 
     private AppProperties() {
-        Properties props = new Properties();
-        InputStream is = AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE);
+        var props = new Properties();
+        var is = AppProperties.class.getClassLoader().getResourceAsStream(PROP_FILE);
 
         try {
             if (is != null) {
@@ -62,6 +62,7 @@ public class AppProperties {
 
     /**
      * Get application properties
+     *
      * @return AppProperties
      */
     public static AppProperties getInstance() {
@@ -86,8 +87,8 @@ public class AppProperties {
             return defaultSettings;
         }
 
-        Gson gson = new Gson();
-        Path path = Settings.getSettingsPath();
+        var gson = new Gson();
+        var path = Settings.getSettingsPath();
 
         if (!path.toFile().exists()) {
             LOGGER.debug(String.format("Can't read settings from %s. Load default settings", path.toString()));
@@ -97,7 +98,7 @@ public class AppProperties {
 
         try {
 
-            JsonReader reader = new JsonReader(new FileReader(path.toFile()));
+            var reader = new JsonReader(new FileReader(path.toFile()));
             return gson.fromJson(reader, Settings.class);
         } catch (FileNotFoundException | JsonIOException | JsonSyntaxException e) {
             LOGGER.warn(String.format("Can't read settings from %s. Load default settings", path.toString()));

@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
@@ -26,11 +27,13 @@ public class NewClientTab extends Tab {
 
     public NewClientTab() {
         setClosable(false);
-        setTooltip(new Tooltip("Create new client instance"));
+        var tp = new Tooltip("Create new client instance");
+        tp.setShowDelay(new Duration(10));
+        setTooltip(tp);
         setText("NEW");
 
         try {
-            ImageView image = new ImageView(getClass().getResource("/images/add.png").toExternalForm());
+            var image = new ImageView(getClass().getResource("/images/add.png").toExternalForm());
             image.setFitHeight(12.0);
             image.setFitWidth(12.0);
             setGraphic(image);
@@ -40,7 +43,7 @@ public class NewClientTab extends Tab {
 
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.new.client.fxml"));
+            var loader = new FXMLLoader(getClass().getResource("/views/tab.new.client.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {

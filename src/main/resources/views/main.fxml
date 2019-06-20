@@ -110,14 +110,14 @@
             </rowConstraints>
             <ComboBox fx:id="httpTypesComboBox" GridPane.columnIndex="0">
                 <tooltip>
-                    <Tooltip text="Select client type"/>
+                    <Tooltip text="Select client type" showDelay="10ms"/>
                 </tooltip>
             </ComboBox>
             <ToggleButton fx:id="httpSettings" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity"
                           mnemonicParsing="false" onAction="#showHttpSettingsPopOver" prefHeight="25.0" prefWidth="25.0"
                           GridPane.columnIndex="1">
                 <tooltip>
-                    <Tooltip text="Set http request settings"/>
+                    <Tooltip text="Set http request settings" showDelay="10ms"/>
                 </tooltip>
                 <graphic>
                     <ImageView>

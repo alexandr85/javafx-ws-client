@@ -1,10 +1,9 @@
-package ru.testing.client.common.objects;
+package ru.testing.client.elements;
 
 import com.google.gson.*;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.elements.ContextMenuItems;
 
 import java.util.List;
 
@@ -15,8 +14,8 @@ public class JsonView {
 
     public JsonView(String jsonString) {
         try {
-            JsonParser parser = new JsonParser();
-            JsonElement root = parser.parse(jsonString);
+            var parser = new JsonParser();
+            var root = parser.parse(jsonString);
             parseStatus = true;
             tree = createTree(root);
         } catch (JsonSyntaxException e) {
@@ -34,7 +33,7 @@ public class JsonView {
                     setText("");
                 } else {
                     setText(item);
-                    final ContextMenu cm = new ContextMenu();
+                    final var cm = new ContextMenu();
                     cm.getItems().addAll(
                             ContextMenuItems.copyTreeCellValue(tv),
                             ContextMenuItems.copyTreeValues(tv)
@@ -59,9 +58,9 @@ public class JsonView {
             JsonView.expandJsonTree(jsonView.getRoot(), true);
         } else {
             bJsonPretty.setDisable(true);
-            Tooltip tp = new Tooltip("json is invalid");
+            var tp = new Tooltip("json is invalid");
             tp.setShowDelay(new Duration(100));
-            segmentedButton.setTooltip(tp);
+            Tooltip.install(segmentedButton, tp);
         }
     }
 
@@ -69,12 +68,10 @@ public class JsonView {
         if (element.isJsonNull()) {
             return new TreeItem<>("null");
         } else if (element.isJsonPrimitive()) {
-            JsonPrimitive primitive = element.getAsJsonPrimitive();
-            return new TreeItem<>(
-                    primitive.isString() ? '"' + primitive.getAsString() + '"' : primitive.getAsString()
-            );
+            var primitive = element.getAsJsonPrimitive();
+            return new TreeItem<>(primitive.isString() ? '"' + primitive.getAsString() + '"' : primitive.getAsString());
         } else if (element.isJsonArray()) {
-            JsonArray array = element.getAsJsonArray();
+            var array = element.getAsJsonArray();
             TreeItem<String> item = new TreeItem<>("[ ]");
 
             array.forEach(c -> {
@@ -84,7 +81,7 @@ public class JsonView {
 
             return item;
         } else {
-            JsonObject object = element.getAsJsonObject();
+            var object = element.getAsJsonObject();
             TreeItem<String> item = new TreeItem<>("{ }");
 
             object.entrySet().forEach(o -> {
@@ -98,7 +95,7 @@ public class JsonView {
     }
 
     private void prependItem(TreeItem<String> item, String key) {
-        String value = item.getValue();
+        var value = item.getValue();
         item.setValue(value == null ? String.format("\"%s\"", key) : String.format("\"%s\": %s", key, value));
     }
 }

@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -20,7 +21,9 @@ public class SettingsTab extends Tab {
 
         // Create new tab
         setText("Settings");
-        setTooltip(new Tooltip("Application settings"));
+        var tp = new Tooltip("Application settings");
+        tp.setShowDelay(new Duration(10));
+        setTooltip(tp);
 
         try {
             setGraphic(new ImageView(getClass().getResource("/images/settings.png").toExternalForm()));
@@ -30,7 +33,7 @@ public class SettingsTab extends Tab {
 
         // Load settings views form
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.settings.fxml"));
+            var loader = new FXMLLoader(getClass().getResource("/views/tab.settings.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {

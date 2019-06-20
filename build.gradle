@@ -8,6 +8,7 @@ buildscript {
         classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
         classpath 'edu.sc.seis:macAppBundle:2.3.0'
         classpath 'org.openjfx:javafx-plugin:0.0.7'
+        classpath 'org.beryx.jlink:org.beryx.jlink.gradle.plugin:2.10.4'
     }
 }
 
@@ -19,6 +20,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'application'
 apply plugin: 'org.openjfx.javafxplugin'
+apply plugin: 'org.beryx.jlink'
 apply plugin: 'edu.sc.seis.macAppBundle'
 apply plugin: 'edu.sc.seis.launch4j'
 
@@ -49,10 +51,8 @@ application {
 dependencies {
     compile 'org.glassfish.tyrus:tyrus-client:1.12'
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
-    compile 'com.sun.jersey:jersey-client:1.19'
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'org.controlsfx:controlsfx:11.0.0'
-    compile 'org.apache.commons:commons-lang3:3.5'
     compile 'org.glassfish.tyrus.ext:tyrus-extension-deflate:1.13.1'
     compile 'log4j:log4j:1.2.17'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
@@ -60,11 +60,10 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': mainClass
+        attributes 'Main-Class': "$moduleName/$mainClass"
     }
-    archivesBaseName = 'test'
+    archivesBaseName = appFileName
 }
-
 
 // Create mac bundle with tasks `createApp` or `createDmg`
 macAppBundle {

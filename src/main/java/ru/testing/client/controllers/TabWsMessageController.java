@@ -3,10 +3,9 @@ package ru.testing.client.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.common.properties.AppProperties;
-import ru.testing.client.common.objects.JsonView;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.properties.Settings;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.elements.JsonView;
 import ru.testing.client.websocket.ReceivedMessageType;
 
 /**
@@ -35,7 +34,7 @@ public class TabWsMessageController {
     private void initialize() {
 
         // Get message settings
-        Settings settings = props.getSettings();
+        var settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
         jsonView.setCellFactory(JsonView::cellFactory);
@@ -88,12 +87,12 @@ public class TabWsMessageController {
     public void setMessage(ReceivedMessage m) {
 
         // apply json to view
-        JsonView view = new JsonView(m.getMessage());
+        var view = new JsonView(m.getMessage());
         view.apply(jsonView, bJsonPretty, segmentedButton);
 
         // Set message text and data on init tab
         txMsgArea.setText(m.getMessage());
-        String sb = String.format(
+        var sb = String.format(
                 "%s time: %s",
                 m.getMessageType() == ReceivedMessageType.RECEIVED ? "Received" : "Send",
                 m.getFormattedTime()

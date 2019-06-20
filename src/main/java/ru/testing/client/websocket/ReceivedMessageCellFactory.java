@@ -25,9 +25,9 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
     public ReceivedMessageCellFactory(TabWsMessagesController controller, boolean isFiltered) {
         this.controller = controller;
         if (isFiltered) {
-            this.list = controller.getReceivedFilteredMessageList();
+            list = controller.getReceivedFilteredMessageList();
         } else {
-            this.list = controller.getReceivedMessageList();
+            list = controller.getReceivedMessageList();
         }
     }
 
@@ -73,7 +73,7 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
      * @return ContextMenu
      */
     private ContextMenu getContextMenu(final ReceivedMessage item) {
-        final ContextMenu contextMenu = new ContextMenu();
+        final var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
                 ContextMenuItems.copyCellMessage(item),
                 ContextMenuItems.copyCellTime(item),

@@ -5,11 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import org.apache.log4j.Logger;
 import ru.testing.client.MainApp;
-import ru.testing.client.controllers.MainController;
 import ru.testing.client.controllers.TabWsMessagesController;
-import ru.testing.client.websocket.WsClient;
 
 import java.io.IOException;
 
@@ -23,12 +22,12 @@ public class WsMessagesTab extends Tab {
     private String serverUrl;
 
     public WsMessagesTab() {
-        MainController mainController = MainApp.getMainController();
+        var mainController = MainApp.getMainController();
         serverUrl = mainController.getServerUrl().getText();
 
         setText("WsMessages");
         setOnClosed(event -> {
-            WsClient wsClient = controller.getWsClient();
+            var wsClient = controller.getWsClient();
             if (wsClient != null) {
                 wsClient.closeConnection();
                 mainController.getWsClients().remove(wsClient);
@@ -43,7 +42,7 @@ public class WsMessagesTab extends Tab {
 
         // Load detail message views form
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.ws.messages.fxml"));
+            var loader = new FXMLLoader(getClass().getResource("/views/tab.ws.messages.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
             setContent(root);
@@ -52,7 +51,9 @@ public class WsMessagesTab extends Tab {
         }
 
         // Setup tab tooltip
-        setTooltip(new Tooltip(String.format("Connected to %s", serverUrl)));
+        var tp = new Tooltip(String.format("Connected to %s", serverUrl));
+        tp.setShowDelay(new Duration(10));
+        setTooltip(tp);
     }
 
     public TabWsMessagesController getController() {

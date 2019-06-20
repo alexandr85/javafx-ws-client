@@ -16,7 +16,7 @@
 
 ###### Dependencies:
 * for app version: _ java 8 
-* for app version: _ java 12 
+* for app version: _ java 11+ 
 
 ---
  

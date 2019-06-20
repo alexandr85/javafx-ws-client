@@ -4,15 +4,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -22,7 +21,9 @@ import org.apache.log4j.Logger;
 import org.controlsfx.control.textfield.CustomTextField;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
-import ru.testing.client.common.objects.*;
+import ru.testing.client.common.objects.Header;
+import ru.testing.client.common.objects.HttpParameter;
+import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.http.settings.HttpSettingsPopOver;
 import ru.testing.client.elements.tabs.*;
@@ -49,6 +50,7 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private final KeyCombination.Modifier keyModifier = (platform == OSX)
             ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
+
     private List<WsClient> wsClients = new ArrayList<>();
     private AppProperties properties = AppProperties.getInstance();
     private NewClientTab newClientTab = new NewClientTab();
@@ -101,7 +103,7 @@ public class MainController {
         tabPane.getTabs().add(newClientTab);
         tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
             if (c.next()) {
-                final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
+                final var header = (StackPane) tabPane.lookup(".tab-header-area");
                 if (header != null) {
                     if (tabPane.getTabs().size() == 1) {
                         header.setStyle("-fx-pref-height: 0");
@@ -112,7 +114,7 @@ public class MainController {
             }
         });
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            HttpSettingsController httpController = getHttpSettingsPopOver().getHttpSettingsController();
+            var httpController = getHttpSettingsPopOver().getHttpSettingsController();
 
             // Save inserted last values in 'new' tab
             if (oldValue instanceof NewClientTab) {
@@ -155,12 +157,10 @@ public class MainController {
                 connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(true);
                 httpSettings.setDisable(false);
-                serverUrl.setEditable(false);
-                urlCleaner.setDisable(true);
                 connectionButton.setDisable(false);
 
                 // Set request data
-                TabRestController restController = ((RestTab) newValue).getController();
+                var restController = ((RestTab) newValue).getController();
                 serverUrl.setText(restController.getServerUrl());
                 httpTypesComboBox.getSelectionModel().select(restController.getHttpType());
                 httpController.getHeadersList().clear();
@@ -177,9 +177,9 @@ public class MainController {
         httpTypesComboBox.setItems(httpTypes);
         httpTypesComboBox.getSelectionModel().select(0);
         httpTypesComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            HttpSettingsController controller = getHttpSettingsPopOver().getHttpSettingsController();
-            TitledPane paramsPane = controller.getParametersPane();
-            TitledPane headersPane = controller.getHeadersPane();
+            var controller = getHttpSettingsPopOver().getHttpSettingsController();
+            var paramsPane = controller.getParametersPane();
+            var headersPane = controller.getHeadersPane();
             if (newValue != HttpTypes.WEBSOCKET) {
                 paramsPane.setVisible(true);
                 paramsPane.setManaged(true);
@@ -236,21 +236,21 @@ public class MainController {
 
     @FXML
     private void createRequest() {
-        HttpTypes currentType = httpTypesComboBox.getSelectionModel().getSelectedItem();
-        Task task = new Task() {
+        var currentType = httpTypesComboBox.getSelectionModel().getSelectedItem();
+        var task = new Task() {
 
             @Override
             protected Object call() {
                 connectionButton.setDisable(true);
                 setProgressVisible(true);
-                Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+                var currentTab = tabPane.getSelectionModel().getSelectedItem();
 
                 if (currentTab instanceof NewClientTab) {
                     switch (currentType) {
                         case WEBSOCKET:
                             LOGGER.debug("Create websocket connection");
-                            WsMessagesTab wsClientTab = new WsMessagesTab();
-                            WsClient wsClient = wsClientTab.getController().getWsClient();
+                            var wsClientTab = new WsMessagesTab();
+                            var wsClient = wsClientTab.getController().getWsClient();
                             if (wsClient.isOpenConnection()) {
                                 wsClients.add(wsClient);
                                 addNewTab(wsClientTab);
@@ -259,12 +259,12 @@ public class MainController {
                         case HTTP_GET:
                         case HTTP_POST:
                             LOGGER.debug("Create rest request");
-                            RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
+                            var restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
                             addNewTab(restTab);
                     }
                 } else if (currentTab instanceof WsMessagesTab) {
-                    TabWsMessagesController controller = ((WsMessagesTab) currentTab).getController();
-                    WsClient wsClient = controller.getWsClient();
+                    var controller = ((WsMessagesTab) currentTab).getController();
+                    var wsClient = controller.getWsClient();
                     if (!wsClient.isOpenConnection()) {
                         controller.startWsClient();
                         controller.checkConnectionStatus();
@@ -272,8 +272,8 @@ public class MainController {
                         wsClient.closeConnection();
                     }
                 } else if (currentTab instanceof RestTab) {
-                    TabRestController controller = ((RestTab) currentTab).getController();
-                    controller.execute();
+                    var rest = ((RestTab) currentTab).getController();
+                    rest.execute();
                 }
 
                 setProgressVisible(false);
@@ -290,16 +290,16 @@ public class MainController {
     @FXML
     private void saveOutputToFile() {
         if (tabPane.isVisible()) {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StringBuilder builder = new StringBuilder();
+            var tab = tabPane.getSelectionModel().getSelectedItem();
+            var builder = new StringBuilder();
             if (tab instanceof WsMessagesTab) {
-                TabWsMessagesController controller = ((WsMessagesTab) tab).getController();
+                var controller = ((WsMessagesTab) tab).getController();
                 for (ReceivedMessage message : controller.getReceivedMessageList()) {
                     builder.append(String.format(ReceivedMessageFormat.DEFAULT.getFormat().concat("\n"),
                             message.getFormattedTime(), message.getMessage()));
                 }
             } else if (tab instanceof RestTab) {
-                TabRestController controller = ((RestTab) tab).getController();
+                var controller = ((RestTab) tab).getController();
                 builder.append(controller.getDetailNode().getText());
                 builder.append(controller.getMasterNode().getText());
             }
@@ -316,8 +316,8 @@ public class MainController {
             settingsTab = new SettingsTab();
             settingsTab.setOnClosed(event -> settingsTab = null);
         }
-        ObservableList<Tab> tabsList = tabPane.getTabs();
-        SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
+        var tabsList = tabPane.getTabs();
+        var selectTabModel = tabPane.getSelectionModel();
         if (!tabsList.contains(settingsTab)) {
             tabsList.add(settingsTab);
         }
@@ -365,7 +365,7 @@ public class MainController {
     @FXML
     private void nextTab() {
         if (!serverUrl.isFocused()) {
-            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            var currentIndex = tabPane.getSelectionModel().getSelectedIndex();
             if (currentIndex < tabPane.getTabs().size()) {
                 tabPane.getSelectionModel().select(currentIndex + 1);
             }
@@ -375,7 +375,7 @@ public class MainController {
     @FXML
     private void previousTab() {
         if (!serverUrl.isFocused()) {
-            int currentIndex = tabPane.getSelectionModel().getSelectedIndex();
+            var currentIndex = tabPane.getSelectionModel().getSelectedIndex();
             if (currentIndex != 0) {
                 tabPane.getSelectionModel().select(currentIndex - 1);
             }
@@ -384,10 +384,10 @@ public class MainController {
 
     @FXML
     private void closeTab() {
-        Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+        var currentTab = tabPane.getSelectionModel().getSelectedItem();
         if (!(currentTab instanceof NewClientTab)) {
             if (currentTab instanceof WsMessagesTab) {
-                WsClient wsClient = ((WsMessagesTab) currentTab).getController().getWsClient();
+                var wsClient = ((WsMessagesTab) currentTab).getController().getWsClient();
                 wsClient.closeConnection();
             }
             tabPane.getTabs().remove(currentTab);
@@ -396,10 +396,10 @@ public class MainController {
 
     @FXML
     private void closeTabs() {
-        FilteredList<Tab> tabs = tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab));
-        for (Tab tab: tabs) {
+        var tabs = tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab));
+        for (Tab tab : tabs) {
             if (tab instanceof WsMessagesTab) {
-                WsClient wsClient = ((WsMessagesTab) tab).getController().getWsClient();
+                var wsClient = ((WsMessagesTab) tab).getController().getWsClient();
                 wsClient.closeConnection();
             }
         }
@@ -413,8 +413,8 @@ public class MainController {
      */
     private void addNewTab(Tab tab) {
         Platform.runLater(() -> {
-            TabPane tabPane = getTabPane();
-            SingleSelectionModel<Tab> selectTabModel = tabPane.getSelectionModel();
+            var tabPane = getTabPane();
+            var selectTabModel = tabPane.getSelectionModel();
             tabPane.getTabs().add(tab);
             selectTabModel.select(tab);
         });
@@ -450,6 +450,7 @@ public class MainController {
 
     /**
      * Get current selected http type
+     *
      * @return HttpTypes
      */
     HttpTypes getHttpType() {
@@ -577,7 +578,7 @@ public class MainController {
      * @param url String
      */
     private void goToWebPage(String url) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        var desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
             try {
                 desktop.browse(new URL(url).toURI());

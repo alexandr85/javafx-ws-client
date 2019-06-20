@@ -56,7 +56,7 @@
                     <Cursor fx:constant="HAND"/>
                 </cursor>
                 <tooltip>
-                    <Tooltip text="Send message history list"/>
+                    <Tooltip text="Send message history list" showDelay="10ms"/>
                 </tooltip>
                 <graphic>
                     <ImageView>
@@ -127,7 +127,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Auto scroll status"/>
+                    <Tooltip text="Auto scroll status" showDelay="10ms"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
@@ -145,7 +145,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Filter status"/>
+                    <Tooltip text="Filter status" showDelay="10ms"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
@@ -157,7 +157,7 @@
             <Separator orientation="VERTICAL"/>
             <Label fx:id="timeDiffLabel" maxWidth="-Infinity">
                 <tooltip>
-                    <Tooltip text="Time difference"/>
+                    <Tooltip text="Time difference" showDelay="10ms"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
@@ -167,7 +167,7 @@
         <rightItems>
             <Label fx:id="outputMsgCount" maxWidth="-Infinity" text="0/0">
                 <tooltip>
-                    <Tooltip text="All / Selected messages"/>
+                    <Tooltip text="All / Selected messages" showDelay="10ms"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>
@@ -176,7 +176,7 @@
             <Separator orientation="VERTICAL"/>
             <Label fx:id="lbHeadersCounter" maxWidth="-Infinity" text="0">
                 <tooltip>
-                    <Tooltip text="Custom headers count"/>
+                    <Tooltip text="Custom headers count" showDelay="10ms"/>
                 </tooltip>
                 <padding>
                     <Insets left="10" right="10" top="2"/>

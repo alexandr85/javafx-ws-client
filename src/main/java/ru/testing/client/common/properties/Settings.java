@@ -1,6 +1,5 @@
 package ru.testing.client.common.properties;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import org.apache.log4j.Logger;
@@ -42,8 +41,8 @@ public class Settings {
     }
 
     static Path getSettingsPath() {
-        AppProperties props = AppProperties.getInstance();
-        String userHomeFolder = System.getProperty("user.home");
+        var props = AppProperties.getInstance();
+        var userHomeFolder = System.getProperty("user.home");
         return Paths.get(userHomeFolder, props.getHomeFolder(), SETTINGS_FILE_NAME);
     }
 
@@ -68,11 +67,11 @@ public class Settings {
     }
 
     public boolean save() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Path path = getSettingsPath();
+        var gson = new GsonBuilder().setPrettyPrinting().create();
+        var path = getSettingsPath();
 
         try {
-            FileWriter writer = new FileWriter(path.toFile());
+            var writer = new FileWriter(path.toFile());
             gson.toJson(this, writer);
             writer.flush();
             writer.close();

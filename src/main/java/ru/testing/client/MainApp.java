@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
 import org.apache.log4j.Logger;
 import org.controlsfx.tools.Platform;
 import ru.testing.client.common.github.ReleaseChecker;
@@ -14,9 +13,6 @@ import ru.testing.client.controllers.MainController;
 
 import javax.swing.*;
 import java.io.IOException;
-import java.net.URL;
-
-import static org.controlsfx.tools.Platform.OSX;
 
 /**
  * Main application class
@@ -47,6 +43,10 @@ public class MainApp extends javafx.application.Application {
         return mainController;
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
+
     /**
      * Start javafx application window
      *
@@ -56,17 +56,17 @@ public class MainApp extends javafx.application.Application {
     public void start(Stage primaryStage) {
         MainApp.primaryStage = primaryStage;
         try {
-            AppProperties properties = AppProperties.getInstance();
-            URL viewMainUrl = getClass().getResource("/views/main.fxml");
+            var properties = AppProperties.getInstance();
+            var viewMainUrl = getClass().getResource("/views/main.fxml");
 
             if (viewMainUrl == null) {
                 throw new IOException("Not found main views fxml resource");
             }
 
-            FXMLLoader loader = new FXMLLoader(viewMainUrl);
+            var loader = new FXMLLoader(viewMainUrl);
             Parent root = loader.load();
             mainController = loader.getController();
-            Scene scene = new Scene(root);
+            var scene = new Scene(root);
             setApplicationIcon(primaryStage, mainController);
             primaryStage.setTitle(String.format("WSR Inspector v%s", properties.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
@@ -89,8 +89,8 @@ public class MainApp extends javafx.application.Application {
      */
     private void setApplicationIcon(Stage stage, MainController controller) {
         try {
-            if (Platform.getCurrent() == OSX) {
-                java.awt.Image imageForMac = new ImageIcon(getClass().getResource("/images/icon-512.png")).getImage();
+            if (Platform.getCurrent() == org.controlsfx.tools.Platform.OSX) {
+                var imageForMac = new ImageIcon(getClass().getResource("/images/icon-512.png")).getImage();
                 java.awt.Taskbar.getTaskbar().setIconImage(imageForMac);
 
                 // Menu bar position for mac os
@@ -107,9 +107,5 @@ public class MainApp extends javafx.application.Application {
         } catch (Exception e) {
             LOGGER.error("Error load application icon", e);
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

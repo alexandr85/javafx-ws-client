@@ -1,6 +1,5 @@
 package ru.testing.client.websocket;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ContextMenu;
@@ -25,7 +24,7 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
 
     public SendMessagesCellFactory(SendMessagesController sendMessagesController,
                                    TabWsMessagesController tabWsMessagesController) {
-        this.list = sendMessagesController.getList();
+        list = sendMessagesController.getList();
         sendMsgTextField = tabWsMessagesController.getSendMsgTextField();
         sentMsgPopOver = tabWsMessagesController.getSendMessagesPopOver();
         checkModel = sendMessagesController.getCheckListView().getCheckModel();
@@ -35,7 +34,7 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
     public void updateItem(String message, boolean empty) {
 
         super.setSelectedStateCallback(param -> {
-            BooleanProperty observable = new SimpleBooleanProperty();
+            var observable = new SimpleBooleanProperty();
             observable.addListener((obs, oldValue, newValue) -> {
                 if (newValue) {
                     checkModel.check(param);
@@ -53,7 +52,7 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
             setContextMenu(getSendHistoryContextMenu(this, checkModel));
             setOnMouseClicked(event -> {
                 if (event.getClickCount() > 1) {
-                    String cellText = getText();
+                    var cellText = getText();
                     if (cellText != null && !cellText.isEmpty() && !sendMsgTextField.isDisable()) {
                         sendMsgTextField.setText(getText());
                         sentMsgPopOver.hide();
@@ -73,7 +72,7 @@ public class SendMessagesCellFactory extends CheckBoxListCell<String> {
      * @return ContextMenu
      */
     private ContextMenu getSendHistoryContextMenu(ListCell<String> cell, IndexedCheckModel<String> checkModel) {
-        ContextMenu contextMenu = new ContextMenu();
+        var contextMenu = new ContextMenu();
         contextMenu.getItems().addAll(
                 ContextMenuItems.copySendMsg(cell),
                 ContextMenuItems.clearCheckListView(list, checkModel)

@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 public class FilesOperations {
 
     private static final Logger LOGGER = Logger.getLogger(FilesOperations.class);
-    private static final String TEXT_FILE_NAME = "logs/output.txt";
+    private static final String TEXT_FILE_NAME = String.format("%s/%s", System.getProperty("user.home"), "output.log");
     private MainController mainController = MainApp.getMainController();
 
     /**
@@ -24,7 +24,7 @@ public class FilesOperations {
      * @param text String
      */
     public void saveTextToFile(String text) {
-        Dialogs dialogs = new Dialogs();
+        var dialogs = new Dialogs();
         mainController.setProgressVisible(true);
         if (text == null || text.isEmpty()) {
             Platform.runLater(() -> dialogs.getWarningDialog("Nothing for save"));
@@ -33,8 +33,9 @@ public class FilesOperations {
         }
         Writer writer = null;
         try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(TEXT_FILE_NAME), StandardCharsets.UTF_8));
+            writer = new BufferedWriter(
+                    new OutputStreamWriter(new FileOutputStream(TEXT_FILE_NAME), StandardCharsets.UTF_8)
+            );
             writer.write(text);
         } catch (IOException io) {
             dialogs.getExceptionDialog(io);
