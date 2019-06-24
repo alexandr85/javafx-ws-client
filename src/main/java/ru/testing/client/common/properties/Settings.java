@@ -43,7 +43,7 @@ public class Settings {
     static Path getSettingsPath() {
         var props = AppProperties.getInstance();
         var userHomeFolder = System.getProperty("user.home");
-        return Paths.get(userHomeFolder, props.getHomeFolder(), SETTINGS_FILE_NAME);
+        return Paths.get(userHomeFolder, String.format(".%s", props.getAppName()), SETTINGS_FILE_NAME);
     }
 
     public int getFontSize() {

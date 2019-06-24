@@ -1,6 +1,9 @@
 package ru.testing.client.elements;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.util.Duration;
 import org.controlsfx.control.SegmentedButton;
@@ -53,15 +56,17 @@ public class JsonView {
     }
 
     public void apply(TreeView<String> jsonView, ToggleButton bJsonPretty, SegmentedButton segmentedButton) {
-        if (parseStatus) {
-            jsonView.setRoot(tree);
-            JsonView.expandJsonTree(jsonView.getRoot(), true);
-        } else {
-            bJsonPretty.setDisable(true);
-            var tp = new Tooltip("json is invalid");
-            tp.setShowDelay(new Duration(100));
-            Tooltip.install(segmentedButton, tp);
-        }
+        Platform.runLater(() -> {
+            if (parseStatus) {
+                jsonView.setRoot(tree);
+                JsonView.expandJsonTree(jsonView.getRoot(), true);
+            } else {
+                bJsonPretty.setDisable(true);
+                var tp = new Tooltip("json is invalid");
+                tp.setShowDelay(new Duration(100));
+                Tooltip.install(segmentedButton, tp);
+            }
+        });
     }
 
     private TreeItem<String> createTree(JsonElement element) {

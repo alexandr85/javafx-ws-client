@@ -143,7 +143,11 @@ public class TabWsMessagesController {
         setCircleTooltip("Disconnected");
 
         // Start ws client
-        startWsClient();
+        try {
+            startWsClient();
+        } catch (Exception e) {
+            LOGGER.warn("Can\t start websocket client: " + e.getMessage());
+        }
     }
 
     /**
@@ -296,7 +300,7 @@ public class TabWsMessagesController {
                 }
             });
         } catch (Exception e) {
-            LOGGER.error("Error open connection", e);
+            LOGGER.error("Can't open connection: " + e.getMessage());
             Platform.runLater(() -> new Dialogs().getExceptionDialog(e));
         } finally {
             checkConnectionStatus();

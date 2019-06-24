@@ -34,6 +34,7 @@ public class TabRestController {
     private MainController mainController = MainApp.getMainController();
     private List<Header> headers = new ArrayList<>();
     private List<HttpParameter> parameters = new ArrayList<>();
+    private HttpClient client;
     private String serverUrl;
     private HttpTypes httpType;
 
@@ -80,56 +81,65 @@ public class TabRestController {
 
         // Set message font size
         masterDetailPane.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
-    }
 
-    void execute() {
+        // Initialize http client
         LOGGER.debug("Initializing http client ...");
-
-        var client = HttpClient
+        client = HttpClient
                 .newBuilder()
                 .connectTimeout(Duration.ofSeconds(TIMEOUT))
                 .build();
 
+        execute();
+    }
+
+    void execute() {
         serverUrl = mainController.getServerUrl().getText();
         httpType = mainController.getHttpType();
 
-
-        // prepare http headers & parameters
+        // prepare http headers
         headers.clear();
         headers.addAll(mainController.getHeadersList());
-        parameters.clear();
-        parameters.addAll(mainController.getHttpParametersList());
-
-        var params = new StringBuilder();
-        parameters.forEach(p -> params.append(String.format("%s=%s&", p.getName(), p.getValue())));
 
         HttpResponse response = null;
         try {
             switch (httpType) {
                 case HTTP_GET:
 
+                    // prepare get parameters
+                    parameters.clear();
+                    parameters.addAll(mainController.getHttpParametersList());
+
                     // create get request builder
+                    var getAddr = uriWithParameters(serverUrl, parameters);
                     var getRequest = HttpRequest.newBuilder()
                             .GET()
                             .timeout(Duration.ofSeconds(TIMEOUT))
-                            .uri(URI.create(String.format("%s?%s", serverUrl, params.toString())));
+                            .uri(getAddr);
 
+                    getRequest.header("User-Agent", String.format("%s/%s", props.getAppName(), props.getVersion()));
                     headers.forEach(h -> getRequest.header(h.getName(), h.getValue()));
 
-                    LOGGER.debug("Execute http GET request");
+                    LOGGER.debug(String.format("Execute http GET request to %s", getAddr));
                     response = client.send(getRequest.build(), HttpResponse.BodyHandlers.ofString());
                     break;
                 case HTTP_POST:
+                    // prepare post body
+                    var body = mainController.getPostBody();
+                    var bodyPublish = body.isEmpty() ?
+                            HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
 
-                    // create get request builder
+                    // create post request builder
+                    var postAddr = URI.create(serverUrl);
                     var postRequest = HttpRequest.newBuilder()
-                            .POST(HttpRequest.BodyPublishers.noBody())
+                            .POST(bodyPublish)
                             .timeout(Duration.ofSeconds(TIMEOUT))
-                            .uri(URI.create(String.format("%s?%s", serverUrl, params.toString())));
+                            .uri(postAddr);
 
+                    postRequest.header("User-Agent", String.format("%s/%s", props.getAppName(), props.getVersion()));
                     headers.forEach(h -> postRequest.header(h.getName(), h.getValue()));
 
-                    LOGGER.debug("Execute http POST request");
+                    LOGGER.debug(String.format("Execute http POST request to %s with body length %d",
+                            postAddr, bodyPublish.contentLength()));
                     response = client.send(postRequest.build(), HttpResponse.BodyHandlers.ofString());
             }
         } catch (IOException | InterruptedException e) {
@@ -138,7 +148,7 @@ public class TabRestController {
 
         // Set http action
         if (response != null) {
-            LOGGER.debug("Get response");
+            LOGGER.debug(String.format("Successful get response with status %d", response.statusCode()));
             String message = response.body().toString();
 
             // apply json tree to view
@@ -187,8 +197,8 @@ public class TabRestController {
      * @param response ClientResponse
      */
     private void setHeadersDetail(HttpResponse response) {
-        var stringBuilder = new StringBuilder();
-        stringBuilder.append(httpType.getName())
+        var builder = new StringBuilder();
+        builder.append(httpType.getName())
                 .append(" ")
                 .append(serverUrl)
                 .append(" ")
@@ -199,11 +209,11 @@ public class TabRestController {
                 .append(response.version())
                 .append("\n");
 
-        response.headers().map().forEach((k, v) -> stringBuilder.append(k)
+        response.headers().map().forEach((k, v) -> builder.append(k)
                 .append(": ")
                 .append(v)
                 .append("\n"));
-        detailNode.setText(stringBuilder.toString());
+        detailNode.setText(builder.toString());
     }
 
     private void toggleJsonPrettyMessage(boolean state) {
@@ -224,5 +234,16 @@ public class TabRestController {
         masterNode.setWrapText(state);
         detailNode.setWrapText(state);
         segmentedButton.requestFocus();
+    }
+
+    private URI uriWithParameters(String url, List<HttpParameter> parameters) {
+        if (parameters == null || parameters.size() == 0) {
+            return URI.create(url);
+        } else {
+            var builder = new StringBuilder(url);
+            builder.append("?");
+            parameters.forEach(p -> builder.append(String.format("%s=%s&", p.getName(), p.getValue())));
+            return URI.create(builder.toString());
+        }
     }
 }

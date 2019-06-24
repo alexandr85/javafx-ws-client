@@ -21,7 +21,7 @@ public class AppProperties {
     private static AppProperties properties;
     private Settings defaultSettings;
     private String version;
-    private String homeFolder;
+    private String appName;
     private String tagsUrl;
     private String lastReleaseUrl;
     private String aboutUrl;
@@ -43,7 +43,7 @@ public class AppProperties {
 
         // read main application properties
         version = props.getProperty("version");
-        homeFolder = props.getProperty("home.folder");
+        appName = props.getProperty("app.name");
 
         // read github properties
         tagsUrl = props.getProperty("tags.url");
@@ -110,8 +110,8 @@ public class AppProperties {
         return version;
     }
 
-    String getHomeFolder() {
-        return homeFolder;
+    public String getAppName() {
+        return appName;
     }
 
     public String getTagsUrl() {

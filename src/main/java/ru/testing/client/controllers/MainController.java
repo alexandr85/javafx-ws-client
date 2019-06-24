@@ -180,16 +180,42 @@ public class MainController {
             var controller = getHttpSettingsPopOver().getHttpSettingsController();
             var paramsPane = controller.getParametersPane();
             var headersPane = controller.getHeadersPane();
-            if (newValue != HttpTypes.WEBSOCKET) {
-                paramsPane.setVisible(true);
-                paramsPane.setManaged(true);
-                headersPane.setCollapsible(true);
-            } else {
-                controller.getAccordion().setExpandedPane(headersPane);
-                headersPane.setCollapsible(false);
-                paramsPane.setVisible(false);
-                paramsPane.setManaged(false);
+            var tpParameters = controller.getTpParameters();
+            var fpParameters = controller.getFpParameters();
+            var bodyArea = controller.getBodyTextArea();
+
+            switch (newValue) {
+                case HTTP_GET:
+                    headersPane.setCollapsible(true);
+                    paramsPane.setVisible(true);
+                    paramsPane.setManaged(true);
+                    tpParameters.setVisible(true);
+                    tpParameters.setManaged(true);
+                    fpParameters.setVisible(true);
+                    fpParameters.setManaged(true);
+                    bodyArea.setVisible(false);
+                    bodyArea.setManaged(false);
+                    paramsPane.setText("Parameters");
+                    break;
+                case HTTP_POST:
+                    headersPane.setCollapsible(true);
+                    paramsPane.setVisible(true);
+                    paramsPane.setManaged(true);
+                    tpParameters.setVisible(false);
+                    tpParameters.setManaged(false);
+                    fpParameters.setVisible(false);
+                    fpParameters.setManaged(false);
+                    bodyArea.setVisible(true);
+                    bodyArea.setManaged(true);
+                    paramsPane.setText("Body");
+                    break;
+                default:
+                    controller.getAccordion().setExpandedPane(headersPane);
+                    headersPane.setCollapsible(false);
+                    paramsPane.setVisible(false);
+                    paramsPane.setManaged(false);
             }
+
             updateConnectionButtonName();
             validateServerUrl();
         });
@@ -273,7 +299,7 @@ public class MainController {
                     }
                 } else if (currentTab instanceof RestTab) {
                     var rest = ((RestTab) currentTab).getController();
-                    rest.execute();
+                    Platform.runLater(rest::execute);
                 }
 
                 setProgressVisible(false);
@@ -530,6 +556,10 @@ public class MainController {
      */
     ObservableList<HttpParameter> getHttpParametersList() {
         return getHttpSettingsPopOver().getHttpSettingsController().getHttpParametersList();
+    }
+
+    String getPostBody() {
+        return getHttpSettingsPopOver().getHttpSettingsController().getBodyTextArea().getText();
     }
 
     /**
