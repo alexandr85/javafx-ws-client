@@ -5,7 +5,7 @@ import javafx.scene.control.*;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
@@ -31,7 +31,7 @@ public class TabRestController {
     private static final int TIMEOUT = 10000;
 
     private AppProperties props = AppProperties.getInstance();
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
     private List<Header> headers = new ArrayList<>();
     private List<HttpParameter> parameters = new ArrayList<>();
     private HttpClient client;

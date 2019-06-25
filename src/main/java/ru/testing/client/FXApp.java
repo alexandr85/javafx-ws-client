@@ -15,11 +15,11 @@ import javax.swing.*;
 import java.io.IOException;
 
 /**
- * Main application class
+ * JavaFx application class
  */
-public class MainApp extends javafx.application.Application {
+public class FXApp extends javafx.application.Application {
 
-    private static final Logger LOGGER = Logger.getLogger(MainApp.class);
+    private static final Logger LOGGER = Logger.getLogger(FXApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
     private static Stage primaryStage;
@@ -54,7 +54,7 @@ public class MainApp extends javafx.application.Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        MainApp.primaryStage = primaryStage;
+        FXApp.primaryStage = primaryStage;
         try {
             var properties = AppProperties.getInstance();
             var viewMainUrl = getClass().getResource("/views/main.fxml");

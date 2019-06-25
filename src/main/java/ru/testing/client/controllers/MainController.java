@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
-import static ru.testing.client.MainApp.getPrimaryStage;
+import static ru.testing.client.FXApp.getPrimaryStage;
 
 /**
  * FXML controller for main page

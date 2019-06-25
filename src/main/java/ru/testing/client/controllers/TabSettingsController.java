@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
@@ -18,7 +18,7 @@ public class TabSettingsController {
 
     private static final String FONT_SIZE_FORMAT = "-fx-font-size: %spx;";
     private AppProperties props = AppProperties.getInstance();
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
 
     @FXML
     private CheckBox chWrap;

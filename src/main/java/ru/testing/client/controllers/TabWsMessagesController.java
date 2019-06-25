@@ -13,7 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.common.properties.AppProperties;
@@ -37,7 +37,7 @@ public class TabWsMessagesController {
     private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
     private AppProperties props = AppProperties.getInstance();
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
     private Settings settings;
     private FilterListPopOver filterPopOver;
     private SendMessagesPopOver sendMessagesPopOver;

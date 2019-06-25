@@ -2,7 +2,7 @@ package ru.testing.client.common;
 
 import javafx.application.Platform;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.Dialogs;
 
@@ -16,7 +16,7 @@ public class FilesOperations {
 
     private static final Logger LOGGER = Logger.getLogger(FilesOperations.class);
     private static final String TEXT_FILE_NAME = String.format("%s/%s", System.getProperty("user.home"), "output.log");
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
 
     /**
      * Save text to file

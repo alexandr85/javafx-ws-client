@@ -7,7 +7,7 @@ import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.controllers.TabWsMessageController;
 
@@ -21,7 +21,7 @@ public class WsMessageTab extends Tab {
     private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
 
     public WsMessageTab(final ReceivedMessage item) {
-        var mainController = MainApp.getMainController();
+        var mainController = FXApp.getMainController();
         ObservableList<Tab> tabsList = mainController.getTabPane().getTabs();
         if (item != null) {
 

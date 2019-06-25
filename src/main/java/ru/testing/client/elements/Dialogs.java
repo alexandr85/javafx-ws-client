@@ -7,7 +7,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,7 +34,7 @@ public class Dialogs {
         alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setContentText(info);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         alert.showAndWait();
     }
 
@@ -76,7 +76,7 @@ public class Dialogs {
 
             // Set expandable Exception into the dialog pane.
             alert.getDialogPane().setExpandableContent(expContent);
-            alert.initOwner(MainApp.getPrimaryStage());
+            alert.initOwner(FXApp.getPrimaryStage());
             alert.showAndWait();
         } catch (IllegalStateException se) {
             LOGGER.error("Error show exception dialog message", se);
@@ -95,7 +95,7 @@ public class Dialogs {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
@@ -110,7 +110,7 @@ public class Dialogs {
         alert.setTitle("Warning");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         alert.showAndWait();
     }
 }

@@ -7,7 +7,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import org.apache.log4j.Logger;
-import ru.testing.client.MainApp;
+import ru.testing.client.FXApp;
 import ru.testing.client.controllers.TabWsMessagesController;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class WsMessagesTab extends Tab {
     private String serverUrl;
 
     public WsMessagesTab() {
-        var mainController = MainApp.getMainController();
+        var mainController = FXApp.getMainController();
         serverUrl = mainController.getServerUrl().getText();
 
         setText("WsMessages");

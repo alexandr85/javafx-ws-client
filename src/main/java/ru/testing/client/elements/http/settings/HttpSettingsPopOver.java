@@ -8,7 +8,7 @@ import ru.testing.client.controllers.HttpSettingsController;
 
 import java.io.IOException;
 
-import static ru.testing.client.MainApp.getMainController;
+import static ru.testing.client.FXApp.getMainController;
 
 /**
  * Http setting pop over

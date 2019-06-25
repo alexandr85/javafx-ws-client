@@ -12,10 +12,10 @@ repositories {
 
 ext {
     appName = "WsrInspector"
-    appLauncher = "wrs.inspector"
-    appPackaging = "WsrInspector"
     appModuleName = "wsr.inspector"
-    appMainClass = "ru.testing.client.MainApp"
+    appMainClass = "ru.testing.client.FXApp"
+    appLauncher = appModuleName
+    appPackaging = appName
 }
 
 application {
@@ -24,6 +24,7 @@ application {
     description = """UI application for testing websocket & rest requests"""
     mainClassName = "${appModuleName}/${appMainClass}"
     compileJava.options.encoding = 'UTF-8'
+    sourceCompatibility = 1.11
 }
 
 allprojects {
