@@ -11,8 +11,8 @@ module wsr.inspector {
     requires gson;
     requires log4j;
 
-    exports ru.testing.client.controllers;
     exports ru.testing.client;
+    exports ru.testing.client.controllers;
     exports ru.testing.client.websocket;
     exports ru.testing.client.common.objects;
 

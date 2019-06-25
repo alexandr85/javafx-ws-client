@@ -1,28 +1,30 @@
-buildscript {
-    repositories {
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath 'gradle.plugin.edu.sc.seis.gradle:launch4j:2.3.0'
-        classpath 'edu.sc.seis:macAppBundle:2.3.0'
-        classpath 'org.openjfx:javafx-plugin:0.0.7'
-        classpath 'org.beryx.jlink:org.beryx.jlink.gradle.plugin:2.10.4'
-    }
+plugins {
+    id 'java'
+    id 'idea'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.7'
+    id 'org.beryx.jlink' version '2.11.1'
 }
 
 repositories {
     mavenCentral()
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'application'
-apply plugin: 'org.openjfx.javafxplugin'
-apply plugin: 'org.beryx.jlink'
-apply plugin: 'edu.sc.seis.macAppBundle'
-apply plugin: 'edu.sc.seis.launch4j'
+ext {
+    appName = "WsrInspector"
+    appLauncher = "wrs.inspector"
+    appPackaging = "WsrInspector"
+    appModuleName = "wsr.inspector"
+    appMainClass = "ru.testing.client.MainApp"
+}
+
+application {
+    group = 'ru.testing'
+    version = '3.0'
+    description = """UI application for testing websocket & rest requests"""
+    mainClassName = "${appModuleName}/${appMainClass}"
+    compileJava.options.encoding = 'UTF-8'
+}
 
 allprojects {
     idea {
@@ -34,18 +36,7 @@ allprojects {
 
 javafx {
     version = "12"
-    modules = [ 'javafx.fxml', 'javafx.controls' ]
-}
-
-def appFileName = 'WsrInspector'
-def mainClass = 'ru.testing.client.MainApp'
-compileJava.options.encoding = 'UTF-8'
-
-application {
-    group = 'ru.testing'
-    version = '3.0'
-    description = """UI application for testing websocket & rest requests"""
-    mainClassName = "$moduleName/$mainClass"
+    modules = ['javafx.fxml', 'javafx.controls']
 }
 
 dependencies {
@@ -58,53 +49,20 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 }
 
-jar {
-    manifest {
-        attributes 'Main-Class': "$moduleName/$mainClass"
-    }
-    archivesBaseName = appFileName
-}
-
-// Create mac bundle with tasks `createApp` or `createDmg`
-macAppBundle {
-    mainClassName = mainClass
-    icon = 'src/main/resources/images/icon-512.icns'
-    bundleJRE = false
-    appName = appFileName
-    dmgName = appFileName
-}
-
-// Create windows wrapper with task `createExe`
-launch4j {
-    mainClassName = mainClass
-    icon = '../../application.ico'
-    outfile = appFileName + '.exe'
-    libraryDir = 'libs'
-    outputDir = 'winApp'
-}
-
-// Create a single Jar with all dependencies
-task fullJar(type: Jar) {
-    jar.archiveFileName = "${appFileName}.jar"
-    manifest { attributes "Implementation-Version": version, "Main-Class": mainClass }
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-    doLast {
-        copy {
-            from "build/libs/${jar.archiveFileName}"
-            into "build/distributions"
-        }
+jlink {
+    imageZip.set(project.file("${buildDir}/distributions/${appPackaging}-${javafx.platform.classifier}.zip"))
+    addOptions('--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages')
+    launcher {
+        name = appLauncher
     }
 }
 
-// Create application distributions for all os
-task create(dependsOn: [clean, createExe, createDmg, fullJar], type: Zip) {
-    from 'build/winApp'
-    jar.archiveFileName = "${appFileName}.zip"
-    doLast {
-        delete "build/libs/${appFileName}.jar"
-    }
+task dist {
+    dependsOn clean, jlinkZip
+    description "Calls clean and then jlinkZip [default]"
 }
+
+defaultTasks 'dist'
 
 test {
     reports.html.enabled = false

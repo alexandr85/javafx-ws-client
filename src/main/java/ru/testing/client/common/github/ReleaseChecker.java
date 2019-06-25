@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
+import javax.net.ssl.SSLParameters;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -22,13 +23,32 @@ public class ReleaseChecker extends Thread {
 
     private static final Logger LOGGER = Logger.getLogger(ReleaseChecker.class);
     private AppProperties properties = AppProperties.getInstance();
-    private String lastVersion = "1.0";
+    private String lastVersion;
+    private String[] sslChippers = new String[]{
+            "SSL_RSA_WITH_RC4_128_MD5",
+            "SSL_RSA_WITH_RC4_128_SHA",
+            "TLS_RSA_WITH_AES_128_CBC_SHA",
+            "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+            "TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
+            "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
+            "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
+            "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
+            "SSL_RSA_WITH_DES_CBC_SHA",
+            "SSL_DHE_RSA_WITH_DES_CBC_SHA",
+            "SSL_DHE_DSS_WITH_DES_CBC_SHA",
+            "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
+            "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
+            "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
+            "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA"
+    };
+    private String[] protocols = new String[]{"TLSv1.2", "TLSv1.1", "SSLv3"};
 
     /**
      * Run get git hub info
      */
     public void run() {
         var url = properties.getTagsUrl();
+        lastVersion = properties.getVersion();
         try {
             if (!url.isEmpty()) {
                 var tags = getTagsFromApi();
@@ -64,7 +84,9 @@ public class ReleaseChecker extends Thread {
      */
     private TagInfo[] getTagsFromApi() {
         var tags = new TagInfo[0];
-        var client = HttpClient.newHttpClient();
+        var client = HttpClient.newBuilder()
+                .sslParameters(new SSLParameters(sslChippers, protocols))
+                .build();
         var request = HttpRequest
                 .newBuilder()
                 .GET()
@@ -80,7 +102,7 @@ public class ReleaseChecker extends Thread {
 
             tags = new Gson().fromJson(response.body(), TagInfo[].class);
         } catch (IOException | InterruptedException | JsonSyntaxException e) {
-            LOGGER.warn(e);
+            LOGGER.warn("Can't execute http request: " + e.getMessage());
         }
 
         return tags;
