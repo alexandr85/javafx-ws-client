@@ -13,7 +13,7 @@
         <Insets top="4"/>
     </padding>
     <panes>
-        <TitledPane text="Headers" fx:id="headersPane">
+        <TitledPane text="Headers" fx:id="headersPane" animated="false">
             <GridPane vgap="8">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES"/>
@@ -43,7 +43,7 @@
                 </TilePane>
             </GridPane>
         </TitledPane>
-        <TitledPane text="Parameters" fx:id="parametersPane">
+        <TitledPane text="Parameters" fx:id="parametersPane" animated="false">
             <GridPane vgap="8">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES"/>
@@ -52,7 +52,8 @@
                     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
                     <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" vgrow="SOMETIMES"/>
                 </rowConstraints>
-                <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
+                <TextArea fx:id="bodyTextArea" GridPane.rowIndex="0" visible="false" managed="false"/>
+                <FlowPane fx:id="fpParameters" GridPane.rowIndex="0" hgap="6" alignment="CENTER">
                     <TextField fx:id="parameterName" promptText="Parameter name" prefWidth="120.0"/>
                     <TextField fx:id="parameterValue" promptText="Parameter value" prefWidth="240.0"/>
                     <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0"
@@ -67,7 +68,7 @@
                         </cursor>
                     </Button>
                 </FlowPane>
-                <TilePane GridPane.columnIndex="0" GridPane.rowIndex="1" prefWidth="400.0" alignment="CENTER">
+                <TilePane fx:id="tpParameters" GridPane.rowIndex="1" prefWidth="400.0" alignment="CENTER">
                     <Label fx:id="lbNoParameters" text="No parameters" alignment="CENTER" prefHeight="80.0"/>
                     <ListView fx:id="pListView" visible="false" managed="false" prefHeight="80.0" prefWidth="400"/>
                 </TilePane>

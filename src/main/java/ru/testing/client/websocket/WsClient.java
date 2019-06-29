@@ -199,6 +199,7 @@ public class WsClient extends Endpoint {
      * Method close current connection
      */
     public void closeConnection() {
+        LOGGER.debug(String.format("Close ws connection to endpoint uri: %s", this.endpointURI));
         if (session != null) {
             try {
                 session.close();

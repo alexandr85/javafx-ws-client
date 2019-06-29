@@ -20,7 +20,7 @@ public class HttpSettingsPopOver extends PopOver {
 
     public HttpSettingsPopOver() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.http.settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/popover.http.settings.fxml"));
             Parent root = loader.load();
             httpSettingsController = loader.getController();
             setContentNode(root);

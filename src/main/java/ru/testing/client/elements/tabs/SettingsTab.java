@@ -25,7 +25,7 @@ public class SettingsTab extends Tab {
 
         // Load settings view form
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.settings.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.settings.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {

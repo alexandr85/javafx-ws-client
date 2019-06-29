@@ -70,7 +70,7 @@ public class FXApp extends Application {
         FXApp.primaryStage = primaryStage;
         try {
             AppProperties props = AppProperties.getInstance();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/main.fxml"));
             Parent root = loader.load();
             mainController = loader.getController();
             Scene scene = new Scene(root);

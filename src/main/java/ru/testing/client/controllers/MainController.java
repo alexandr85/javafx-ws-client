@@ -8,21 +8,25 @@ import javafx.collections.transformation.FilteredList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import org.apache.log4j.Logger;
 import org.controlsfx.control.textfield.CustomTextField;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
-import ru.testing.client.common.objects.*;
+import ru.testing.client.common.objects.Header;
+import ru.testing.client.common.objects.HttpParameter;
+import ru.testing.client.common.objects.ReceivedMessage;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.http.settings.HttpSettingsPopOver;
 import ru.testing.client.elements.tabs.*;
@@ -33,8 +37,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
 import static ru.testing.client.FXApp.getPrimaryStage;
@@ -49,7 +51,7 @@ public class MainController {
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private final KeyCombination.Modifier keyModifier = (platform == OSX)
             ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
-    private List<WsClient> wsClients = new ArrayList<>();
+
     private AppProperties properties = AppProperties.getInstance();
     private NewClientTab newClientTab = new NewClientTab();
     private HttpSettingsPopOver httpSettingsPopOver;
@@ -100,15 +102,18 @@ public class MainController {
         // Tabs change listener
         tabPane.getTabs().add(newClientTab);
         tabPane.getTabs().addListener((ListChangeListener<? super Tab>) c -> {
-            if (c.next()) {
-                final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
-                if (header != null) {
-                    if (tabPane.getTabs().size() == 1) {
-                        header.setStyle("-fx-pref-height: 0");
-                    } else {
-                        header.setStyle("-fx-pref-height: 30");
-                    }
+            while (c.next()) {
+
+                if (c.wasRemoved()) {
+                    c.getRemoved().forEach(tab -> {
+                        if (tab instanceof WsMessagesTab) {
+                            WsClient wsClient = ((WsMessagesTab) tab).getController().getWsClient();
+                            wsClient.closeConnection();
+                        }
+                    });
                 }
+
+                updateTabPaneStyle();
             }
         });
         tabPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -155,8 +160,6 @@ public class MainController {
                 connectTilePane.setDisable(false);
                 httpTypesComboBox.setDisable(true);
                 httpSettings.setDisable(false);
-                serverUrl.setEditable(false);
-                urlCleaner.setDisable(true);
                 connectionButton.setDisable(false);
 
                 // Set request data
@@ -180,16 +183,42 @@ public class MainController {
             HttpSettingsController controller = getHttpSettingsPopOver().getHttpSettingsController();
             TitledPane paramsPane = controller.getParametersPane();
             TitledPane headersPane = controller.getHeadersPane();
-            if (newValue != HttpTypes.WEBSOCKET) {
-                paramsPane.setVisible(true);
-                paramsPane.setManaged(true);
-                headersPane.setCollapsible(true);
-            } else {
-                controller.getAccordion().setExpandedPane(headersPane);
-                headersPane.setCollapsible(false);
-                paramsPane.setVisible(false);
-                paramsPane.setManaged(false);
+            TilePane tpParameters = controller.getTpParameters();
+            FlowPane fpParameters = controller.getFpParameters();
+            TextArea bodyArea = controller.getBodyTextArea();
+
+            switch (newValue) {
+                case HTTP_GET:
+                    headersPane.setCollapsible(true);
+                    paramsPane.setVisible(true);
+                    paramsPane.setManaged(true);
+                    tpParameters.setVisible(true);
+                    tpParameters.setManaged(true);
+                    fpParameters.setVisible(true);
+                    fpParameters.setManaged(true);
+                    bodyArea.setVisible(false);
+                    bodyArea.setManaged(false);
+                    paramsPane.setText("Parameters");
+                    break;
+                case HTTP_POST:
+                    headersPane.setCollapsible(true);
+                    paramsPane.setVisible(true);
+                    paramsPane.setManaged(true);
+                    tpParameters.setVisible(false);
+                    tpParameters.setManaged(false);
+                    fpParameters.setVisible(false);
+                    fpParameters.setManaged(false);
+                    bodyArea.setVisible(true);
+                    bodyArea.setManaged(true);
+                    paramsPane.setText("Body");
+                    break;
+                default:
+                    controller.getAccordion().setExpandedPane(headersPane);
+                    headersPane.setCollapsible(false);
+                    paramsPane.setVisible(false);
+                    paramsPane.setManaged(false);
             }
+
             updateConnectionButtonName();
             validateServerUrl();
         });
@@ -225,11 +254,7 @@ public class MainController {
      */
     @FXML
     private void exitApplication() {
-        wsClients.forEach(wsClient -> {
-            if (wsClient != null && wsClient.isOpenConnection()) {
-                wsClient.closeConnection();
-            }
-        });
+        tabPane.getTabs().clear();
         Platform.exit();
         System.exit(0);
     }
@@ -244,17 +269,22 @@ public class MainController {
                 connectionButton.setDisable(true);
                 setProgressVisible(true);
                 Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
+
                 if (currentTab instanceof NewClientTab) {
-                    if (currentType == HttpTypes.WEBSOCKET) {
-                        WsMessagesTab wsClientTab = new WsMessagesTab();
-                        WsClient wsClient = wsClientTab.getController().getWsClient();
-                        if (wsClient.isOpenConnection()) {
-                            wsClients.add(wsClient);
-                            addNewTab(wsClientTab);
-                        }
-                    } else {
-                        RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
-                        addNewTab(restTab);
+                    switch (currentType) {
+                        case WEBSOCKET:
+                            LOGGER.debug("Create websocket connection");
+                            WsMessagesTab wsClientTab = new WsMessagesTab();
+                            WsClient wsClient = wsClientTab.getController().getWsClient();
+                            if (wsClient.isOpenConnection()) {
+                                addNewTab(wsClientTab);
+                            }
+                            break;
+                        case HTTP_GET:
+                        case HTTP_POST:
+                            LOGGER.debug("Create rest request");
+                            RestTab restTab = new RestTab(httpTypesComboBox.getSelectionModel().getSelectedItem());
+                            addNewTab(restTab);
                     }
                 } else if (currentTab instanceof WsMessagesTab) {
                     TabWsMessagesController controller = ((WsMessagesTab) currentTab).getController();
@@ -266,9 +296,10 @@ public class MainController {
                         wsClient.closeConnection();
                     }
                 } else if (currentTab instanceof RestTab) {
-                    TabRestController controller = ((RestTab) currentTab).getController();
-                    controller.execute();
+                    TabRestController rest = ((RestTab) currentTab).getController();
+                    Platform.runLater(rest::execute);
                 }
+
                 setProgressVisible(false);
                 connectionButton.setDisable(false);
                 return null;
@@ -379,10 +410,6 @@ public class MainController {
     private void closeTab() {
         Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
         if (!(currentTab instanceof NewClientTab)) {
-            if (currentTab instanceof WsMessagesTab) {
-                WsClient wsClient = ((WsMessagesTab) currentTab).getController().getWsClient();
-                wsClient.closeConnection();
-            }
             tabPane.getTabs().remove(currentTab);
         }
     }
@@ -390,13 +417,21 @@ public class MainController {
     @FXML
     private void closeTabs() {
         FilteredList<Tab> tabs = tabPane.getTabs().filtered(tab -> !(tab instanceof NewClientTab));
-        for (Tab tab: tabs) {
-            if (tab instanceof WsMessagesTab) {
-                WsClient wsClient = ((WsMessagesTab) tab).getController().getWsClient();
-                wsClient.closeConnection();
+        tabPane.getTabs().removeAll(tabs);
+    }
+
+    /**
+     * Update tabb pane style on tabs count change
+     */
+    private void updateTabPaneStyle() {
+        final StackPane header = (StackPane) tabPane.lookup(".tab-header-area");
+        if (header != null) {
+            if (tabPane.getTabs().size() == 1) {
+                header.setStyle("-fx-pref-height: 0");
+            } else {
+                header.setStyle("-fx-pref-height: 30");
             }
         }
-        tabPane.getTabs().removeAll(tabs);
     }
 
     /**
@@ -433,16 +468,8 @@ public class MainController {
     }
 
     /**
-     * Get ws clients list
-     *
-     * @return List<WsClient>
-     */
-    public List<WsClient> getWsClients() {
-        return wsClients;
-    }
-
-    /**
      * Get current selected http type
+     *
      * @return HttpTypes
      */
     HttpTypes getHttpType() {
@@ -454,7 +481,7 @@ public class MainController {
      *
      * @return HttpSettingsPopOver
      */
-    private HttpSettingsPopOver getHttpSettingsPopOver() {
+    HttpSettingsPopOver getHttpSettingsPopOver() {
         if (httpSettingsPopOver == null) {
             httpSettingsPopOver = new HttpSettingsPopOver();
         }

@@ -32,7 +32,7 @@ public class WsMessageTab extends Tab {
 
             // Load detail message view form
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.ws.message.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.ws.message.fxml"));
                 Parent root = loader.load();
                 TabWsMessageController controller = loader.getController();
                 controller.setMessage(item);

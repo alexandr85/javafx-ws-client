@@ -1,17 +1,13 @@
 package ru.testing.client.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.common.Utils;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.properties.Settings;
 import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.common.properties.Settings;
+import ru.testing.client.elements.JsonView;
 import ru.testing.client.websocket.ReceivedMessageType;
-
-import static ru.testing.client.common.Utils.getJsonPretty;
 
 /**
  * Controller for detail message tab form
@@ -19,16 +15,15 @@ import static ru.testing.client.common.Utils.getJsonPretty;
 public class TabWsMessageController {
 
     private AppProperties props = AppProperties.getInstance();
-    private ReceivedMessage message;
 
     @FXML
     private TextArea txMsgArea;
     @FXML
+    private TreeView<String> jsonView;
+    @FXML
     private ToggleButton bWrapText;
     @FXML
-    private ToggleButton bPrettyJson;
-    @FXML
-    private ToggleButton editMessage;
+    private ToggleButton bJsonPretty;
     @FXML
     private Label msgTimeLabel;
     @FXML
@@ -43,58 +38,67 @@ public class TabWsMessageController {
         Settings settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
+        jsonView.setCellFactory(JsonView::cellFactory);
+        jsonView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
         // Set message as json pretty or text
-        bPrettyJson.setOnAction(event -> {
-            if (bPrettyJson.isSelected()) {
-                Utils.PrettyStatus status = getJsonPretty(message.getMessage());
-                txMsgArea.setText(status.getMessage());
-                bPrettyJson.setSelected(status.getButtonSelect());
-            } else {
-                txMsgArea.setText(message.getMessage());
-            }
-            segmentedButton.requestFocus();
-        });
+        bJsonPretty.setOnAction(event -> toggleJsonPretty(bJsonPretty.isSelected()));
 
         // Set text area wrap or not
-        bWrapText.setOnAction(event -> {
-            if (bWrapText.isSelected()) {
-                txMsgArea.setWrapText(true);
-            } else {
-                txMsgArea.setWrapText(false);
-            }
-            segmentedButton.requestFocus();
-        });
+        bWrapText.setOnAction(event -> toggleWrapText(bWrapText.isSelected()));
         if (settings.isTextWrap()) {
             bWrapText.fire();
         }
 
-        // Set enable or disable edit text message
-        editMessage.setOnAction(event -> {
-            if (editMessage.isSelected()) {
-                txMsgArea.setEditable(true);
-            } else {
-                txMsgArea.setEditable(false);
-            }
-            segmentedButton.requestFocus();
-        });
-
         // Set message font size
         txMsgArea.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
+        jsonView.setStyle(String.format("-fx-font-size: %spx;", settings.getFontSize()));
     }
 
     /**
-     * Set message data in tab
+     * Toggle message as json tree, if available
      *
-     * @param message ReceivedMessage
+     * @param state boolean
      */
-    public void setMessage(ReceivedMessage message) {
-        this.message = message;
+    private void toggleJsonPretty(boolean state) {
+        txMsgArea.setVisible(!state);
+        txMsgArea.setManaged(!state);
+        bWrapText.setDisable(state);
+        jsonView.setVisible(state);
+        jsonView.setManaged(state);
+        bJsonPretty.setSelected(state);
+        segmentedButton.requestFocus();
+    }
+
+    /**
+     * Toggle wrap message text
+     *
+     * @param state boolean
+     */
+    private void toggleWrapText(boolean state) {
+        txMsgArea.setWrapText(state);
+        segmentedButton.requestFocus();
+    }
+
+    /**
+     * Set message data for current tab
+     *
+     * @param m received message
+     */
+    public void setMessage(ReceivedMessage m) {
+
+        // apply json to view
+        JsonView view = new JsonView(m.getMessage());
+        view.apply(jsonView, bJsonPretty, segmentedButton);
 
         // Set message text and data on init tab
-        txMsgArea.setText(message.getMessage());
-        String sb = (message.getMessageType() == ReceivedMessageType.RECEIVED ? "Received " : "Send ") +
-                "time: " + message.getFormattedTime();
+        txMsgArea.setText(m.getMessage());
+        String sb = String.format(
+                "%s time: %s",
+                m.getMessageType() == ReceivedMessageType.RECEIVED ? "Received" : "Send",
+                m.getFormattedTime()
+        );
         msgTimeLabel.setText(sb);
-        msgLengthLabel.setText(String.format("Length: %s", message.getMessage().length()));
+        msgLengthLabel.setText(String.format("Length: %s", m.getMessage().length()));
     }
 }

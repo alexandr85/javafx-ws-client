@@ -33,7 +33,7 @@ public class RestTab extends Tab {
         setGraphic(new ImageView("/images/message.png"));
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.rest.message.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.rest.message.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
             setContent(root);

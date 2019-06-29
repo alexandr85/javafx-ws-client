@@ -252,7 +252,7 @@ public class TabWsMessagesController {
      *
      * @return WsClient
      */
-    public WsClient getWsClient() {
+    WsClient getWsClient() {
         return wsClient;
     }
 

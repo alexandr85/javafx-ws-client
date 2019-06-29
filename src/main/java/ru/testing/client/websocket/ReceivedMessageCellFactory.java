@@ -71,17 +71,16 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
      */
     private ContextMenu getContextMenu(final ReceivedMessage item) {
         final ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.copyCellMessage(item),
-                m.copyCellTime(item),
-                m.copyCellAll(item),
+                ContextMenuItems.copyCellMessage(item),
+                ContextMenuItems.copyCellTime(item),
+                ContextMenuItems.copyCellAll(item),
                 new SeparatorMenuItem(),
-                m.saveMessageToFile(item),
-                m.showMessage(item),
+                ContextMenuItems.saveMessageToFile(item),
+                ContextMenuItems.showMessage(item),
                 new SeparatorMenuItem(),
-                m.deselectCell(controller.getOutputTextView()),
-                m.clearListView(list)
+                ContextMenuItems.deselectCell(controller.getOutputTextView()),
+                ContextMenuItems.clearListView(list)
         );
         return contextMenu;
     }

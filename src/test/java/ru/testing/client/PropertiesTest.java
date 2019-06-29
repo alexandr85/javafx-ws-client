@@ -17,7 +17,7 @@ public class PropertiesTest {
 
     @BeforeClass
     public static void testClassSetup() {
-        properties = AppProperties.getAppProperties();
+        properties = AppProperties.getInstance();
     }
 
     @Test

@@ -25,7 +25,7 @@ public class SendMessagesPopOver extends PopOver {
         setOnHidden(event -> tabWsMessagesController.getSendMsgHistoryBtn().setSelected(false));
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/popover.send.messages.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/popover.send.messages.fxml"));
             Parent root = loader.load();
             controller = loader.getController();
             controller.setCheckListViewCellFactory(tabWsMessagesController);

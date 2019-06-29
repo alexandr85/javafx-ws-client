@@ -33,7 +33,7 @@ public class NewClientTab extends Tab {
         image.setFitWidth(12.0);
         setGraphic(image);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.new.client.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.new.client.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {
