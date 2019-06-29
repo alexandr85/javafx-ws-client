@@ -1,10 +1,7 @@
 package ru.testing.client.common.objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.testing.client.websocket.ReceivedMessageType;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -15,8 +12,6 @@ import static ru.testing.client.common.Utils.getDateFormat;
  */
 public class ReceivedMessage {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReceivedMessage.class);
-
     private Date time;
     private String message;
     private ReceivedMessageType type;
@@ -25,17 +20,6 @@ public class ReceivedMessage {
         this.type = type;
         this.time = Calendar.getInstance().getTime();
         this.message = message;
-    }
-
-    public ReceivedMessage(ReceivedMessageType type, String time, String message) {
-        this.type = type;
-        this.message = message;
-        try {
-            this.time = getDateFormat().parse(time);
-        } catch (ParseException e) {
-            LOGGER.error("Error parse time from string: {}", e.getMessage());
-            this.time = Calendar.getInstance().getTime();
-        }
     }
 
     /**

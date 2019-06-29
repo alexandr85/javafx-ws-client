@@ -4,12 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import ru.testing.client.MainApp;
-import ru.testing.client.common.DataBase;
-import ru.testing.client.common.objects.Settings;
-import ru.testing.client.common.properties.DefaultProperties;
+import ru.testing.client.FXApp;
+import ru.testing.client.common.github.ReleaseChecker;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.tabs.WsMessageTab;
+
 
 /**
  * Controller for settings tab form
@@ -17,8 +18,8 @@ import ru.testing.client.elements.tabs.WsMessageTab;
 public class TabSettingsController {
 
     private static final String FONT_SIZE_FORMAT = "-fx-font-size: %spx;";
-    private DataBase dataBase = DataBase.getInstance();
-    private MainController mainController = MainApp.getMainController();
+    private AppProperties props = AppProperties.getInstance();
+    private MainController mainController = FXApp.getMainController();
 
     @FXML
     private CheckBox chWrap;
@@ -32,19 +33,22 @@ public class TabSettingsController {
     private CheckBox cbWsSslValidate;
     @FXML
     private CheckBox chWsCompression;
+    @FXML
+    private CheckBox chAutoCheck;
 
     @FXML
     private void initialize() {
 
         // Slider value listener
-        fontSlider.valueProperty().addListener(observable ->
-                fontLabel.setText(
-                        String.format("%spx", ((Number) fontSlider.getValue()).intValue())
-                )
-        );
+        fontSlider
+                .valueProperty()
+                .addListener(observable ->
+                        fontLabel.setText(String.format("%dpx", ((Double) fontSlider.getValue()).intValue()))
+                );
 
-        // Set value from database
-        setSettingsValues(dataBase.getSettings());
+        // Set settings
+        AppProperties props = AppProperties.getInstance();
+        setSettingsValues(props.getSettings());
     }
 
     /**
@@ -52,7 +56,15 @@ public class TabSettingsController {
      */
     @FXML
     private void loadDefaultSettings() {
-        setSettingsValues(DefaultProperties.getInstance().getDefaultSettings());
+        setSettingsValues(props.getSettings(true));
+    }
+
+    /**
+     * Check new version on github
+     */
+    @FXML
+    private void checkNewVersion() {
+        new ReleaseChecker(true).start();
     }
 
     /**
@@ -65,16 +77,18 @@ public class TabSettingsController {
         mainController.setProgressVisible(true);
 
         // Save new settings in database
-        boolean status = dataBase.setSettings(new Settings(
-                ((Number) fontSlider.getValue()).intValue(),
+        Settings newSettings = new Settings(
+                ((Double) fontSlider.getValue()).intValue(),
                 chWrap.isSelected(),
                 cbAutoScroll.isSelected(),
                 cbWsSslValidate.isSelected(),
-                chWsCompression.isSelected()
-        ));
-        if (status) {
+                chWsCompression.isSelected(),
+                chAutoCheck.isSelected()
+        );
 
-            Settings settings = dataBase.getSettings();
+        boolean status = newSettings.save();
+
+        if (status) {
 
             // Set font size for all messages
             for (Tab tab : mainController.getTabPane().getTabs()) {
@@ -83,7 +97,7 @@ public class TabSettingsController {
                     if (tabNode instanceof GridPane) {
                         for (Node node : ((GridPane) tabNode).getChildren()) {
                             if (node instanceof TextArea || node instanceof ListView) {
-                                node.setStyle(String.format(FONT_SIZE_FORMAT, settings.getFontSize()));
+                                node.setStyle(String.format(FONT_SIZE_FORMAT, newSettings.getFontSize()));
                                 node.applyCss();
                             }
                         }
@@ -102,7 +116,7 @@ public class TabSettingsController {
     }
 
     /**
-     * Set settings value from database
+     * Set settings values
      */
     private void setSettingsValues(Settings settings) {
 
@@ -123,6 +137,9 @@ public class TabSettingsController {
 
         // Set ws compression status
         chWsCompression.setSelected(settings.isWithCompression());
+
+        // Set auto check on startup
+        chAutoCheck.setSelected(settings.isCheckUpdate());
 
         // Disable loader
         mainController.setProgressVisible(false);

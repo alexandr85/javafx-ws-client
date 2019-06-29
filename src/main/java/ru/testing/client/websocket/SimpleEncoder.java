@@ -1,14 +1,12 @@
 package ru.testing.client.websocket;
 
-import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-@SuppressWarnings("WeakerAccess")
 public class SimpleEncoder implements Encoder.Text<String> {
 
     @Override
-    public String encode(String object) throws EncodeException {
+    public String encode(String object) {
         return null;
     }
 

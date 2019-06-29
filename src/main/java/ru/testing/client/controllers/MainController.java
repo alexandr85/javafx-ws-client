@@ -18,9 +18,8 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import org.apache.log4j.Logger;
 import org.controlsfx.control.textfield.CustomTextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.testing.client.common.FilesOperations;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.*;
@@ -38,20 +37,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.controlsfx.tools.Platform.OSX;
-import static ru.testing.client.MainApp.getPrimaryStage;
+import static ru.testing.client.FXApp.getPrimaryStage;
 
 /**
  * FXML controller for main page
  */
 public class MainController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final Logger LOGGER = Logger.getLogger(MainController.class);
     private final ObservableList<HttpTypes> httpTypes = FXCollections.observableArrayList();
     private final org.controlsfx.tools.Platform platform = org.controlsfx.tools.Platform.getCurrent();
     private final KeyCombination.Modifier keyModifier = (platform == OSX)
             ? KeyCombination.META_DOWN : KeyCombination.CONTROL_DOWN;
     private List<WsClient> wsClients = new ArrayList<>();
-    private AppProperties properties = AppProperties.getAppProperties();
+    private AppProperties properties = AppProperties.getInstance();
     private NewClientTab newClientTab = new NewClientTab();
     private HttpSettingsPopOver httpSettingsPopOver;
     private SettingsTab settingsTab;
@@ -241,7 +240,7 @@ public class MainController {
         Task task = new Task() {
 
             @Override
-            protected Object call() throws Exception {
+            protected Object call() {
                 connectionButton.setDisable(true);
                 setProgressVisible(true);
                 Tab currentTab = tabPane.getSelectionModel().getSelectedItem();
@@ -576,7 +575,7 @@ public class MainController {
             try {
                 desktop.browse(new URL(url).toURI());
             } catch (IOException | URISyntaxException e) {
-                LOGGER.error("Error go to web page: {}", e.getMessage());
+                LOGGER.warn(String.format("Error go to web page: %s", e.getMessage()));
             }
         }
     }

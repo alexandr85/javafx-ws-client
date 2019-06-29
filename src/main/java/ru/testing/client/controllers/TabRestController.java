@@ -3,7 +3,6 @@ package ru.testing.client.controllers;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -12,13 +11,13 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.MasterDetailPane;
 import org.controlsfx.control.SegmentedButton;
-import ru.testing.client.MainApp;
-import ru.testing.client.common.DataBase;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.Utils;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
-import ru.testing.client.common.objects.Settings;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.common.properties.Settings;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.ArrayList;
@@ -32,11 +31,11 @@ import static ru.testing.client.common.Utils.getJsonPretty;
 public class TabRestController {
 
     private static final int TIMEOUT = 10000;
-    private DataBase dataBase = DataBase.getInstance();
-    private MainController mainController = MainApp.getMainController();
+    private AppProperties props = AppProperties.getInstance();
+    private MainController mainController = FXApp.getMainController();
     private List<Header> headers = new ArrayList<>();
     private List<HttpParameter> parameters = new ArrayList<>();
-    private Client restClient = Client.create();
+    private Client restClient;
     private String serverUrl;
     private HttpTypes httpType;
     private String message;
@@ -64,7 +63,7 @@ public class TabRestController {
     private void initialize() {
 
         // Get message settings
-        Settings settings = dataBase.getSettings();
+        Settings settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text
@@ -92,11 +91,15 @@ public class TabRestController {
             segmentedButton.requestFocus();
         });
 
-        // Create http client
-        serverUrl = mainController.getServerUrl().getText();
-        httpType = mainController.getHttpType();
+        // Init http client
+        restClient = Client.create();
         restClient.setConnectTimeout(TIMEOUT);
         restClient.setReadTimeout(TIMEOUT);
+
+        // Http data
+        serverUrl = mainController.getServerUrl().getText();
+        httpType = mainController.getHttpType();
+
         execute();
     }
 
@@ -105,23 +108,39 @@ public class TabRestController {
         headers.addAll(mainController.getHeadersList());
         parameters.clear();
         parameters.addAll(mainController.getHttpParametersList());
-        ClientResponse response = null;
+
         MultivaluedMap<String, String> parametersMap = new MultivaluedMapImpl();
         parameters.forEach(p -> parametersMap.add(p.getName(), p.getValue()));
+
         switch (httpType) {
             case HTTP_GET:
-                WebResource.Builder getResource = restClient.resource(serverUrl)
-                        .queryParams(parametersMap).getRequestBuilder();
+                WebResource.Builder getResource = restClient
+                        .resource(serverUrl)
+                        .queryParams(parametersMap)
+                        .getRequestBuilder();
+
                 headers.forEach(header -> getResource.header(header.getName(), header.getValue()));
-                response = getResource.get(ClientResponse.class);
+                headers.add(new Header("User-Agent", String.format("%s/%s", props.getAppName(), props.getVersion())));
+
+                ClientResponse getResponse = getResource.get(ClientResponse.class);
+                setResult(getResponse);
                 break;
             case HTTP_POST:
+
+                // TODO FIX body
                 WebResource.Builder postResource = restClient.resource(serverUrl).getRequestBuilder();
                 mainController.getHeadersList().forEach(header -> postResource.header(header.getName(), header.getValue()));
-                response = postResource.post(ClientResponse.class, parametersMap);
-                break;
+                ClientResponse postResponse = postResource.post(ClientResponse.class, parametersMap);
+                setResult(postResponse);
         }
+    }
 
+    /**
+     * Save request result
+     *
+     * @param response ClientResponse
+     */
+    private void setResult(ClientResponse response) {
         // Set http action
         if (response != null) {
             message = response.getEntity(String.class);

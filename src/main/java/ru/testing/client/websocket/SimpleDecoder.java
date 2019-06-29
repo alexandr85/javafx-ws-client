@@ -1,14 +1,12 @@
 package ru.testing.client.websocket;
 
-import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
 
-@SuppressWarnings("WeakerAccess")
 public class SimpleDecoder implements Decoder.Text<String> {
 
     @Override
-    public String decode(String s) throws DecodeException {
+    public String decode(String s) {
         return null;
     }
 

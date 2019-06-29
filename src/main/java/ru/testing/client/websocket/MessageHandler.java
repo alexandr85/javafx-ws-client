@@ -1,7 +1,6 @@
 package ru.testing.client.websocket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.controllers.TabWsMessagesController;
 
 import static ru.testing.client.websocket.ReceivedMessageType.RECEIVED;
@@ -11,7 +10,7 @@ import static ru.testing.client.websocket.ReceivedMessageType.RECEIVED;
  */
 public class MessageHandler implements javax.websocket.MessageHandler.Whole<String> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("MessageHandler");
+    private static final Logger LOGGER = Logger.getLogger("MessageHandler");
     private TabWsMessagesController messagesController;
 
     /**
@@ -28,7 +27,7 @@ public class MessageHandler implements javax.websocket.MessageHandler.Whole<Stri
         if (messagesController != null) {
             messagesController.addMessageToOutput(RECEIVED, message);
         } else {
-            LOGGER.info("Response: {}\n", message);
+            LOGGER.info(String.format("Response: %s\n", message));
         }
     }
 }

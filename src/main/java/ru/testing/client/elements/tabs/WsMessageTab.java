@@ -3,14 +3,14 @@ package ru.testing.client.elements.tabs;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.SingleSelectionModel;
+import javafx.scene.control.Tab;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.MainApp;
+import org.apache.log4j.Logger;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.controllers.TabWsMessageController;
 import ru.testing.client.controllers.MainController;
+import ru.testing.client.controllers.TabWsMessageController;
 
 import java.io.IOException;
 
@@ -19,10 +19,10 @@ import java.io.IOException;
  */
 public class WsMessageTab extends Tab {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
 
     public WsMessageTab(final ReceivedMessage item) {
-        MainController mainController = MainApp.getMainController();
+        MainController mainController = FXApp.getMainController();
         ObservableList<Tab> tabsList = mainController.getTabPane().getTabs();
         if (item != null) {
 
@@ -38,7 +38,7 @@ public class WsMessageTab extends Tab {
                 controller.setMessage(item);
                 setContent(root);
             } catch (IOException e) {
-                LOGGER.error("Error load view form: {}", e.getMessage());
+                LOGGER.error(String.format("Error load view form: %s", e.getMessage()));
             }
 
             // Setup new tab with content in tabPane

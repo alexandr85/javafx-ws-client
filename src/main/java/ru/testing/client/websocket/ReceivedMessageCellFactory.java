@@ -8,6 +8,8 @@ import ru.testing.client.controllers.TabWsMessagesController;
 import ru.testing.client.elements.ContextMenuItems;
 import ru.testing.client.elements.tabs.WsMessageTab;
 
+import java.util.Objects;
+
 /**
  * Output message cell factory
  */
@@ -58,7 +60,7 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
                 }
             }
         });
-        return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
+        return !Objects.equals(oldItem, newItem);
     }
 
     /**

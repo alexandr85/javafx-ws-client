@@ -2,8 +2,7 @@ package ru.testing.client.common;
 
 import com.google.gson.*;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.controllers.TabRestController;
 
 import java.text.SimpleDateFormat;
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Utils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabRestController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TabRestController.class.getName());
     private static final String TIME_FORMAT = "HH:mm:ss.SSS";
 
     /**
@@ -71,7 +70,7 @@ public class Utils {
             JsonElement jsonElement = parser.parse(StringEscapeUtils.unescapeJson(message));
             return new PrettyStatus(gson.toJson(jsonElement), true);
         } catch (JsonIOException | JsonSyntaxException e) {
-            LOGGER.error("Error pretty json from string: {}", e.getMessage());
+            LOGGER.warn(String.format("Error pretty json from string: %s", e.getMessage()));
             return new PrettyStatus(message, false);
         }
     }

@@ -1,18 +1,16 @@
 package ru.testing.client.common.github;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.elements.Dialogs;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 
@@ -21,60 +19,77 @@ import java.util.Arrays;
  */
 public class ReleaseChecker extends Thread {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReleaseChecker.class);
-    private static ReleaseChecker instance;
-    private AppProperties properties = AppProperties.getAppProperties();
-    private String lastVersion = "1.0";
+    private static final Logger LOGGER = Logger.getLogger(ReleaseChecker.class);
+    private AppProperties props = AppProperties.getInstance();
+    private String lastVersion;
+    private boolean isManual;
 
-    private ReleaseChecker() {
-
-    }
-
-    public static ReleaseChecker getInstance() {
-        if (instance == null) {
-            instance = new ReleaseChecker();
-        }
-        return instance;
+    public ReleaseChecker(boolean isManual) {
+        this.isManual = isManual;
     }
 
     /**
      * Run get git hub info
      */
     public void run() {
-        String url = properties.getTagsUrl();
+        lastVersion = props.getVersion();
+
         try {
-            if (!url.isEmpty()) {
-                TagInfo[] tags = getTagsFromApi();
+            TagInfo[] tags = getTagsFromApi();
+            if (tags.length > 0) {
                 lastVersion = tags[0].getName().replace("v", "");
             }
-            if (isCurrentVersionOld(properties.getVersion(), lastVersion)) {
+
+            LOGGER.debug(String.format("Last release version on git hub: %s", getLastVersion()));
+            if (isCurrentVersionOld(props.getVersion(), lastVersion)) {
                 Platform.runLater(() -> {
                     boolean goToPage = new Dialogs().getConfirmationDialog("Great news!",
-                            String.format("New version %s is available!\nGo to new release page?", lastVersion));
-                    if (goToPage && Desktop.isDesktopSupported()) {
+                            String.format(
+                                    "New version %s is available!\n%s\n%s",
+                                    lastVersion,
+                                    "Disable auto check in `Settings` if need.",
+                                    "Go to new release page?"
+                            ));
+                    if (goToPage && java.awt.Desktop.isDesktopSupported()) {
                         try {
-                            Desktop.getDesktop().browse(new URI(properties.getLastReleaseUrl()));
-                        } catch (URISyntaxException | IOException e) {
+                            java.awt.Desktop.getDesktop().browse(URI.create(props.getLastReleaseUrl()));
+                        } catch (IOException e) {
                             LOGGER.error("Error open new release web page");
                         }
                     }
                 });
+            } else if (isManual) {
+                Platform.runLater(() -> new Dialogs().getInfoDialog("You already have the latest version"));
             }
-            LOGGER.debug("Last release version on git hub: {}", getLastVersion());
-        } catch (IOException | NumberFormatException e) {
+
+        } catch (NumberFormatException e) {
             LOGGER.error(e.getMessage());
         }
     }
 
     /**
-     * Create request
+     * Create tags request
      *
      * @return List<TagInfo>
-     * @throws IOException mapping TagInfo
      */
-    private TagInfo[] getTagsFromApi() throws IOException {
-        ClientResponse response = Client.create().resource(properties.getTagsUrl()).get(ClientResponse.class);
-        return new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
+    private TagInfo[] getTagsFromApi() {
+        TagInfo[] tags = new TagInfo[0];
+
+        try {
+            ClientResponse response = Client.create().resource(props.getTagsUrl()).get(ClientResponse.class);
+
+            if (response.getStatus() != 200) {
+                throw new IOException(
+                        String.format("response status code %s", response.getStatus())
+                );
+            }
+
+            tags = new Gson().fromJson(response.getEntity(String.class), TagInfo[].class);
+        } catch (IOException | JsonSyntaxException e) {
+            LOGGER.warn("Can't get github tags: " + e.getMessage());
+        }
+
+        return tags;
     }
 
     /**
@@ -100,9 +115,6 @@ public class ReleaseChecker extends Thread {
             return false;
         } else if (cvt[0] < nvt[0]) {
             return true;
-        } else if (cvt[1] < nvt[1]) {
-            return true;
-        }
-        return false;
+        } else return cvt[1] < nvt[1];
     }
 }

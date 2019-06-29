@@ -5,8 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -15,14 +14,14 @@ import java.io.IOException;
  */
 public class SettingsTab extends Tab {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
 
     public SettingsTab() {
 
         // Create new tab
         setText("Settings");
         setTooltip(new Tooltip("Application settings"));
-        setGraphic( new ImageView("/images/settings.png"));
+        setGraphic(new ImageView("/images/settings.png"));
 
         // Load settings view form
         try {
@@ -30,7 +29,7 @@ public class SettingsTab extends Tab {
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {
-            LOGGER.error("Error load settings tab: {}", e.getMessage());
+            LOGGER.error(String.format("Error load settings tab: %s", e.getMessage()));
         }
     }
 }

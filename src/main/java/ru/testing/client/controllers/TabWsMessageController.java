@@ -6,9 +6,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import org.controlsfx.control.SegmentedButton;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.objects.Settings;
+import ru.testing.client.common.properties.Settings;
+import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.websocket.ReceivedMessageType;
 
 import static ru.testing.client.common.Utils.getJsonPretty;
@@ -18,7 +18,7 @@ import static ru.testing.client.common.Utils.getJsonPretty;
  */
 public class TabWsMessageController {
 
-    private DataBase dataBase = DataBase.getInstance();
+    private AppProperties props = AppProperties.getInstance();
     private ReceivedMessage message;
 
     @FXML
@@ -40,7 +40,7 @@ public class TabWsMessageController {
     private void initialize() {
 
         // Get message settings
-        Settings settings = dataBase.getSettings();
+        Settings settings = props.getSettings();
         segmentedButton.setToggleGroup(null);
 
         // Set message as json pretty or text

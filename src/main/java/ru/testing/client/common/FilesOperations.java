@@ -1,9 +1,8 @@
 package ru.testing.client.common;
 
 import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.MainApp;
+import org.apache.log4j.Logger;
+import ru.testing.client.FXApp;
 import ru.testing.client.controllers.MainController;
 import ru.testing.client.elements.Dialogs;
 import java.io.*;
@@ -14,9 +13,9 @@ import java.nio.charset.StandardCharsets;
  */
 public class FilesOperations {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FilesOperations.class);
+    private static final Logger LOGGER = Logger.getLogger(FilesOperations.class);
     private static final String TEXT_FILE_NAME = "logs/output.txt";
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
 
     /**
      * Save text to file
@@ -38,7 +37,7 @@ public class FilesOperations {
             writer.write(text);
         } catch (IOException io) {
             dialogs.getExceptionDialog(io);
-            LOGGER.error("Can't save file: {}", io.getMessage());
+            LOGGER.error(String.format("Can't save file: %s", io.getMessage()));
         } finally {
             if (writer != null) {
                 try {
@@ -46,7 +45,7 @@ public class FilesOperations {
                     dialogs.getInfoDialog(String.format("Save successful in file %s", TEXT_FILE_NAME));
                 } catch (Exception e) {
                     dialogs.getExceptionDialog(e);
-                    LOGGER.error("Can't close writer: {}", e.getMessage());
+                    LOGGER.error(String.format("Can't close writer: %s", e.getMessage()));
                 }
             }
             mainController.setProgressVisible(false);

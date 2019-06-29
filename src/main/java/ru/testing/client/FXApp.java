@@ -6,10 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 import org.controlsfx.tools.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.github.ReleaseChecker;
 import ru.testing.client.common.properties.AppProperties;
 import ru.testing.client.controllers.MainController;
@@ -22,9 +20,9 @@ import static org.controlsfx.tools.Platform.OSX;
 /**
  * Main application class
  */
-public class MainApp extends Application {
+public class FXApp extends Application {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainApp.class);
+    private static final Logger LOGGER = Logger.getLogger(FXApp.class);
     private static final double PRIMARY_STAGE_MIN_WIDTH = 730;
     private static final double PRIMARY_STAGE_MIN_HEIGHT = 540;
     private static Stage primaryStage;
@@ -37,10 +35,9 @@ public class MainApp extends Application {
      */
     public static void main(String[] args) {
         try {
-            DataBase.getInstance();
             launch(args);
         } catch (Exception e) {
-            LOGGER.error("Running exception: {}", e.getMessage());
+            LOGGER.error(String.format("Running exception: %s", e.getMessage()));
             System.exit(1);
         }
     }
@@ -70,22 +67,25 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        MainApp.primaryStage = primaryStage;
+        FXApp.primaryStage = primaryStage;
         try {
-            AppProperties properties = AppProperties.getAppProperties();
+            AppProperties props = AppProperties.getInstance();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main.fxml"));
             Parent root = loader.load();
             mainController = loader.getController();
             Scene scene = new Scene(root);
             setApplicationIcon(primaryStage, mainController);
-            primaryStage.setTitle(String.format("WebSocket & Rest client v%s", properties.getVersion()));
+            primaryStage.setTitle(String.format("WebSocket & Rest client v%s", props.getVersion()));
             primaryStage.setMinWidth(PRIMARY_STAGE_MIN_WIDTH);
             primaryStage.setMinHeight(PRIMARY_STAGE_MIN_HEIGHT);
             primaryStage.setScene(scene);
             primaryStage.centerOnScreen();
             primaryStage.setResizable(true);
             primaryStage.show();
-            ReleaseChecker.getInstance().start();
+
+            if (props.getSettings().isCheckUpdate()) {
+                new ReleaseChecker(false).start();
+            }
         } catch (IOException e) {
             LOGGER.error("Error load main fxml view");
             e.printStackTrace();
@@ -116,7 +116,7 @@ public class MainApp extends Application {
                 stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/icon-512.png")));
             }
         } catch (Exception e) {
-            LOGGER.error("Error load application icon: {}", e.getMessage());
+            LOGGER.error(String.format("Error load application icon: %s", e.getMessage()));
         }
     }
 }
