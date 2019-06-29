@@ -7,7 +7,9 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import ru.testing.client.MainApp;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.TilePane;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
@@ -42,6 +44,12 @@ public class HttpSettingsController {
     @FXML
     private ListView<HttpParameter> pListView;
     @FXML
+    private FlowPane fpParameters;
+    @FXML
+    private TilePane tpParameters;
+    @FXML
+    private TextArea bodyTextArea;
+    @FXML
     private Label lbNoHeaders;
     @FXML
     private Label lbNoParameters;
@@ -49,7 +57,7 @@ public class HttpSettingsController {
     @FXML
     private void initialize() {
 
-        if (MainApp.getMainController().getHttpType() == HttpTypes.WEBSOCKET) {
+        if (FXApp.getMainController().getHttpType() == HttpTypes.WEBSOCKET) {
             accordion.setExpandedPane(headersPane);
             headersPane.setCollapsible(false);
             parametersPane.setVisible(false);
@@ -228,6 +236,18 @@ public class HttpSettingsController {
      */
     TitledPane getHeadersPane() {
         return headersPane;
+    }
+
+    FlowPane getFpParameters() {
+        return fpParameters;
+    }
+
+    TilePane getTpParameters() {
+        return tpParameters;
+    }
+
+    TextArea getBodyTextArea() {
+        return bodyTextArea;
     }
 
     /**

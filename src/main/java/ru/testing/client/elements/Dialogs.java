@@ -1,11 +1,13 @@
 package ru.testing.client.elements;
 
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.MainApp;
+import org.apache.log4j.Logger;
+import ru.testing.client.FXApp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -19,7 +21,7 @@ import static javafx.scene.control.Alert.AlertType.*;
  */
 public class Dialogs {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Dialogs.class);
+    private static final Logger LOGGER = Logger.getLogger(Dialogs.class);
     private static final double DIALOG_WEIGHT = 420;
 
     /**
@@ -32,7 +34,7 @@ public class Dialogs {
         alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setContentText(info);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         alert.showAndWait();
     }
 
@@ -74,10 +76,10 @@ public class Dialogs {
 
             // Set expandable Exception into the dialog pane.
             alert.getDialogPane().setExpandableContent(expContent);
-            alert.initOwner(MainApp.getPrimaryStage());
+            alert.initOwner(FXApp.getPrimaryStage());
             alert.showAndWait();
         } catch (IllegalStateException se) {
-            LOGGER.error("Error show exception dialog message: {}", se.getLocalizedMessage());
+            LOGGER.error(String.format("Error show exception dialog message: %s", se.getLocalizedMessage()));
         }
     }
 
@@ -93,7 +95,7 @@ public class Dialogs {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
@@ -108,7 +110,7 @@ public class Dialogs {
         alert.setTitle("Warning");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.initOwner(MainApp.getPrimaryStage());
+        alert.initOwner(FXApp.getPrimaryStage());
         alert.showAndWait();
     }
 }

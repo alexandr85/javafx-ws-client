@@ -8,6 +8,8 @@ import ru.testing.client.controllers.TabWsMessagesController;
 import ru.testing.client.elements.ContextMenuItems;
 import ru.testing.client.elements.tabs.WsMessageTab;
 
+import java.util.Objects;
+
 /**
  * Output message cell factory
  */
@@ -58,7 +60,7 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
                 }
             }
         });
-        return oldItem != null ? !oldItem.equals(newItem) : newItem != null;
+        return !Objects.equals(oldItem, newItem);
     }
 
     /**
@@ -69,17 +71,16 @@ public class ReceivedMessageCellFactory extends ListCell<ReceivedMessage> {
      */
     private ContextMenu getContextMenu(final ReceivedMessage item) {
         final ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.copyCellMessage(item),
-                m.copyCellTime(item),
-                m.copyCellAll(item),
+                ContextMenuItems.copyCellMessage(item),
+                ContextMenuItems.copyCellTime(item),
+                ContextMenuItems.copyCellAll(item),
                 new SeparatorMenuItem(),
-                m.saveMessageToFile(item),
-                m.showMessage(item),
+                ContextMenuItems.saveMessageToFile(item),
+                ContextMenuItems.showMessage(item),
                 new SeparatorMenuItem(),
-                m.deselectCell(controller.getOutputTextView()),
-                m.clearListView(list)
+                ContextMenuItems.deselectCell(controller.getOutputTextView()),
+                ContextMenuItems.clearListView(list)
         );
         return contextMenu;
     }

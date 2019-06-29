@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.control.MasterDetailPane?>
 <?import org.controlsfx.control.SegmentedButton?>
-<GridPane xmlns:fx="http://javafx.com/fxml/1"
+<GridPane xmlns:fx="http://javafx.com/fxml/1" stylesheets="/styles/tab.detail.msg.css"
           fx:controller="ru.testing.client.controllers.TabRestController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
@@ -19,7 +19,16 @@
     <MasterDetailPane fx:id="masterDetailPane" detailSide="TOP" showDetailNode="false" GridPane.rowIndex="0"
                       dividerPosition=".3">
         <masterNode>
-            <TextArea fx:id="masterNode" editable="false"/>
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <TextArea fx:id="masterNode" editable="false" GridPane.rowIndex="0"/>
+                <TreeView fx:id="jsonView" visible="false" managed="false" GridPane.rowIndex="0"/>
+            </GridPane>
         </masterNode>
         <detailNode>
             <TextArea fx:id="detailNode" editable="false"/>
@@ -39,12 +48,11 @@
             <rowConstraints>
                 <RowConstraints minHeight="30.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES"/>
             </rowConstraints>
-            <SegmentedButton fx:id="segmentedButton" styleClass="SegmentedButton.STYLE_CLASS_DARK" GridPane.columnIndex="0">
+            <SegmentedButton fx:id="segmentedButton" GridPane.columnIndex="0">
                 <buttons>
-                    <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap"/>
-                    <ToggleButton fx:id="bPrettyJson" mnemonicParsing="false" prefWidth="90" text="Json"/>
+                    <ToggleButton fx:id="bWrapText" mnemonicParsing="false" prefWidth="90" text="Wrap text"/>
+                    <ToggleButton fx:id="bJsonPretty" mnemonicParsing="false" prefWidth="90" text="Json tree"/>
                     <ToggleButton fx:id="showHeaders" mnemonicParsing="false" prefWidth="90" text="Headers"/>
-                    <ToggleButton fx:id="editBody" mnemonicParsing="false" prefWidth="90" text="Edit"/>
                 </buttons>
             </SegmentedButton>
             <Label fx:id="msgLengthLabel" GridPane.columnIndex="1" maxWidth="130.0"/>

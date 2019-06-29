@@ -1,21 +1,23 @@
-## <img src="application.ico" width="32" height="32"> *JavaFX Websocket client*
+## *JavaFX Websocket & Rest client for testing*
 
 ###### Features:
 * Connect to ws:// and wss:// websocket server
-* Use custom headers for http connection
 * Filtered incoming websocket message
 * Collected sent message history
+* Use custom headers for http connection
 * Save output messages to text file
-* Save sessions for load them after
 * Show current session info in status bar
 * Show websocket message in new tab
-* Pretty json websocket message in new tab
 * Send selected messages list after connect
+* Send GET & POST http request with header & parameters
+* View response headers & body message
+* Pretty json message in new tab as tree view
 
 ---
 
 ###### Dependencies:
-* java 1.8 or later
+* java 1.8
+* java 1.9+ not supported yet
 
 ---
  

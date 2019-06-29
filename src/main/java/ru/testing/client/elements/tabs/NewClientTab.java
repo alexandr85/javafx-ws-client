@@ -5,8 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import ru.testing.client.common.HttpTypes;
 import ru.testing.client.common.objects.Header;
 import ru.testing.client.common.objects.HttpParameter;
@@ -19,7 +18,7 @@ import java.util.List;
  */
 public class NewClientTab extends Tab {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SettingsTab.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SettingsTab.class.getName());
     private String prevUrl;
     private HttpTypes prevType;
     private List<Header> prevHeaders;
@@ -34,7 +33,7 @@ public class NewClientTab extends Tab {
         image.setFitWidth(12.0);
         setGraphic(image);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/tab.new.client.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/tab.new.client.fxml"));
             Parent root = loader.load();
             setContent(root);
         } catch (IOException e) {

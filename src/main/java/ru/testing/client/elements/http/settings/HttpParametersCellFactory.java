@@ -36,10 +36,9 @@ public class HttpParametersCellFactory extends ListCell<HttpParameter> {
      */
     private ContextMenu getHeaderContextMenu(ListCell<HttpParameter> cell) {
         ContextMenu contextMenu = new ContextMenu();
-        ContextMenuItems m = new ContextMenuItems();
         contextMenu.getItems().addAll(
-                m.removeCell(cell),
-                m.clearListView(list)
+                ContextMenuItems.removeCell(cell),
+                ContextMenuItems.clearListView(list)
         );
         return contextMenu;
     }

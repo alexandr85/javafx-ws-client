@@ -11,13 +11,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Circle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.testing.client.MainApp;
+import org.apache.log4j.Logger;
+import ru.testing.client.FXApp;
 import ru.testing.client.common.Utils;
-import ru.testing.client.common.DataBase;
 import ru.testing.client.common.objects.ReceivedMessage;
-import ru.testing.client.common.objects.Settings;
+import ru.testing.client.common.properties.AppProperties;
+import ru.testing.client.common.properties.Settings;
 import ru.testing.client.elements.Dialogs;
 import ru.testing.client.elements.filter.FilterListPopOver;
 import ru.testing.client.elements.tabs.WsMessageTab;
@@ -31,13 +30,13 @@ import java.net.URI;
  */
 public class TabWsMessagesController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TabWsMessagesController.class);
+    private static final Logger LOGGER = Logger.getLogger(TabWsMessagesController.class);
     private static final int CHECK_CONNECTION_STATUS_TIMEOUT = 1000;
-    private DataBase dataBase = DataBase.getInstance();
+    private AppProperties props = AppProperties.getInstance();
     private final ObservableList<ReceivedMessage> receivedMessageList = FXCollections.observableArrayList();
     private final ObservableList<ReceivedMessage> receivedFilteredMessageList = FXCollections.observableArrayList();
     private final ObservableList<String> filterList = FXCollections.observableArrayList();
-    private MainController mainController = MainApp.getMainController();
+    private MainController mainController = FXApp.getMainController();
     private Settings settings;
     private FilterListPopOver filterPopOver;
     private SendMessagesPopOver sendMessagesPopOver;
@@ -80,7 +79,7 @@ public class TabWsMessagesController {
     protected void initialize() {
 
         // Get settings
-        settings = dataBase.getSettings();
+        settings = props.getSettings();
         autoScroll = settings.isAutoScroll();
 
         // Set message font size
@@ -253,7 +252,7 @@ public class TabWsMessagesController {
      *
      * @return WsClient
      */
-    public WsClient getWsClient() {
+    WsClient getWsClient() {
         return wsClient;
     }
 
@@ -288,7 +287,7 @@ public class TabWsMessagesController {
                 }
             });
         } catch (Exception e) {
-            LOGGER.error("Error open connection: {}", e.getLocalizedMessage());
+            LOGGER.warn(String.format("Error open connection: %s", e.getLocalizedMessage()));
             Platform.runLater(() -> new Dialogs().getExceptionDialog(e));
         } finally {
             checkConnectionStatus();
@@ -302,19 +301,20 @@ public class TabWsMessagesController {
      * @param message String message
      */
     public void addMessageToOutput(ReceivedMessageType type, String message) {
+        ReceivedMessage msg = new ReceivedMessage(type, message);
         if (filtered && filterList.size() > 0) {
             for (String filterItem : filterList) {
                 if (message.contains(filterItem)) {
                     Platform.runLater(() -> {
                         receivedMessageList.add(new ReceivedMessage(type, message));
-                        receivedFilteredMessageList.add(new ReceivedMessage(type, message));
+                        receivedFilteredMessageList.add(msg);
                     });
                     return;
                 }
             }
-            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
+            Platform.runLater(() -> receivedMessageList.add(msg));
         } else {
-            Platform.runLater(() -> receivedMessageList.add(new ReceivedMessage(type, message)));
+            Platform.runLater(() -> receivedMessageList.add(msg));
         }
     }
 
@@ -420,7 +420,7 @@ public class TabWsMessagesController {
                         Thread.sleep(CHECK_CONNECTION_STATUS_TIMEOUT);
                     } while (wsClient != null);
                 } catch (InterruptedException e) {
-                    LOGGER.error("Thread interrupted exception{}", e.getMessage());
+                    LOGGER.error(String.format("Thread interrupted exception: %s", e.getMessage()));
                 }
                 return null;
             }
